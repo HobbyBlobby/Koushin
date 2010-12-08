@@ -1,0 +1,4 @@
+[Project]
+Name=Koushin
+Manager=KDevCMakeManager
+VersionControl=kdevgit

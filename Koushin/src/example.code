@@ -1,0 +1,4 @@
+[tasks]
+use #1 for population
+repeat #1 for 10 every 2 from 3
+do #1 makeHealthy

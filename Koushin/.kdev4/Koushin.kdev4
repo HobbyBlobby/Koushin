@@ -1,0 +1,15 @@
+[Buildset]
+BuildItems=@Variant(\x00\x00\x00\t\x00\x00\x00\x00\x01\x00\x00\x00\x0b\x00\x00\x00\x00\x01\x00\x00\x00\x0e\x00K\x00o\x00u\x00s\x00h\x00i\x00n)
+
+[CMake]
+BuildDirs=/home/HobbyBlobby/src/Koushin/build
+CMakeDir=/usr/share/cmake/Modules
+Current CMake Binary=file:///usr/bin/cmake
+CurrentBuildDir=file:///home/HobbyBlobby/src/Koushin/build
+CurrentBuildType=Debug
+CurrentInstallDir=file:///usr
+Extra Arguments=
+ProjectRootRelative=./
+
+[Project]
+VersionControlSupport=kdevgit
