@@ -1,12 +1,18 @@
 set(Koushin_SRCS
   action.cpp
   actionmanager.cpp
+  actionowner.cpp
   actionparser.cpp
+  building.cpp
   citizen.cpp
   citizenaction.cpp
   Koushin.cpp
   main.cpp
+  player.cpp
+  playeraction.cpp
   population.cpp
+  town.cpp
+  townaction.cpp
 )
 
 kde4_add_executable(Koushin ${Koushin_SRCS})
