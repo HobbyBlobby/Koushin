@@ -17,27 +17,25 @@
     Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-#ifndef ACTION_H
-#define ACTION_H
 
-#include <QMap>
-#include <QString>
-#include <QStringList>
+#ifndef BUILDING_H
+#define BUILDING_H
+
+#include "actionowner.h"
+#include "town.h"
 
 namespace Koushin {
-  class Action
+  class Building : public ActionOwner
   {
     public:
-      Action();
-      virtual ~Action();
-      virtual void execute() = 0;
-      QMap<QString, QString> getPossibleActions();
+      Building(Town* town);
+      virtual ~Building();
+      actionOwnerType getActionOwnerType() {return actionOwnerIsBuilding;};
       
-      void addParameter(QString para) {m_parameters << para;}
-      void addParameters(QStringList paras) {m_parameters << paras;}
-    protected:
-      QStringList m_parameters;
-      QString m_action;
+      Town* getTown() {return m_town;}
+    private:
+      Town* m_town;
   };
 }
-#endif // ACTION_H
+
+#endif // BUILDING_H

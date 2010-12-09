@@ -24,19 +24,22 @@
 #include <QList>
 
 #include "action.h"
+#include "player.h"
 
 namespace Koushin {
   class Action;
   class ActionManager
   {
     public:
-      ActionManager();
+      ActionManager(Player* owner);
       virtual ~ActionManager();
       
       void addAction(Action* action) {m_actions << action;}
       void executeActions();
+      Player* getOwner() {return m_owner;}
     private:
       QList<Action* > m_actions;
+      Player* m_owner;
   };
 }
 

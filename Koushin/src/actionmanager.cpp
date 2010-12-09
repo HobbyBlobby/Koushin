@@ -21,7 +21,8 @@
 #include "action.h"
 #include "actionmanager.h"
 
-Koushin::ActionManager::ActionManager()
+Koushin::ActionManager::ActionManager(Player* owner)
+  : m_owner(owner)
 {
 
 }

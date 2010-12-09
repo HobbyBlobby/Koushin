@@ -32,3 +32,11 @@ Koushin::Citizen::~Citizen()
 
 }
 
+Koushin::citizenCondition Koushin::Citizen::citizenConditionFromQString(QString condition)
+{
+  if (condition == "citizenIsHungry") return Koushin::citizenIsHungry;
+  else if (condition == "citizenIsIll") return Koushin::citizenIsIll;
+  else if (condition == "citizenIsOld") return Koushin::citizenIsOld;
+  else return Koushin::citizenIsHealthy;
+}
+

@@ -17,27 +17,17 @@
     Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-#ifndef ACTION_H
-#define ACTION_H
 
-#include <QMap>
-#include <QString>
-#include <QStringList>
+#include "building.h"
 
-namespace Koushin {
-  class Action
-  {
-    public:
-      Action();
-      virtual ~Action();
-      virtual void execute() = 0;
-      QMap<QString, QString> getPossibleActions();
-      
-      void addParameter(QString para) {m_parameters << para;}
-      void addParameters(QStringList paras) {m_parameters << paras;}
-    protected:
-      QStringList m_parameters;
-      QString m_action;
-  };
+Koushin::Building::Building(Town* town)
+  : m_town(town)
+{
+
 }
-#endif // ACTION_H
+
+Koushin::Building::~Building()
+{
+
+}
+

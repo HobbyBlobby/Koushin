@@ -19,6 +19,9 @@
 
 
 #include "action.h"
+#include "citizenaction.h"
+#include "townaction.h"
+#include "playeraction.h"
 
 Koushin::Action::Action()
 {
@@ -30,3 +33,9 @@ Koushin::Action::~Action()
 
 }
 
+QMap< QString, QString > Koushin::Action::getPossibleActions()
+{
+  return Koushin::CitizenAction::getPossibleActions().
+      unite(Koushin::PlayerAction::getPossibleActions().
+      unite(Koushin::TownAction::getPossibleActions()));
+}

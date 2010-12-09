@@ -22,8 +22,12 @@
 #define ACTIONPARSER_H
 
 #include "action.h"
+#include "actionmanager.h"
+#include "actionowner.h"
 #include "citizen.h"
 #include "population.h"
+#include "player.h"
+#include "town.h"
 
 #include <QMultiMap>
 #include <QString>
@@ -34,21 +38,21 @@ namespace Koushin {
   class ActionParser
   {
     public:
-      ActionParser();
+      ActionParser(ActionOwner* owner, ActionManager* manager);
       virtual ~ActionParser();
       
       Action* parseConfig(const KConfigGroup& config);
-//       void setAction(Action* action) {m_action = action;}
-//       Action* addLine(QString line);
-//       Action* parseRepeatLine(QString line);
-//       Action* parseTaskLine(QString line);
-    private:
-      Citizen* selectRandomCitizen();
+
+  private:
+      bool parseRecipient(const QString& configLine);
+      bool findPlayer(const QString& parameter);
+      bool findTown(const QString& parameter);
       
       Action* m_action;
-      QMultiMap<int, Action* > m_actions;
-      QMultiMap<int, QString > m_taskLines;
-      QMultiMap<int, QString > m_repeatLines;
+      ActionManager* m_manager;
+      Player* m_player;
+      Town* m_town;
+      ActionOwner* m_owner;
   };
 }
 

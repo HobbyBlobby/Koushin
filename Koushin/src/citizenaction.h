@@ -22,6 +22,7 @@
 #define CITIZENACTION_H
 
 #include <QList>
+#include <QMap>
 #include <QString>
 
 #include "action.h"
@@ -34,6 +35,8 @@ namespace Koushin {
       CitizenAction(Citizen* citizen = 0, QString action = "");
       virtual ~CitizenAction();
       void execute();
+      static QMap<QString, QString> getPossibleActions();
+      
     private:
       Citizen* m_citizen;
   };

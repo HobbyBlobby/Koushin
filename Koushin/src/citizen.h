@@ -40,6 +40,8 @@ namespace Koushin {
       citizenConditions addCondition(citizenCondition condition) {return m_condition |= condition;}
       citizenConditions removeCondition(citizenCondition condition) {return m_condition ^= condition;}
       citizenConditions getCondition() {return m_condition;}
+      
+      static citizenCondition citizenConditionFromQString(QString condition);
     private:
       citizenConditions m_condition;
       int m_birthround;

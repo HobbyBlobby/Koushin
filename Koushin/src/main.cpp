@@ -1,17 +1,20 @@
+#include <ctime>
+
 #include <KAboutData>
 #include <KApplication>
 #include <KCmdLineArgs>
-
 #include <KConfigGroup>
 #include <KConfig>
 #include <KStandardDirs>
 
 #include "Koushin.h"
 
-#include "citizen.h"
-#include "citizenaction.h"
 #include "actionmanager.h"
 #include "actionparser.h"
+#include "building.h"
+#include "citizen.h"
+#include "citizenaction.h"
+#include "player.h"
 #include <kdebug.h>
 
 static const char description[] =
@@ -26,25 +29,32 @@ int main(int argc, char** argv)
     KCmdLineArgs::init(argc, argv, &about);
 
     KApplication app;
-
-//create full person
+    qsrand(std::time(0));
+    
+/*//create full person
     Koushin::Citizen man(0);
     Koushin::ActionManager manager;
     kDebug() << ((man.getCondition() && Koushin::citizenIsHungry) ? "Ist hungrig" : "Ist satt");
 //make person hungry
     Koushin::CitizenAction action(&man, QString("addCondition"));
-    Koushin::citizenCondition condition(Koushin::citizenIsHungry);
-    action.addParameter((void*)&condition);
+    QString condition("citizenIsHungry");
+    action.addParameter(condition);
     manager.addAction(&action);
     manager.executeActions();
     kDebug() << ((man.getCondition() && Koushin::citizenIsHungry) ? "Ist hungrig" : "Ist satt");
 //make person again full
     Koushin::CitizenAction action2(&man, QString("removeCondition"));
-    action2.addParameter((void*)&condition);
+    action2.addParameter(condition);
     manager.addAction(&action2);
     manager.executeActions();
-    kDebug() << ((man.getCondition() && Koushin::citizenIsHungry) ? "Ist hungrig" : "Ist satt");
+    kDebug() << ((man.getCondition() && Koushin::citizenIsHungry) ? "Ist hungrig" : "Ist satt");*/
     
+    Koushin::Player* tester = new Koushin::Player;
+    Koushin::ActionManager* manager = new Koushin::ActionManager(tester);
+    Koushin::Town* town = new Koushin::Town(tester);
+    Koushin::Building* testbldg = new Koushin::Building(town);
+    
+
     KConfig config(KStandardDirs::locate("data", "koushin/data/buildings/test.cfg"));
     KConfigGroup tasks(&config, "tasks");
     QStringList taskConfigList = tasks.groupList();
@@ -52,14 +62,11 @@ int main(int argc, char** argv)
     for (QStringList::const_iterator it = taskConfigList.begin(); it != taskConfigList.end(); ++it) {
       taskList << KConfigGroup(&tasks, *it);
     }
-    Koushin::ActionParser parser;
     foreach(KConfigGroup group, taskList) {
+      Koushin::ActionParser parser(testbldg, manager);
       parser.parseConfig(group);
-//       kDebug() << group.readEntry("recipient", QString());
     }
     
-//     Koushin::ActionParser parser;
-//     parser.addLine("do population makeHealthy");
-    
-    return app.exec();
+//     return app.exec();
+  return 0;
 }

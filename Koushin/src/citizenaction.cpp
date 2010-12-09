@@ -32,17 +32,26 @@ Koushin::CitizenAction::~CitizenAction()
 
 }
 
+QMap<QString, QString > Koushin::CitizenAction::getPossibleActions()
+{
+  QMap<QString, QString> actions;
+  actions["addCondition"] = "Citizen: Adds a condition. Parameter: name of a condition";
+  actions["removeCondition"] = "Citizen: Removes a condition. Parameter: name of a condition";
+  return actions;
+}
+
+
 #include <kdebug.h>
 void Koushin::CitizenAction::execute()
 {
    if (m_action == "addCondition") {
-      Koushin::citizenCondition* parameter;
-      if (!m_parameters.isEmpty() && (parameter = (Koushin::citizenCondition*)m_parameters.first()))
-	m_citizen->addCondition(*parameter);
+      Koushin::citizenCondition parameter;
+      if (!m_parameters.isEmpty() && (parameter = Koushin::Citizen::citizenConditionFromQString(m_parameters.first())))
+	m_citizen->addCondition(parameter);
     } else if (m_action == "removeCondition") {
-      Koushin::citizenCondition* parameter;
-      if (!m_parameters.isEmpty() && (parameter = (Koushin::citizenCondition*)m_parameters.first()))
-	m_citizen->removeCondition(*parameter);
+      Koushin::citizenCondition parameter;
+      if (!m_parameters.isEmpty() && (parameter = Koushin::Citizen::citizenConditionFromQString(m_parameters.first())))
+	m_citizen->removeCondition(parameter);
     } else {
       kDebug() << "Undefined action called!";
   }

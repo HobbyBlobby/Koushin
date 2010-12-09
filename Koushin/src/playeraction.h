@@ -17,27 +17,26 @@
     Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-#ifndef ACTION_H
-#define ACTION_H
+
+#ifndef PLAYERACTION_H
+#define PLAYERACTION_H
+
+#include "action.h"
 
 #include <QMap>
 #include <QString>
-#include <QStringList>
 
 namespace Koushin {
-  class Action
-  {
+  class Player;
+  class PlayerAction :public Action{
+
     public:
-      Action();
-      virtual ~Action();
-      virtual void execute() = 0;
-      QMap<QString, QString> getPossibleActions();
-      
-      void addParameter(QString para) {m_parameters << para;}
-      void addParameters(QStringList paras) {m_parameters << paras;}
-    protected:
-      QStringList m_parameters;
-      QString m_action;
+      PlayerAction();
+      virtual ~PlayerAction();
+      static QMap<QString, QString> getPossibleActions();
+      void execute() {}
+    private:  
+      Player* m_recipient;
   };
 }
-#endif // ACTION_H
+#endif // PLAYERACTION_H

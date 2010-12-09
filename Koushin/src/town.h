@@ -17,27 +17,22 @@
     Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-#ifndef ACTION_H
-#define ACTION_H
 
-#include <QMap>
-#include <QString>
-#include <QStringList>
+#ifndef TOWN_H
+#define TOWN_H
 
 namespace Koushin {
-  class Action
+  class Player;
+  class Town
   {
     public:
-      Action();
-      virtual ~Action();
-      virtual void execute() = 0;
-      QMap<QString, QString> getPossibleActions();
+      Town(Player* owner);
+      virtual ~Town();
+      Player* getOwner() {return m_owner;}
       
-      void addParameter(QString para) {m_parameters << para;}
-      void addParameters(QStringList paras) {m_parameters << paras;}
-    protected:
-      QStringList m_parameters;
-      QString m_action;
+    private:
+      Player* m_owner;
   };
 }
-#endif // ACTION_H
+
+#endif // TOWN_H
