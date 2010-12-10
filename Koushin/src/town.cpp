@@ -23,10 +23,43 @@
 Koushin::Town::Town(Player* owner)
   : m_owner(owner)
 {
-
+  //Create Resources with town
+  for (int i = 1; i < (int)Koushin::ResourceTypeCount; ++i) {
+    Koushin::ResourceType type = (Koushin::ResourceType)i;
+    m_resources.insert(type, Koushin::Resource(type));
+  }
 }
 
 Koushin::Town::~Town()
 {
 
 }
+
+#include <KDebug>
+bool Koushin::Town::changeResource(Koushin::ResourceType type, int difference)
+{
+  Koushin::Resource res = m_resources.value(type);
+  if (res.type == Koushin::ResourceUnspezifed) {
+    kDebug() << "Resource not found.";
+    return 0;
+  }
+  if (res.amount + difference > res.maximumCapacity) {
+    kDebug() << "Capacity reached" << res.amount + difference << " of " << res.maximumCapacity;
+    return 0;
+  }
+  if (res.amount + difference < 0) {
+    kDebug() << "Not enough resources: " << res.amount - difference;
+    return 0;
+  }
+  res.amount += difference;
+  return 1;
+}
+
+Koushin::ResourceType Koushin::Town::getResourceTypeFromQString(QString resourceName)
+{
+  if(resourceName == "Wood") return Koushin::ResourceWood;
+  if(resourceName == "Stone") return Koushin::ResourceStone;
+  if(resourceName == "Rice") return Koushin::ResourceRice;
+  return Koushin::ResourceUnspezifed;
+}
+

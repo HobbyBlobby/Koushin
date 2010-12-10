@@ -17,14 +17,15 @@
     Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
+#include "actionmanager.h"
 
 #include "action.h"
-#include "actionmanager.h"
+#include "player.h"
 
 Koushin::ActionManager::ActionManager(Player* owner)
   : m_owner(owner)
 {
-
+  m_owner->setActionManager(this);
 }
 
 Koushin::ActionManager::~ActionManager()

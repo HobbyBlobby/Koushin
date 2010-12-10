@@ -25,14 +25,31 @@
 #include <QStringList>
 
 namespace Koushin {
-  class Action
-  {
+  enum actionType {
+    noActionType = 0,
+    actionForPlayer,
+    actionForTown,
+    actionForCitizen
+  };
+
+  class ActionProperties {
+    public:
+      ActionProperties(QStringList parameterTypes = QStringList(), QString description = "")
+	: parameterTypes(parameterTypes)
+	, description(description) {}
+      QStringList parameterTypes;
+      QString description;
+  };
+
+  class Action {
     public:
       Action();
       virtual ~Action();
       virtual void execute() = 0;
-      QMap<QString, QString> getPossibleActions();
-      
+      virtual actionType getActionType() = 0;
+      QMap<QString, ActionProperties> getPossibleActions();
+            
+      void addAction(QString action) {m_action = action;}
       void addParameter(QString para) {m_parameters << para;}
       void addParameters(QStringList paras) {m_parameters << paras;}
     protected:

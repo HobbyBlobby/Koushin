@@ -23,13 +23,10 @@
 
 #include <QList>
 
-#include "action.h"
-#include "player.h"
-
 namespace Koushin {
   class Action;
-  class ActionManager
-  {
+  class Player;
+  class ActionManager {
     public:
       ActionManager(Player* owner);
       virtual ~ActionManager();

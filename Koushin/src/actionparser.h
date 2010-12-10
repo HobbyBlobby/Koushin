@@ -13,7 +13,8 @@
     Lesser General Public License for more details.
 
     You should have received a copy of the GNU Lesser General Public
-    License along with this library; if not, write to the Free Software
+    License along with this library; if not, write to
+    the Free Software
     Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
@@ -21,35 +22,34 @@
 #ifndef ACTIONPARSER_H
 #define ACTIONPARSER_H
 
-#include "action.h"
-#include "actionmanager.h"
-#include "actionowner.h"
-#include "citizen.h"
-#include "population.h"
-#include "player.h"
-#include "town.h"
-
 #include <QMultiMap>
+#include <QPair>
 #include <QString>
 
 #include <KConfigGroup>
 
 namespace Koushin {
-  class ActionParser
-  {
+  class Action;
+  class ActionOwner;
+  class Player;
+  class Town;
+  class ActionParser {
     public:
-      ActionParser(ActionOwner* owner, ActionManager* manager);
+      ActionParser(ActionOwner* owner);
       virtual ~ActionParser();
       
       Action* parseConfig(const KConfigGroup& config);
 
   private:
       bool parseRecipient(const QString& configLine);
+      bool parseAction(const QString& actionString);
       bool findPlayer(const QString& parameter);
       bool findTown(const QString& parameter);
       
+      QPair<QString, QStringList > separateNameAndParameters(QString string);
+      bool possibleParametersGiven(QString actionName, QStringList parameters);
+      
       Action* m_action;
-      ActionManager* m_manager;
       Player* m_player;
       Town* m_town;
       ActionOwner* m_owner;

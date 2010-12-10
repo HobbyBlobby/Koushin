@@ -18,17 +18,18 @@
 */
 
 #include "actionparser.h"
+#include "actionmanager.h"
 #include "building.h"
 #include "citizenaction.h"
+#include "player.h"
 #include "playeraction.h"
 #include "townaction.h"
 
 #include <QRegExp>
 #include <QString>
 
-Koushin::ActionParser::ActionParser(ActionOwner* owner, ActionManager* manager)
+Koushin::ActionParser::ActionParser(ActionOwner* owner)
   : m_action(0)
-  , m_manager(manager)
   , m_player(0)
   , m_town(0)
   , m_owner(owner)
@@ -52,6 +53,11 @@ Koushin::Action* Koushin::ActionParser::parseConfig(const KConfigGroup& config)
     kDebug() << "Can't parse recipient: " << recipient;
     return 0;
   }
+  QString actionString = config.readEntry("action", QString());
+  if (!parseAction(actionString)) {
+    kDebug() << "Can't parse action: " << actionString;
+    return 0;
+  }
   return m_action;
 }
 
@@ -59,10 +65,9 @@ bool Koushin::ActionParser::parseRecipient(const QString& configLine)
 {
   QStringList recipient = configLine.split("->");
   for (QStringList::const_iterator it = recipient.begin(); it != recipient.end();) {
-    QString object = it->split("(")[0];
-    QString parameter = *it;
-    parameter.remove(0, it->indexOf("(")+1);   //remove all untill/inclusive the first "("
-    parameter.remove(parameter.length()-1, 1); //remove last char, should be ")"
+    QPair<QString, QStringList> pair =  separateNameAndParameters(*it);
+    QString object = pair.first;
+    QString parameter = pair.second.value(0, "");
     if (object == "player" && !findPlayer(parameter)) {
       kDebug() << "No reasonable player found" << parameter;
       return 0;
@@ -74,7 +79,7 @@ bool Koushin::ActionParser::parseRecipient(const QString& configLine)
     if (++it == recipient.end()) { //create right actionClass
       if (object == "player") {
 	kDebug() << "Create PlayerAction";
-	m_action = new Koushin::PlayerAction(m_player;
+	m_action = new Koushin::PlayerAction(m_player);
       } else if (object == "town") {
 	kDebug() << "Create TonwAction";
 	m_action = new Koushin::TownAction(m_town);
@@ -87,11 +92,42 @@ bool Koushin::ActionParser::parseRecipient(const QString& configLine)
   return 1;
 }
 
+bool Koushin::ActionParser::parseAction(const QString& actionString)
+{
+  if (!m_action) {
+    kDebug() << "Parse recipient before action";
+    return 0;
+  }
+  //Seperate action name and parameters
+  QPair<QString, QStringList> pair = separateNameAndParameters(actionString);
+  QString actionName = pair.first;
+  QStringList parameters = pair.second;
+  
+  if (m_owner->getActionOwnerType() == Koushin::actionOwnerIsBuilding) {
+    if (!m_action->getPossibleActions().contains(actionName)) {
+      kDebug() << "Action " << actionName << " unknown.";
+      return 0;
+    }
+    m_action->addAction(actionName);
+    if (!possibleParametersGiven(actionName, parameters)) {
+      kDebug() << "Given Parameters fit not in action definition";
+      return 0;
+    }
+    m_action->addParameters(parameters);
+    return 1;
+  } else if (m_owner->getActionOwnerType() == Koushin::actionOwnerIsSpell) {
+    kDebug() << "Spells not implemented yet. Sorry!";
+    return 0;
+  } else {
+    return 0;
+  }
+}
+
 bool Koushin::ActionParser::findPlayer(const QString& parameter)
 {
   if (parameter.isEmpty()) return 0;
   if (parameter == "current" || parameter == "") {//current is default, of no parameter is given
-    m_player = m_manager->getOwner();
+    m_player = ((Building*)m_owner)->getTown()->getOwner();
     return 1;
   }
   return 0;
@@ -130,4 +166,38 @@ bool Koushin::ActionParser::findTown(const QString& parameter)
       kDebug() << "The given parameter is unknown for towns: " << parameter;
       return 0;
     }
+}
+
+QPair< QString, QStringList > Koushin::ActionParser::separateNameAndParameters(QString string)
+{
+  QString actionName = string.split("(")[0];
+  string.remove(0, string.indexOf("(")+1);   //remove all untill/inclusive the first "("
+  string.remove(string.length()-1, 1); //remove last char, should be ")"
+  QStringList parameters = string.split(",");
+  if (string.isEmpty()) parameters = QStringList();
+  return QPair<QString, QStringList>(actionName, parameters);
+}
+
+bool Koushin::ActionParser::possibleParametersGiven(QString actionName, QStringList parameters)
+{
+  if(!m_action || !m_action->getPossibleActions().contains(actionName)) {
+    kDebug() << "Action is not in list of possible action";
+    return 0;
+  }
+  Koushin::ActionProperties properties = m_action->getPossibleActions().value(actionName);
+  if (parameters.length() != properties.parameterTypes.length()) {
+    kDebug() << "Wrong parameter Number: Expected = " << properties.parameterTypes.length() << "; Given = " << parameters.length();
+    return 0;
+  }
+  for (int i = 0; i <= properties.parameterTypes.length(); ++i) {
+    if (properties.parameterTypes.value(i) == "int") {
+      bool succes;
+      parameters.value(i).toInt(&succes);
+      if (!succes){
+	kDebug() << "Integer value expected: Can't generate Integer from " << properties.parameterTypes.value(i);
+	return 0;
+      }
+    }
+  }
+  return 1;
 }

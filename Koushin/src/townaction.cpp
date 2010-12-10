@@ -19,6 +19,7 @@
 
 
 #include "townaction.h"
+#include "town.h"
 
 Koushin::TownAction::TownAction(Town* recipient)
   : m_recipient(recipient)
@@ -31,9 +32,21 @@ Koushin::TownAction::~TownAction()
 
 }
 
-QMap< QString, QString > Koushin::TownAction::getPossibleActions()
+QMap< QString, Koushin::ActionProperties> Koushin::TownAction::getPossibleActions()
 {
-  QMap<QString, QString> actions;
+  QMap<QString, Koushin::ActionProperties> actions;
+  actions.insert("changeResource", Koushin::ActionProperties(
+    QStringList() << "string" << "int",
+    "Town: Add the given parameter to the given resource. string=ResourceName, int=difference"));
   return actions;
+}
+
+void Koushin::TownAction::execute()
+{
+  if(m_action == "changeResource") {
+    Koushin::ResourceType type = Koushin::Town::getResourceTypeFromQString(m_parameters[0]);
+    int diff = m_parameters.value(1, QString("0")).toInt();
+    m_recipient->changeResource(type, diff);
+  }
 }
 

@@ -23,7 +23,9 @@
 
 #include <QList>
 
+
 namespace Koushin {
+  class ActionManager;
   class Town;
   class Player
   {
@@ -31,9 +33,12 @@ namespace Koushin {
       Player();
       virtual ~Player();
       QList<Town* > getTowns() {return m_townList;}
+      ActionManager* getActionManager() const {return m_actionManager;}
+      void setActionManager(ActionManager* manager) {m_actionManager = manager;}
       
     private:
       QList<Town* > m_townList;
+      ActionManager* m_actionManager;
   };
 }
 

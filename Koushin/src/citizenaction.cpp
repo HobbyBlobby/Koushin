@@ -32,11 +32,15 @@ Koushin::CitizenAction::~CitizenAction()
 
 }
 
-QMap<QString, QString > Koushin::CitizenAction::getPossibleActions()
+QMap<QString, Koushin::ActionProperties > Koushin::CitizenAction::getPossibleActions()
 {
-  QMap<QString, QString> actions;
-  actions["addCondition"] = "Citizen: Adds a condition. Parameter: name of a condition";
-  actions["removeCondition"] = "Citizen: Removes a condition. Parameter: name of a condition";
+  QMap<QString, Koushin::ActionProperties> actions;
+  actions.insert("addCondition", Koushin::ActionProperties(
+    QStringList() << QString("string"),
+    "Citizen: Adds a condition. Parameter: name of a condition"));
+  actions.insert("removeCondition", Koushin::ActionProperties(
+    QStringList() << "string",
+    "Citizen: Removes a condition. Parameter: name of a condition"));
   return actions;
 }
 

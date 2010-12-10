@@ -32,9 +32,10 @@ namespace Koushin {
     public:
       TownAction(Town* recipient);
       virtual ~TownAction();
-      static QMap<QString, QString> getPossibleActions();
+      static QMap<QString, ActionProperties> getPossibleActions();
       
-      void execute() {}
+      actionType getActionType() {return Koushin::actionForTown;}
+      void execute();
     private:
       Town* m_recipient;
   };

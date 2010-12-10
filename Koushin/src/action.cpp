@@ -33,7 +33,7 @@ Koushin::Action::~Action()
 
 }
 
-QMap< QString, QString > Koushin::Action::getPossibleActions()
+QMap< QString, Koushin::ActionProperties > Koushin::Action::getPossibleActions()
 {
   return Koushin::CitizenAction::getPossibleActions().
       unite(Koushin::PlayerAction::getPossibleActions().

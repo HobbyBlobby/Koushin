@@ -31,8 +31,8 @@ Koushin::PlayerAction::~PlayerAction()
 
 }
 
-QMap< QString, QString > Koushin::PlayerAction::getPossibleActions()
+QMap< QString, Koushin::ActionProperties> Koushin::PlayerAction::getPossibleActions()
 {
-  QMap<QString, QString> actions;
+  QMap<QString, Koushin::ActionProperties> actions;
   return actions;
 }

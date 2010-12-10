@@ -21,6 +21,7 @@
 #include "player.h"
 
 Koushin::Player::Player()
+  : m_actionManager(0)
 {
 
 }

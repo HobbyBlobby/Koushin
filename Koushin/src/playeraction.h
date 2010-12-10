@@ -28,12 +28,12 @@
 
 namespace Koushin {
   class Player;
-  class PlayerAction :public Action{
-
+  class PlayerAction : public Action {
     public:
-      PlayerAction();
+      PlayerAction(Player* recipient);
       virtual ~PlayerAction();
-      static QMap<QString, QString> getPossibleActions();
+      static QMap<QString, ActionProperties> getPossibleActions();
+      actionType getActionType() {return Koushin::actionForPlayer;}
       void execute() {}
     private:  
       Player* m_recipient;

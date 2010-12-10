@@ -21,17 +21,43 @@
 #ifndef TOWN_H
 #define TOWN_H
 
+#include <QMap>
+
 namespace Koushin {
+  enum ResourceType {
+    ResourceUnspezifed = 0,
+    ResourceWood,
+    ResourceStone,
+    ResourceRice,
+    ResourceTypeCount
+  };
+  
+  class Resource {
+    public:
+      Resource(ResourceType type = ResourceUnspezifed)
+	: maximumCapacity(0)
+	, amount(0)
+	, type(type) {}
+      void setAmount(int val) {amount = val;}
+      int maximumCapacity;
+      int amount;
+      ResourceType type;
+  };
+  
   class Player;
-  class Town
-  {
+  class Town {
     public:
       Town(Player* owner);
       virtual ~Town();
       Player* getOwner() {return m_owner;}
       
+      bool changeResource(ResourceType type, int difference);
+      QMap<ResourceType, Resource> getResources() {return m_resources;}
+      
+      static ResourceType getResourceTypeFromQString(QString resourceName);
     private:
       Player* m_owner;
+      QMap<ResourceType, Resource> m_resources;
   };
 }
 

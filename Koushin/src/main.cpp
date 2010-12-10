@@ -1,5 +1,7 @@
 #include <ctime>
 
+#include <QMap>
+
 #include <KAboutData>
 #include <KApplication>
 #include <KCmdLineArgs>
@@ -54,6 +56,8 @@ int main(int argc, char** argv)
     Koushin::Town* town = new Koushin::Town(tester);
     Koushin::Building* testbldg = new Koushin::Building(town);
     
+    kDebug() << "Holz vorher: " << town->getResources().value(Koushin::ResourceWood).amount;
+    
 
     KConfig config(KStandardDirs::locate("data", "koushin/data/buildings/test.cfg"));
     KConfigGroup tasks(&config, "tasks");
@@ -62,11 +66,21 @@ int main(int argc, char** argv)
     for (QStringList::const_iterator it = taskConfigList.begin(); it != taskConfigList.end(); ++it) {
       taskList << KConfigGroup(&tasks, *it);
     }
+    kDebug() << taskConfigList;
     foreach(KConfigGroup group, taskList) {
-      Koushin::ActionParser parser(testbldg, manager);
-      parser.parseConfig(group);
+      Koushin::ActionParser parser(testbldg);
+      QString recipient = group.readEntry("recipient", QString());
+      QString actionName = group.readEntry("action", QString());
+      kDebug() << "#######Create Action: " << recipient << " ### und ### " << actionName;
+      Koushin::Action* action = parser.parseConfig(group);
+      if(action) kDebug() << "######Succes";
+      if (action) manager->addAction(action);
     }
     
+    manager->executeActions();
+    kDebug() << "Holz nachher: " << town->getResources().value(Koushin::ResourceWood).amount;
+
+
 //     return app.exec();
   return 0;
 }
