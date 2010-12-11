@@ -19,6 +19,7 @@
 
 
 #include "building.h"
+#include <qpainter.h>
 
 Koushin::Building::Building(Town* town)
   : m_town(town)
@@ -31,3 +32,14 @@ Koushin::Building::~Building()
 
 }
 
+void Koushin::Building::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget)
+{
+  Q_UNUSED(option)
+  Q_UNUSED(widget)
+  painter->drawEllipse(QRect(0,0,1,1));
+}
+
+QRectF Koushin::Building::boundingRect() const
+{
+  return QRectF(0.0, 0.0, 1.0, 1.0);
+}

@@ -22,6 +22,11 @@
 #define TOWN_H
 
 #include <QMap>
+#include <QPoint>
+
+namespace KoushinGUI {
+  class TownWidget;
+}
 
 namespace Koushin {
   enum ResourceType {
@@ -44,6 +49,7 @@ namespace Koushin {
       ResourceType type;
   };
   
+  class Building;
   class Player;
   class Town {
     public:
@@ -53,11 +59,17 @@ namespace Koushin {
       
       bool changeResource(ResourceType type, int difference);
       QMap<ResourceType, Resource> getResources() {return m_resources;}
+      ::KoushinGUI::TownWidget* getTownWidget() const {return m_townWidget;}
+      bool addBuilding(Building* building, QPoint pos);
+      QMap<Building*, QPoint> getBuildings() const {return m_buildings;}
       
       static ResourceType getResourceTypeFromQString(QString resourceName);
+      
     private:
       Player* m_owner;
       QMap<ResourceType, Resource> m_resources;
+      QMap<Building*, QPoint> m_buildings;
+      ::KoushinGUI::TownWidget* m_townWidget;
   };
 }
 

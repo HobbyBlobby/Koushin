@@ -13,8 +13,9 @@ set(Koushin_SRCS
   population.cpp
   town.cpp
   townaction.cpp
+  GUI/townwidget.cpp
 )
 
-kde4_add_executable(Koushin ${Koushin_SRCS})
+kde4_add_executable(Koushin ${Koushin_SRCS} ${Koushin_GUI})
 target_link_libraries(Koushin ${KDE4_KDEUI_LIBS} ${KDEGAMES_LIBRARY})
 install(TARGETS Koushin ${INSTALL_TARGETS_DEFAULT_ARGS} )

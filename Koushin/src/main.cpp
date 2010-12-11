@@ -1,6 +1,7 @@
 #include <ctime>
 
 #include <QMap>
+// #include <QGraphicsScene>
 
 #include <KAboutData>
 #include <KApplication>
@@ -17,7 +18,13 @@
 #include "citizen.h"
 #include "citizenaction.h"
 #include "player.h"
+#include "town.h"
 #include <kdebug.h>
+#include "GUI/townwidget.h"
+#include <QGraphicsScene>
+#include <QGraphicsRectItem>
+#include <QGraphicsView>
+#include <QObject>
 
 static const char description[] =
     I18N_NOOP("A round based strategy game.");
@@ -33,31 +40,12 @@ int main(int argc, char** argv)
     KApplication app;
     qsrand(std::time(0));
     
-/*//create full person
-    Koushin::Citizen man(0);
-    Koushin::ActionManager manager;
-    kDebug() << ((man.getCondition() && Koushin::citizenIsHungry) ? "Ist hungrig" : "Ist satt");
-//make person hungry
-    Koushin::CitizenAction action(&man, QString("addCondition"));
-    QString condition("citizenIsHungry");
-    action.addParameter(condition);
-    manager.addAction(&action);
-    manager.executeActions();
-    kDebug() << ((man.getCondition() && Koushin::citizenIsHungry) ? "Ist hungrig" : "Ist satt");
-//make person again full
-    Koushin::CitizenAction action2(&man, QString("removeCondition"));
-    action2.addParameter(condition);
-    manager.addAction(&action2);
-    manager.executeActions();
-    kDebug() << ((man.getCondition() && Koushin::citizenIsHungry) ? "Ist hungrig" : "Ist satt");*/
-    
     Koushin::Player* tester = new Koushin::Player;
     Koushin::ActionManager* manager = new Koushin::ActionManager(tester);
     Koushin::Town* town = new Koushin::Town(tester);
     Koushin::Building* testbldg = new Koushin::Building(town);
     
     kDebug() << "Holz vorher: " << town->getResources().value(Koushin::ResourceWood).amount;
-    
 
     KConfig config(KStandardDirs::locate("data", "koushin/data/buildings/test.cfg"));
     KConfigGroup tasks(&config, "tasks");
@@ -80,7 +68,20 @@ int main(int argc, char** argv)
     manager->executeActions();
     kDebug() << "Holz nachher: " << town->getResources().value(Koushin::ResourceWood).amount;
 
-
-//     return app.exec();
-  return 0;
+    QGraphicsScene* scene = new QGraphicsScene;
+    QGraphicsView* view = new QGraphicsView;
+    view->setScene(scene);
+    scene->addItem(town->getTownWidget());
+    town->getTownWidget()->drawBuildings();
+    town->getTownWidget()->scale(50,50);
+    view->show();
+    
+    QObject::connect(town->getTownWidget(), SIGNAL(townClicked(QPoint)), tester, SLOT(townClicked(QPoint)));
+    
+/*    for (int i = 0; i < 10; ++i) {
+      town->addBuilding(new Koushin::Building(town), QPoint(qrand() % 10, qrand() % 10));
+    }
+    town->getTownWidget()->drawBuildings(town->getBuildings());*/
+    
+    return app.exec();
 }

@@ -21,16 +21,21 @@
 #ifndef BUILDING_H
 #define BUILDING_H
 
+#include <QGraphicsItem>
+
 #include "actionowner.h"
 #include "town.h"
 
 namespace Koushin {
-  class Building : public ActionOwner
+  class Building : public QGraphicsItem, public ActionOwner
   {
     public:
       Building(Town* town);
       virtual ~Building();
       actionOwnerType getActionOwnerType() {return actionOwnerIsBuilding;};
+      
+      void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget = 0);
+      QRectF boundingRect() const;
       
       Town* getTown() {return m_town;}
     private:

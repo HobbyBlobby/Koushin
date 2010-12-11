@@ -19,15 +19,19 @@
 
 
 #include "town.h"
+#include "GUI/townwidget.h"
+#include "player.h"
 
 Koushin::Town::Town(Player* owner)
   : m_owner(owner)
+  , m_townWidget(new KoushinGUI::TownWidget)
 {
   //Create Resources with town
   for (int i = 1; i < (int)Koushin::ResourceTypeCount; ++i) {
     Koushin::ResourceType type = (Koushin::ResourceType)i;
     m_resources.insert(type, Koushin::Resource(type));
   }
+  m_owner->addTown(this);
 }
 
 Koushin::Town::~Town()
@@ -45,6 +49,7 @@ bool Koushin::Town::changeResource(Koushin::ResourceType type, int difference)
   }
   if (res.amount + difference > res.maximumCapacity) {
     kDebug() << "Capacity reached" << res.amount + difference << " of " << res.maximumCapacity;
+    res.amount = res.maximumCapacity;
     return 0;
   }
   if (res.amount + difference < 0) {
@@ -63,3 +68,16 @@ Koushin::ResourceType Koushin::Town::getResourceTypeFromQString(QString resource
   return Koushin::ResourceUnspezifed;
 }
 
+bool Koushin::Town::addBuilding(Koushin::Building* building, QPoint pos)
+{
+  if(m_buildings.contains(building)){
+    kDebug() << "Building is allready on the map at" << m_buildings.value(building).x() << ", " << m_buildings.value(building).y();
+    return 0;
+  }
+  if(m_buildings.key(pos, 0) != 0) {
+    kDebug() << "There is allready a building at this position" << pos.x() << ", " << pos.y();
+    return 0;
+  }
+  m_buildings.insert(building, pos);
+  return 1;
+}

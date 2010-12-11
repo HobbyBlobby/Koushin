@@ -22,20 +22,24 @@
 #define PLAYER_H
 
 #include <QList>
-
+#include <QObject>
+#include <QPoint>
 
 namespace Koushin {
   class ActionManager;
   class Town;
-  class Player
-  {
+  class Player : public QObject {
+    Q_OBJECT
     public:
       Player();
       virtual ~Player();
       QList<Town* > getTowns() {return m_townList;}
       ActionManager* getActionManager() const {return m_actionManager;}
       void setActionManager(ActionManager* manager) {m_actionManager = manager;}
+      void addTown(Town* town) {m_townList << town;}
       
+    public Q_SLOTS:
+      void townClicked(QPoint point);
     private:
       QList<Town* > m_townList;
       ActionManager* m_actionManager;

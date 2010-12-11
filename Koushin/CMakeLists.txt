@@ -13,8 +13,6 @@ include_directories(${CMAKE_SOURCE_DIR}
     ${KDE4_INCLUDES}
     ${KDEGAMES_INCLUDE_DIRS}
 )
-#     ${KDEGAMES_INCLUDE_DIR}/highscore/
-#     ${KDEGAMES_INCLUDE_DIR}/kgame/
 
 add_subdirectory(src)
 add_subdirectory(data)

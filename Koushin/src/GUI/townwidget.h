@@ -17,30 +17,33 @@
     Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-#include "building.h"
-#include "player.h"
-#include <kdebug.h>
-#include "town.h"
-#include "GUI/townwidget.h"
 
-Koushin::Player::Player()
-  : m_actionManager(0)
-{
+#ifndef TOWNWIDGET_H
+#define TOWNWIDGET_H
 
+#include <QGraphicsWidget>
+#include <QMap>
+#include <QPoint>
+
+class QGraphicsSceneMouseEvent;
+
+namespace Koushin {
+  class Building; 
 }
 
-Koushin::Player::~Player()
-{
-
+namespace KoushinGUI {
+  class TownWidget : public QGraphicsWidget {
+    Q_OBJECT
+    public:
+      TownWidget(QGraphicsItem* parent = 0, Qt::WindowFlags wFlags = 0);
+      virtual ~TownWidget();
+      
+      void drawBuildings(QMap< ::Koushin::Building*, QPoint> buildingMap = QMap< ::Koushin::Building*, QPoint>());
+    protected:
+      void mousePressEvent(QGraphicsSceneMouseEvent * event);
+    Q_SIGNALS:
+      void townClicked(QPoint point);
+  };
 }
 
-void Koushin::Player::townClicked(QPoint point)
-{
-  if(!m_townList.isEmpty()) {
-    m_townList.first()->addBuilding(new Building(m_townList.first()), point);
-    m_townList.first()->getTownWidget()->drawBuildings(m_townList.first()->getBuildings());
-  }
-}
-
-
-#include "player.moc"
+#endif // TOWNWIDGET_H
