@@ -194,7 +194,7 @@ bool Koushin::ActionParser::possibleParametersGiven(QString actionName, QStringL
       bool succes;
       parameters.value(i).toInt(&succes);
       if (!succes){
-	kDebug() << "Integer value expected: Can't generate Integer from " << properties.parameterTypes.value(i);
+	kDebug() << "Integer value expected: Can't generate Integer from " << parameters.value(i);
 	return 0;
       }
     }

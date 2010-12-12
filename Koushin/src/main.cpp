@@ -21,6 +21,8 @@
 #include "town.h"
 #include <kdebug.h>
 #include "GUI/townwidget.h"
+#include <QDir>
+#include <QStringList>
 #include <QGraphicsScene>
 #include <QGraphicsRectItem>
 #include <QGraphicsView>
@@ -46,24 +48,36 @@ int main(int argc, char** argv)
     Koushin::Building* testbldg = new Koushin::Building(town);
     
     kDebug() << "Holz vorher: " << town->getResources().value(Koushin::ResourceWood).amount;
-
-    KConfig config(KStandardDirs::locate("data", "koushin/data/buildings/test.cfg"));
-    KConfigGroup tasks(&config, "tasks");
-    QStringList taskConfigList = tasks.groupList();
-    QList<KConfigGroup > taskList;
-    for (QStringList::const_iterator it = taskConfigList.begin(); it != taskConfigList.end(); ++it) {
-      taskList << KConfigGroup(&tasks, *it);
+    
+//     QStringList possibleDirs = KStandardDirs::resourceDirs("data");
+    QStringList fileStrings;
+    KStandardDirs stdDirs;
+    foreach(QString dirString, stdDirs.resourceDirs("data")) {
+      QDir dir(dirString + "koushin/data/buildings/");
+      dir.setNameFilters(QStringList() << "*.cfg");
+      foreach(QString entry, dir.entryList()) {
+	fileStrings << dir.path() + "/" + entry;
+	KConfig config(dir.path() + "/" + entry);
+// 	KConfig config(KStandardDirs::locate("data", "koushin/data/buildings/test.cfg"));
+	KConfigGroup tasks(&config, "tasks");
+	QStringList taskConfigList = tasks.groupList();
+	QList<KConfigGroup > taskList;
+	for (QStringList::const_iterator it = taskConfigList.begin(); it != taskConfigList.end(); ++it) {
+	  taskList << KConfigGroup(&tasks, *it);
+	}
+	kDebug() << taskConfigList;
+	foreach(KConfigGroup group, taskList) {
+	  Koushin::ActionParser parser(testbldg);
+	  QString recipient = group.readEntry("recipient", QString());
+	  QString actionName = group.readEntry("action", QString());
+	  kDebug() << "#######Create Action: " << recipient << " ### und ### " << actionName;
+	  Koushin::Action* action = parser.parseConfig(group);
+	  if(action) kDebug() << "######Succes";
+	  if (action) manager->addAction(action);
+	}
+      }
     }
-    kDebug() << taskConfigList;
-    foreach(KConfigGroup group, taskList) {
-      Koushin::ActionParser parser(testbldg);
-      QString recipient = group.readEntry("recipient", QString());
-      QString actionName = group.readEntry("action", QString());
-      kDebug() << "#######Create Action: " << recipient << " ### und ### " << actionName;
-      Koushin::Action* action = parser.parseConfig(group);
-      if(action) kDebug() << "######Succes";
-      if (action) manager->addAction(action);
-    }
+    kDebug() << "Building files parsed: " << fileStrings;
     
     manager->executeActions();
     kDebug() << "Holz nachher: " << town->getResources().value(Koushin::ResourceWood).amount;
