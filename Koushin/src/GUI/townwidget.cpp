@@ -38,6 +38,7 @@ KoushinGUI::TownWidget::TownWidget(QGraphicsItem* parent, Qt::WindowFlags wFlags
     new QGraphicsLineItem(0.0, i, 10.0, i, this);
     new QGraphicsLineItem(i, 0.0, i, 10.0, this);
   }
+ setGeometry(0, 0, 10, 10);
 }
 
 KoushinGUI::TownWidget::~TownWidget()

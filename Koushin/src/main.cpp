@@ -9,6 +9,7 @@
 #include <KConfigGroup>
 #include <KConfig>
 #include <KStandardDirs>
+#include <KMainWindow>
 
 #include "Koushin.h"
 
@@ -27,6 +28,8 @@
 #include <QGraphicsRectItem>
 #include <QGraphicsView>
 #include <QObject>
+#include <QDockWidget>
+#include <QListWidget>
 
 static const char description[] =
     I18N_NOOP("A round based strategy game.");
@@ -52,6 +55,7 @@ int main(int argc, char** argv)
 //     QStringList possibleDirs = KStandardDirs::resourceDirs("data");
     QStringList fileStrings;
     KStandardDirs stdDirs;
+    QMap<QString, QString> buildings;
     foreach(QString dirString, stdDirs.resourceDirs("data")) {
       QDir dir(dirString + "koushin/data/buildings/");
       dir.setNameFilters(QStringList() << "*.cfg");
@@ -59,6 +63,9 @@ int main(int argc, char** argv)
 	fileStrings << dir.path() + "/" + entry;
 	KConfig config(dir.path() + "/" + entry);
 // 	KConfig config(KStandardDirs::locate("data", "koushin/data/buildings/test.cfg"));
+	KConfigGroup general(&config, "general");
+	buildings.insert(general.readEntry("name", QString()), dir.path() + "/" + entry);
+	
 	KConfigGroup tasks(&config, "tasks");
 	QStringList taskConfigList = tasks.groupList();
 	QList<KConfigGroup > taskList;
@@ -86,16 +93,22 @@ int main(int argc, char** argv)
     QGraphicsView* view = new QGraphicsView;
     view->setScene(scene);
     scene->addItem(town->getTownWidget());
-    town->getTownWidget()->drawBuildings();
     town->getTownWidget()->scale(50,50);
-    view->show();
-    
+    view->resize(scene->sceneRect().size().toSize());
     QObject::connect(town->getTownWidget(), SIGNAL(townClicked(QPoint)), tester, SLOT(townClicked(QPoint)));
     
-/*    for (int i = 0; i < 10; ++i) {
-      town->addBuilding(new Koushin::Building(town), QPoint(qrand() % 10, qrand() % 10));
+    KMainWindow* window = new KMainWindow;
+    QDockWidget* tmpDock = new QDockWidget();
+    QListWidget* list = new QListWidget;
+    tmpDock->setWidget(list);
+    foreach(QString name, buildings.keys()) {
+      list->addItem(name);
     }
-    town->getTownWidget()->drawBuildings(town->getBuildings());*/
+    window->setCentralWidget(view);
+    window->addDockWidget(Qt::RightDockWidgetArea, tmpDock);
+    scene->addItem(new QGraphicsRectItem(scene->sceneRect()));
+    
+    window->show();
     
     return app.exec();
 }
