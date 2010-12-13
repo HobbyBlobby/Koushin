@@ -30,6 +30,9 @@
 #include <QObject>
 #include <QDockWidget>
 #include <QListWidget>
+#include <QVBoxLayout>
+#include "GUI/resourceinfowidget.h"
+#include <QPushButton>
 
 static const char description[] =
     I18N_NOOP("A round based strategy game.");
@@ -101,8 +104,22 @@ int main(int argc, char** argv)
     view->resize(scene->sceneRect().size().toSize());
     QObject::connect(town->getTownWidget(), SIGNAL(townClicked(QPoint)), tester, SLOT(townClicked(QPoint)));
     
+    QDockWidget* tmpView = new QDockWidget;
+    QWidget* tmpViewWidget = new QWidget;
+    QVBoxLayout* layout = new QVBoxLayout;
+    tmpViewWidget->setLayout(layout);
+    KoushinGUI::ResourceInfoWidget* infos = new KoushinGUI::ResourceInfoWidget;
+    layout->addWidget(infos);
+    tester->setResourceInfoWidget(infos);
+    QPushButton* endRoundButton = new QPushButton("End Round");
+    layout->addWidget(endRoundButton);
+    tmpView->setWidget(tmpViewWidget);
+    
+    QObject::connect(endRoundButton, SIGNAL(clicked(bool)), tester, SLOT(endRound()));
+    
     KMainWindow* window = new KMainWindow;
     window->setCentralWidget(view);
+    window->addDockWidget(Qt::RightDockWidgetArea, tmpView);
     scene->addItem(new QGraphicsRectItem(scene->sceneRect()));
     
     window->show();

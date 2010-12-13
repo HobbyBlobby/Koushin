@@ -28,6 +28,7 @@
 #include <KConfig>
 #include "actionparser.h"
 #include "actionmanager.h"
+#include "GUI/resourceinfowidget.h"
 
 Koushin::Player::Player()
   : m_actionManager(0)
@@ -80,6 +81,12 @@ void Koushin::Player::buildingChosen(QString buildingConfig)
     m_constructionMenu->setVisible(false);
     m_constructionMenu = 0;
   }
+}
+
+void Koushin::Player::endRound()
+{
+  m_actionManager->executeActions();
+  m_resourceInfo->updateInfos(m_townList.first()->getResources().values());
 }
 
 #include "player.moc"

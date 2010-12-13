@@ -61,7 +61,7 @@ namespace Koushin {
       bool changeResource(ResourceType type, int difference);
       void setResourceCapacity(ResourceType type, int value);
 //other functions
-      QMap<ResourceType, Resource> getResources() {return m_resources;}
+      QMap<ResourceType, Resource*> getResources() {return m_resources;}
       ::KoushinGUI::TownWidget* getTownWidget() const {return m_townWidget;}
       bool addBuilding(Building* building, QPoint pos);
       QMap<Building*, QPoint> getBuildings() const {return m_buildings;}
@@ -71,7 +71,7 @@ namespace Koushin {
       
     private:
       Player* m_owner;
-      QMap<ResourceType, Resource> m_resources;
+      QMap<ResourceType, Resource*> m_resources;
       QMap<Building*, QPoint> m_buildings;
       ::KoushinGUI::TownWidget* m_townWidget;
   };

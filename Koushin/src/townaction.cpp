@@ -61,8 +61,8 @@ void Koushin::TownAction::execute()
   }
   if(m_action == "setResourceCapacity") {
     Koushin::ResourceType type = Koushin::Town::getResourceTypeFromQString(m_parameters[0]);
-    int value = m_parameters.value(0, QString("-1")).toInt();
-    if(value == -1) value = m_recipient->getResources().value(type).maximumCapacity;
+    int value = m_parameters.value(1, QString("-1")).toInt();
+    if(value == -1) value = m_recipient->getResources().value(type)->maximumCapacity;
     m_recipient->setResourceCapacity(type, value);
   }
 }

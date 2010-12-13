@@ -115,7 +115,6 @@ bool Koushin::ActionParser::parseAction(const QString& actionString, int priorit
       return 0;
     }
     m_action->addParameters(parameters);
-    return 1;
   } else if (m_owner->getActionOwnerType() == Koushin::actionOwnerIsSpell) {
     kDebug() << "Spells not implemented yet. Sorry!";
     return 0;
@@ -123,6 +122,7 @@ bool Koushin::ActionParser::parseAction(const QString& actionString, int priorit
     return 0;
   }
   m_action->setPriority(priority);
+  return 1;
 }
 
 bool Koushin::ActionParser::findPlayer(const QString& parameter)

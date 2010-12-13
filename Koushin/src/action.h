@@ -23,6 +23,7 @@
 #include <QMap>
 #include <QString>
 #include <QStringList>
+#include <kdebug.h>
 
 namespace Koushin {
   enum actionType {

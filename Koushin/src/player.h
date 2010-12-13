@@ -28,6 +28,7 @@
 
 namespace KoushinGUI {
   class ConstructionMenu;
+class ResourceInfoWidget;
 }
 
 namespace Koushin {
@@ -43,16 +44,19 @@ namespace Koushin {
       void setActionManager(ActionManager* manager) {m_actionManager = manager;}
       void addTown(Town* town) {m_townList << town;}
       void setBuildingList(QMap<QString, QString> buildings) {m_listOfAllBuildings = buildings;}
+      void setResourceInfoWidget(KoushinGUI::ResourceInfoWidget* widget) {m_resourceInfo = widget;}
       
     public Q_SLOTS:
       void townClicked(QPoint point);
       void buildingChosen(QString buildingConfig);
+      void endRound();
     private:
       QList<Town* > m_townList;
       ActionManager* m_actionManager;
       QMap<QString, QString> m_listOfAllBuildings;
       QPoint m_buildingLot;
       KoushinGUI::ConstructionMenu* m_constructionMenu;
+      KoushinGUI::ResourceInfoWidget* m_resourceInfo;
   };
 }
 

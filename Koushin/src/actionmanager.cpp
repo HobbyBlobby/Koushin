@@ -21,6 +21,7 @@
 
 #include "action.h"
 #include "player.h"
+#include <kdebug.h>
 
 Koushin::ActionManager::ActionManager(Player* owner)
   : m_owner(owner)
@@ -38,6 +39,7 @@ void Koushin::ActionManager::executeActions()
   QList<int > priorityList = m_actions.uniqueKeys();
   qSort(priorityList.begin(), priorityList.end(), qGreater<int>()); //execute first actions with height priority
   for (QList<int >::const_iterator it = priorityList.begin(); it != priorityList.end(); ++it) {
+    kDebug() << "Execute jobs with priority = " << *it;
     QList<Koushin::Action* > currentActions = m_actions.values(*it);
     foreach(Koushin::Action* action, currentActions) {
       action->execute();

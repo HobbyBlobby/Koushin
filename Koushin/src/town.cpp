@@ -22,6 +22,7 @@
 #include "GUI/townwidget.h"
 #include "player.h"
 
+#include <KDebug>
 Koushin::Town::Town(Player* owner)
   : m_owner(owner)
   , m_townWidget(new KoushinGUI::TownWidget)
@@ -29,7 +30,7 @@ Koushin::Town::Town(Player* owner)
   //Create Resources with town
   for (int i = 1; i < (int)Koushin::ResourceTypeCount; ++i) {
     Koushin::ResourceType type = (Koushin::ResourceType)i;
-    m_resources.insert(type, Koushin::Resource(type));
+    m_resources.insert(type, new Koushin::Resource(type));
   }
   m_owner->addTown(this);
 }
@@ -39,31 +40,30 @@ Koushin::Town::~Town()
 
 }
 
-#include <KDebug>
 bool Koushin::Town::changeResource(Koushin::ResourceType type, int difference)
 {
-  Koushin::Resource res = m_resources.value(type);
-  if (res.type == Koushin::ResourceUnspezifed) {
+  Koushin::Resource* res = m_resources.value(type);
+  if (res->type == Koushin::ResourceUnspezifed) {
     kDebug() << "Resource not found.";
     return 0;
   }
-  if (res.amount + difference > res.maximumCapacity) {
-    kDebug() << "Capacity reached" << res.amount + difference << " of " << res.maximumCapacity;
-    res.amount = res.maximumCapacity;
+  if (res->amount + difference > res->maximumCapacity) {
+    kDebug() << "Capacity reached" << res->amount + difference << " of " << res->maximumCapacity;
+    res->amount = res->maximumCapacity;
     return 0;
   }
-  if (res.amount + difference < 0) {
-    kDebug() << "Not enough resources: " << res.amount - difference;
+  if (res->amount + difference < 0) {
+    kDebug() << "Not enough resources: " << res->amount - difference;
     return 0;
   }
-  res.amount += difference;
+  res->amount += difference;
   return 1;
 }
 
 void Koushin::Town::setResourceCapacity(Koushin::ResourceType type, int value)
 {
-  Koushin::Resource res = m_resources.value(type);
-  res.maximumCapacity = value;
+  Koushin::Resource* res = m_resources.value(type);
+  res->maximumCapacity = value;
 }
 
 Koushin::ResourceType Koushin::Town::getResourceTypeFromQString(QString resourceName)
