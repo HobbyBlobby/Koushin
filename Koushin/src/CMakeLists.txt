@@ -14,6 +14,7 @@ set(Koushin_SRCS
   town.cpp
   townaction.cpp
   GUI/townwidget.cpp
+  GUI/constructionmenu.cpp
 )
 
 kde4_add_executable(Koushin ${Koushin_SRCS} ${Koushin_GUI})

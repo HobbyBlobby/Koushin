@@ -81,3 +81,9 @@ bool Koushin::Town::addBuilding(Koushin::Building* building, QPoint pos)
   m_buildings.insert(building, pos);
   return 1;
 }
+
+QMap< QString, QString > Koushin::Town::getPossibleBuildings(QMap< QString, QString > allBuildings) const
+{
+  //Look for prerequisits, now: no prerequisits are implemented, so all buildings will returned
+  return allBuildings;
+}

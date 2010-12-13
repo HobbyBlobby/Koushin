@@ -62,6 +62,7 @@ namespace Koushin {
       ::KoushinGUI::TownWidget* getTownWidget() const {return m_townWidget;}
       bool addBuilding(Building* building, QPoint pos);
       QMap<Building*, QPoint> getBuildings() const {return m_buildings;}
+      QMap<QString, QString> getPossibleBuildings(QMap<QString, QString> allBuildings) const;
       
       static ResourceType getResourceTypeFromQString(QString resourceName);
       

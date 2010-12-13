@@ -18,42 +18,37 @@
 */
 
 
-#ifndef PLAYER_H
-#define PLAYER_H
+#ifndef CONSTRUCTIONMENU_H
+#define CONSTRUCTIONMENU_H
 
-#include <QList>
-#include <QObject>
-#include <QPoint>
 #include <QMap>
+#include <QString>
+#include <QWidget>
+#include <QList>
 
+class QListWidgetItem;
+class QListWidget;
+class QResizeEvent;
+class QPushButton;
 namespace KoushinGUI {
-  class ConstructionMenu;
-}
-
-namespace Koushin {
-  class ActionManager;
-  class Town;
-  class Player : public QObject {
+  class ConstructionMenu : public QWidget {
     Q_OBJECT
     public:
-      Player();
-      virtual ~Player();
-      QList<Town* > getTowns() const {return m_townList;}
-      ActionManager* getActionManager() const {return m_actionManager;}
-      void setActionManager(ActionManager* manager) {m_actionManager = manager;}
-      void addTown(Town* town) {m_townList << town;}
-      void setBuildingList(QMap<QString, QString> buildings) {m_listOfAllBuildings = buildings;}
+      ConstructionMenu(QMap<QString, QString> possibleBuildings, QWidget* parent = 0);
+      virtual ~ConstructionMenu();
+    protected:
+      void resizeEvent(QResizeEvent* event);
       
-    public Q_SLOTS:
-      void townClicked(QPoint point);
+    Q_SIGNALS:
       void buildingChosen(QString buildingConfig);
+    public Q_SLOTS:
+      void listitemSelected(QListWidgetItem* item);
+      void okButtonClicked();
     private:
-      QList<Town* > m_townList;
-      ActionManager* m_actionManager;
-      QMap<QString, QString> m_listOfAllBuildings;
-      QPoint m_buildingLot;
-      KoushinGUI::ConstructionMenu* m_constructionMenu;
+      QListWidget* m_list;
+      QMap<QString, QString> m_buildings;
+      QPushButton* m_okButton; 
   };
 }
 
-#endif // PLAYER_H
+#endif // CONSTRUCTIONMENU_H

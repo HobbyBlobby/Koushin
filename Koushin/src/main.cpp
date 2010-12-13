@@ -84,6 +84,7 @@ int main(int argc, char** argv)
 	}
       }
     }
+    tester->setBuildingList(buildings);
     kDebug() << "Building files parsed: " << fileStrings;
     
     manager->executeActions();
@@ -98,14 +99,7 @@ int main(int argc, char** argv)
     QObject::connect(town->getTownWidget(), SIGNAL(townClicked(QPoint)), tester, SLOT(townClicked(QPoint)));
     
     KMainWindow* window = new KMainWindow;
-    QDockWidget* tmpDock = new QDockWidget();
-    QListWidget* list = new QListWidget;
-    tmpDock->setWidget(list);
-    foreach(QString name, buildings.keys()) {
-      list->addItem(name);
-    }
     window->setCentralWidget(view);
-    window->addDockWidget(Qt::RightDockWidgetArea, tmpDock);
     scene->addItem(new QGraphicsRectItem(scene->sceneRect()));
     
     window->show();
