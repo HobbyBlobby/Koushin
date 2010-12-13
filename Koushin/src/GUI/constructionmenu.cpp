@@ -28,6 +28,7 @@
 KoushinGUI::ConstructionMenu::ConstructionMenu(QMap<QString, QString> buildings, QWidget* parent)
   : QWidget(parent)
   , m_list(new QListWidget(this))
+  , m_buildings(buildings)
   , m_okButton(new QPushButton("Construct selected building", this))
 {
   m_okButton->setDisabled(true);

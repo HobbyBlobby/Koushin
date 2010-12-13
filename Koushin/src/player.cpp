@@ -25,7 +25,7 @@
 #include "GUI/constructionmenu.h"
 #include <QGraphicsScene>
 #include <KConfigGroup>
-#include <kconfig.h>
+#include <KConfig>
 #include "actionparser.h"
 #include "actionmanager.h"
 
@@ -61,23 +61,25 @@ void Koushin::Player::buildingChosen(QString buildingConfig)
     return; 
   }
   Koushin::Building* newBuilding = new Koushin::Building(m_townList.first());
+  m_townList.first()->addBuilding(newBuilding, m_buildingLot);
   KConfig config(buildingConfig);
   KConfigGroup tasksGroup(&config, "tasks");
   QStringList taskConfigList = tasksGroup.groupList();
   for (QStringList::const_iterator it = taskConfigList.begin(); it != taskConfigList.end(); ++it) {
-    KConfigGroup task(&config, *it);
+    KConfigGroup group(&tasksGroup, *it);
     Koushin::ActionParser parser(newBuilding);
-    Koushin::Action* action = parser.parseConfig(task);
+    Koushin::Action* action = parser.parseConfig(group);
     m_actionManager->addAction(action);
   }
-  m_townList.first()->addBuilding(newBuilding, m_buildingLot);
   m_townList.first()->getTownWidget()->drawBuildings(m_townList.first()->getBuildings());
 
-//   m_townList.first()->getTownWidget()->scene()->(m_constructionMenu);
+//   m_townList.first()->getTownWidget()->scene()->removeWidget(m_constructionMenu);
 //   delete(m_constructionMenu);
   //TODO: find a way to delete the widget
-  m_constructionMenu->setVisible(false);
-  m_constructionMenu = 0;
+  if(m_constructionMenu) {
+    m_constructionMenu->setVisible(false);
+    m_constructionMenu = 0;
+  }
 }
 
 #include "player.moc"

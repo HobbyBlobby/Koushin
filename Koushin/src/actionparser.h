@@ -42,7 +42,7 @@ namespace Koushin {
 
   private:
       bool parseRecipient(const QString& configLine);
-      bool parseAction(const QString& actionString);
+      bool parseAction(const QString& actionString, int priority);
       bool findPlayer(const QString& parameter);
       bool findTown(const QString& parameter);
       

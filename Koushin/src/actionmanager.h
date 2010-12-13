@@ -21,7 +21,7 @@
 #ifndef ACTIONMANAGER_H
 #define ACTIONMANAGER_H
 
-#include <QList>
+#include <QMultiMap>
 
 namespace Koushin {
   class Action;
@@ -31,11 +31,11 @@ namespace Koushin {
       ActionManager(Player* owner);
       virtual ~ActionManager();
       
-      void addAction(Action* action) {m_actions << action;}
+      void addAction(Action* action);
       void executeActions();
       Player* getOwner() {return m_owner;}
     private:
-      QList<Action* > m_actions;
+      QMultiMap<int, Action* > m_actions;
       Player* m_owner;
   };
 }

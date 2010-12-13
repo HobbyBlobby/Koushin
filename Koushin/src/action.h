@@ -52,9 +52,12 @@ namespace Koushin {
       void addAction(QString action) {m_action = action;}
       void addParameter(QString para) {m_parameters << para;}
       void addParameters(QStringList paras) {m_parameters << paras;}
+      void setPriority(int prio) {m_priority = prio;}
+      int getPriority() const {return m_priority;}
     protected:
       QStringList m_parameters;
       QString m_action;
+      int m_priority;
   };
 }
 #endif // ACTION_H

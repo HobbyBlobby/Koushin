@@ -54,7 +54,8 @@ Koushin::Action* Koushin::ActionParser::parseConfig(const KConfigGroup& config)
     return 0;
   }
   QString actionString = config.readEntry("action", QString());
-  if (!parseAction(actionString)) {
+  int priority = config.readEntry("priority", int(10));
+  if (!parseAction(actionString, priority)) {
     kDebug() << "Can't parse action: " << actionString;
     return 0;
   }
@@ -92,7 +93,7 @@ bool Koushin::ActionParser::parseRecipient(const QString& configLine)
   return 1;
 }
 
-bool Koushin::ActionParser::parseAction(const QString& actionString)
+bool Koushin::ActionParser::parseAction(const QString& actionString, int priority)
 {
   if (!m_action) {
     kDebug() << "Parse recipient before action";
@@ -121,6 +122,7 @@ bool Koushin::ActionParser::parseAction(const QString& actionString)
   } else {
     return 0;
   }
+  m_action->setPriority(priority);
 }
 
 bool Koushin::ActionParser::findPlayer(const QString& parameter)

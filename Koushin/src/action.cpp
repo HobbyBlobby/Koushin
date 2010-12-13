@@ -24,6 +24,7 @@
 #include "playeraction.h"
 
 Koushin::Action::Action()
+  : m_priority(100)
 {
 
 }

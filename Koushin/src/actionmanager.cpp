@@ -35,8 +35,17 @@ Koushin::ActionManager::~ActionManager()
 
 void Koushin::ActionManager::executeActions()
 {
-  for (QList<Koushin::Action* >::const_iterator it = m_actions.begin(); it != m_actions.end(); ++it) {
-    (*it)->execute();
+  QList<int > priorityList = m_actions.uniqueKeys();
+  qSort(priorityList.begin(), priorityList.end(), qGreater<int>()); //execute first actions with height priority
+  for (QList<int >::const_iterator it = priorityList.begin(); it != priorityList.end(); ++it) {
+    QList<Koushin::Action* > currentActions = m_actions.values(*it);
+    foreach(Koushin::Action* action, currentActions) {
+      action->execute();
+    }
   }
 }
 
+void Koushin::ActionManager::addAction(Koushin::Action* action)
+{
+  m_actions.insert(action->getPriority(), action); //insert is like insertMulti for normal QMaps
+}

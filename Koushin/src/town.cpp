@@ -60,6 +60,12 @@ bool Koushin::Town::changeResource(Koushin::ResourceType type, int difference)
   return 1;
 }
 
+void Koushin::Town::setResourceCapacity(Koushin::ResourceType type, int value)
+{
+  Koushin::Resource res = m_resources.value(type);
+  res.maximumCapacity = value;
+}
+
 Koushin::ResourceType Koushin::Town::getResourceTypeFromQString(QString resourceName)
 {
   if(resourceName == "Wood") return Koushin::ResourceWood;

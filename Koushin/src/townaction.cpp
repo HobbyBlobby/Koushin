@@ -35,18 +35,35 @@ Koushin::TownAction::~TownAction()
 QMap< QString, Koushin::ActionProperties> Koushin::TownAction::getPossibleActions()
 {
   QMap<QString, Koushin::ActionProperties> actions;
-  actions.insert("changeResource", Koushin::ActionProperties(
+  actions.insert("increaseResource", Koushin::ActionProperties(
     QStringList() << "string" << "int",
     "Town: Add the given parameter to the given resource. string=ResourceName, int=difference"));
+  actions.insert("decreaseResource", Koushin::ActionProperties(
+    QStringList() << "string" << "int",
+    "Town: Removes the given parameter from the given resource. string=ResourceName, int=difference"));
+  actions.insert("setResourceCapacity", Koushin::ActionProperties(
+    QStringList() << "string" << "int",
+    "Town: Sets the capacity of a given resource to the given value. string=ResourceName, int=new value"));
   return actions;
 }
 
 void Koushin::TownAction::execute()
 {
-  if(m_action == "changeResource") {
+  if(m_action == "increaseResource") {
     Koushin::ResourceType type = Koushin::Town::getResourceTypeFromQString(m_parameters[0]);
     int diff = m_parameters.value(1, QString("0")).toInt();
     m_recipient->changeResource(type, diff);
+  }
+  if(m_action == "decreaseResource") {
+    Koushin::ResourceType type = Koushin::Town::getResourceTypeFromQString(m_parameters[0]);
+    int diff = m_parameters.value(1, QString("0")).toInt();
+    m_recipient->changeResource(type, -diff);
+  }
+  if(m_action == "setResourceCapacity") {
+    Koushin::ResourceType type = Koushin::Town::getResourceTypeFromQString(m_parameters[0]);
+    int value = m_parameters.value(0, QString("-1")).toInt();
+    if(value == -1) value = m_recipient->getResources().value(type).maximumCapacity;
+    m_recipient->setResourceCapacity(type, value);
   }
 }
 
