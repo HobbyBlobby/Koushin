@@ -76,6 +76,7 @@ void Koushin::Player::buildingChosen(QString buildingConfig)
 //   m_townList.first()->getTownWidget()->scene()->(m_constructionMenu);
 //   delete(m_constructionMenu);
   //TODO: find a way to delete the widget
+  m_constructionMenu->setVisible(false);
   m_constructionMenu = 0;
 }
 
