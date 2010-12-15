@@ -51,18 +51,18 @@ QList<Koushin::Action* > Koushin::ActionParser::parseConfig(const KConfigGroup& 
     KConfigGroup task(&config, *it);
     if (!task.hasKey("recipient")) {
       kDebug() << "Config for " << task.name() << " doesn't contain a recipient. Can't parse this entry";
-      break;
+      continue;
     }
     QString recipient = task.readEntry("recipient", QString());
     if (!parseRecipient(recipient)) {
       kDebug() << "Can't parse recipient: " << recipient;
-      break;
+      continue;
     }
     QString actionString = task.readEntry("action", QString());
     int priority = task.readEntry("priority", int(10));
     if (!parseAction(actionString, priority)) {
       kDebug() << "Can't parse action: " << actionString;
-      break;
+      continue;
     }
     kDebug() << "Create Action for " << recipient << " to do " << actionString;
     m_actions << m_action;

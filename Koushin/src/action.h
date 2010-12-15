@@ -81,7 +81,10 @@ namespace Koushin {
       void addAction(QString action) {m_action = action;}
       void addParameter(QString para) {m_parameters << para;}
       void addParameters(QStringList paras) {m_parameters << paras;}
-      void addRequirement(Action* action) {m_requirements << action;}
+      void addRequirement(Action* action, bool positiv = true) {
+	m_requirements.insert(action, positiv); action->setAsRequirementFor(this, positiv);}
+      void setAsRequirementFor(Action* action, bool positiv = true) {
+	m_requirementFor.insert(action, positiv); action ->addRequirement(this, positiv);}
       actionStatus getStatus() const {return m_status;}
       void setPriority(int prio) {m_priority = prio;}
       int getPriority() const {return m_priority;}
@@ -93,7 +96,8 @@ namespace Koushin {
       QStringList m_parameters;
       QString m_action;
       int m_priority;
-      QList<Action* > m_requirements;
+      QMap<Action*, bool > m_requirements;
+      QMap<Action*, bool > m_requirementFor;
       actionStatus m_status;
   };
 //   DEFINE_PUBLIC_ACTION(getFunctionName,QString action COMMA int a,action COMMA a)

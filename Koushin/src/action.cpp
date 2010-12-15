@@ -43,8 +43,11 @@ QMap< QString, Koushin::ActionProperties > Koushin::Action::getPossibleActions()
 
 bool Koushin::Action::requirementsFinished()
 {
-  for(QList<Action* >::const_iterator it = m_requirements.begin(); it != m_requirements.end(); ++it) {
-    if((*it)->getStatus() != Koushin::actionSucceeded) return false;
+  QList<Koushin::Action* > actions = m_requirements.keys();
+  for(QList<Action* >::const_iterator it = actions.begin(); it != actions.end(); ++it) {
+    if(((*it)->getStatus() == Koushin::actionSucceeded) & (m_requirements.value(*it))) continue;
+    if(((*it)->getStatus() == Koushin::actionFailed) & (!m_requirements.value(*it))) continue;
+    return false;
   }
   return true;
 }
