@@ -46,6 +46,7 @@ namespace Koushin {
       bool parseAction(const QString& actionString, int priority);
       bool findPlayer(const QString& parameter);
       bool findTown(const QString& parameter);
+      void addRequirementsToActions(QStringList conditionStrings, QMap<QString, Action* > actions);
       
       QPair<QString, QStringList > separateNameAndParameters(QString string);
       bool possibleParametersGiven(QString actionName, QStringList parameters);

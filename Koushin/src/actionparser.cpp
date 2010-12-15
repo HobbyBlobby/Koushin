@@ -44,7 +44,7 @@ Koushin::ActionParser::~ActionParser()
 #include <kdebug.h>
 QList<Koushin::Action* > Koushin::ActionParser::parseConfig(const KConfigGroup& config)
 {
-  QList<Koushin::Action* > m_actions;
+  QMap<QString, Koushin::Action*> actions;
   QStringList taskConfigList = config.groupList();
   for (QStringList::const_iterator it = taskConfigList.begin(); it != taskConfigList.end(); ++it) {
     m_action = 0;
@@ -65,9 +65,14 @@ QList<Koushin::Action* > Koushin::ActionParser::parseConfig(const KConfigGroup& 
       continue;
     }
     kDebug() << "Create Action for " << recipient << " to do " << actionString;
-    m_actions << m_action;
+    actions.insert(*it, m_action);
   }
-  return m_actions;
+  //add Requirements after initializing all actions
+  KConfigGroup conditions(&config, "conditions");
+  QStringList conditionStrings = conditions.keyList();
+  addRequirementsToActions(conditionStrings, actions);
+  
+  return actions.values();
 }
 
 bool Koushin::ActionParser::parseRecipient(const QString& configLine)
@@ -132,6 +137,31 @@ bool Koushin::ActionParser::parseAction(const QString& actionString, int priorit
   m_action->setPriority(priority);
   return 1;
 }
+
+void Koushin::ActionParser::addRequirementsToActions(QStringList conditionStrings, QMap< QString, Koushin::Action* > actions)
+{
+  foreach(QString condition, conditionStrings) {
+    QStringList actionNames = condition.split("->");
+    if(actionNames.size() != 2) {
+      kDebug() << "Wrong condition string: " << condition;
+      continue;
+    }
+    QString requirement = actionNames[0];
+    requirement.remove(QRegExp("^!"));
+    if(actions.value(requirement, 0) == 0) {
+      kDebug() << "Requirement is not a valid action: " << actionNames[0];
+    }
+    if(actions.value(actionNames[1], 0) == 0) {
+      kDebug() << "The conditional action is not valid: " << actionNames[1];
+    }
+    if (requirement == actionNames[0]) {//no "!" as first char, so no char is removed, the strings are equal
+      actions.value(actionNames[1])->addRequirement(actions.value(requirement));
+    } else {
+      actions.value(actionNames[1])->addRequirement(actions.value(requirement), false);
+    }
+  }
+}
+
 
 bool Koushin::ActionParser::findPlayer(const QString& parameter)
 {
