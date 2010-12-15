@@ -24,7 +24,8 @@
 Koushin::TownAction::TownAction(Town* recipient)
   : m_recipient(recipient)
 {
-
+//   PUBLIC_ACTION;
+//   kDebug() << ACTION_NAME;
 }
 
 Koushin::TownAction::~TownAction()

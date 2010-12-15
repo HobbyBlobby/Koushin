@@ -40,3 +40,17 @@ QMap< QString, Koushin::ActionProperties > Koushin::Action::getPossibleActions()
       unite(Koushin::PlayerAction::getPossibleActions().
       unite(Koushin::TownAction::getPossibleActions()));
 }
+
+bool Koushin::Action::requirementsFinished()
+{
+  for(QList<Action* >::const_iterator it = m_requirements.begin(); it != m_requirements.end(); ++it) {
+    if((*it)->getStatus() != Koushin::actionSucceeded) return false;
+  }
+  return true;
+}
+
+// bool Koushin::Action::getFunctionName(QString function, int test)
+// {
+//   kDebug() << function;
+//   return 1;
+// }

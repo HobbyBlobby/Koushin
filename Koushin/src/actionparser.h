@@ -25,6 +25,7 @@
 #include <QMultiMap>
 #include <QPair>
 #include <QString>
+#include <QList>
 
 #include <KConfigGroup>
 
@@ -38,7 +39,7 @@ namespace Koushin {
       ActionParser(ActionOwner* owner);
       virtual ~ActionParser();
       
-      Action* parseConfig(const KConfigGroup& config);
+      QList<Action* > parseConfig(const KConfigGroup& config);
 
   private:
       bool parseRecipient(const QString& configLine);

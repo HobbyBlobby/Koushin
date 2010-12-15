@@ -51,3 +51,9 @@ void Koushin::ActionManager::addAction(Koushin::Action* action)
 {
   m_actions.insert(action->getPriority(), action); //insert is like insertMulti for normal QMaps
 }
+
+void Koushin::ActionManager::addAction(QList< Koushin::Action* > actions)
+{
+  foreach(Koushin::Action* action, actions)
+    addAction(action);
+}

@@ -1,4 +1,5 @@
 set (koushin_BLDGS
+  lumberjack.config
   lumbermill.config
   warehouse.config
 )

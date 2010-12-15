@@ -32,6 +32,7 @@ namespace Koushin {
       virtual ~ActionManager();
       
       void addAction(Action* action);
+      void addAction(QList<Action* > actions);
       void executeActions();
       Player* getOwner() {return m_owner;}
     private:

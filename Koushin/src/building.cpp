@@ -20,11 +20,16 @@
 
 #include "building.h"
 #include <qpainter.h>
+#include <KDebug>
 
 Koushin::Building::Building(Town* town)
   : m_town(town)
+  , m_name("NoName")
 {
-
+  m_textItem = new QGraphicsTextItem(m_name);
+  m_textItem->setScale(1 / m_textItem->boundingRect().width());
+  m_textItem->setPos(0, 0.5 - m_textItem->boundingRect().height()/(2*m_textItem->boundingRect().width()));
+  m_textItem->setParentItem(this);
 }
 
 Koushin::Building::~Building()
@@ -37,6 +42,11 @@ void Koushin::Building::paint(QPainter* painter, const QStyleOptionGraphicsItem*
   Q_UNUSED(option)
   Q_UNUSED(widget)
   painter->drawEllipse(QRect(0,0,1,1));
+  m_textItem->setPlainText(m_name);
+  m_textItem->setScale(1 / m_textItem->boundingRect().width());
+  m_textItem->setPos(0, 0.5 - m_textItem->boundingRect().height()/(2*m_textItem->boundingRect().width()));
+//   kDebug() << "Update of Building " << m_name;
+  // yPos = 0.5 - (textheight/2 * scalefactor)
 }
 
 QRectF Koushin::Building::boundingRect() const

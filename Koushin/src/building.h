@@ -36,10 +36,14 @@ namespace Koushin {
       
       void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget = 0);
       QRectF boundingRect() const;
+      void setName(QString name) {m_name = name;}
+      QString getName() const {return m_name;}
       
       Town* getTown() {return m_town;}
     private:
       Town* m_town;
+      QString m_name;
+      QGraphicsTextItem* m_textItem;
   };
 }
 

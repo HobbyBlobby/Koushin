@@ -42,24 +42,32 @@ Koushin::ActionParser::~ActionParser()
 }
 
 #include <kdebug.h>
-Koushin::Action* Koushin::ActionParser::parseConfig(const KConfigGroup& config)
+QList<Koushin::Action* > Koushin::ActionParser::parseConfig(const KConfigGroup& config)
 {
-  if (!config.hasKey("recipient")) {
-    kDebug() << "Config for " << config.name() << " doesn't contain a recipient. Can't parse this entry";
-    return 0;
+  QList<Koushin::Action* > m_actions;
+  QStringList taskConfigList = config.groupList();
+  for (QStringList::const_iterator it = taskConfigList.begin(); it != taskConfigList.end(); ++it) {
+    m_action = 0;
+    KConfigGroup task(&config, *it);
+    if (!task.hasKey("recipient")) {
+      kDebug() << "Config for " << task.name() << " doesn't contain a recipient. Can't parse this entry";
+      break;
+    }
+    QString recipient = task.readEntry("recipient", QString());
+    if (!parseRecipient(recipient)) {
+      kDebug() << "Can't parse recipient: " << recipient;
+      break;
+    }
+    QString actionString = task.readEntry("action", QString());
+    int priority = task.readEntry("priority", int(10));
+    if (!parseAction(actionString, priority)) {
+      kDebug() << "Can't parse action: " << actionString;
+      break;
+    }
+    kDebug() << "Create Action for " << recipient << " to do " << actionString;
+    m_actions << m_action;
   }
-  QString recipient = config.readEntry("recipient", QString());
-  if (!parseRecipient(recipient)) {
-    kDebug() << "Can't parse recipient: " << recipient;
-    return 0;
-  }
-  QString actionString = config.readEntry("action", QString());
-  int priority = config.readEntry("priority", int(10));
-  if (!parseAction(actionString, priority)) {
-    kDebug() << "Can't parse action: " << actionString;
-    return 0;
-  }
-  return m_action;
+  return m_actions;
 }
 
 bool Koushin::ActionParser::parseRecipient(const QString& configLine)
@@ -79,10 +87,10 @@ bool Koushin::ActionParser::parseRecipient(const QString& configLine)
     }
     if (++it == recipient.end()) { //create right actionClass
       if (object == "player") {
-	kDebug() << "Create PlayerAction";
+// 	kDebug() << "Create PlayerAction";
 	m_action = new Koushin::PlayerAction(m_player);
       } else if (object == "town") {
-	kDebug() << "Create TonwAction";
+// 	kDebug() << "Create TonwAction";
 	m_action = new Koushin::TownAction(m_town);
       } else {
 	kDebug() << "Unknown recipient: can't create action";

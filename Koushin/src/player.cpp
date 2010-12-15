@@ -64,14 +64,13 @@ void Koushin::Player::buildingChosen(QString buildingConfig)
   Koushin::Building* newBuilding = new Koushin::Building(m_townList.first());
   m_townList.first()->addBuilding(newBuilding, m_buildingLot);
   KConfig config(buildingConfig);
+  newBuilding->setName(KConfigGroup(&config , "general").readEntry("name", QString("NoName")));
   KConfigGroup tasksGroup(&config, "tasks");
-  QStringList taskConfigList = tasksGroup.groupList();
-  for (QStringList::const_iterator it = taskConfigList.begin(); it != taskConfigList.end(); ++it) {
-    KConfigGroup group(&tasksGroup, *it);
-    Koushin::ActionParser parser(newBuilding);
-    Koushin::Action* action = parser.parseConfig(group);
-    m_actionManager->addAction(action);
-  }
+
+  Koushin::ActionParser parser(newBuilding);
+    QList<Koushin::Action* > actions = parser.parseConfig(tasksGroup);
+    m_actionManager->addAction(actions);
+//   }
   m_townList.first()->getTownWidget()->drawBuildings(m_townList.first()->getBuildings());
 
 //   m_townList.first()->getTownWidget()->scene()->removeWidget(m_constructionMenu);
