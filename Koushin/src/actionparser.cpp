@@ -34,7 +34,11 @@ Koushin::ActionParser::ActionParser(ActionOwner* owner)
   , m_town(0)
   , m_owner(owner)
 {
-
+  if(m_owner->getActionOwnerType() == Koushin::actionOwnerIsBuilding) {
+    m_player = ((Koushin::Building*)m_owner)->getTown()->getOwner();
+  } else {
+    kDebug() << "Actions not owned by a building is not implemented yet.";
+  }
 }
 
 Koushin::ActionParser::~ActionParser()
@@ -46,8 +50,10 @@ QList<Koushin::Action* > Koushin::ActionParser::parseConfig(const KConfigGroup& 
 {
   QMap<QString, Koushin::Action*> actions;
   QStringList taskConfigList = config.groupList();
+  parseGlobals(KConfigGroup(&config, "globals"));
+
   for (QStringList::const_iterator it = taskConfigList.begin(); it != taskConfigList.end(); ++it) {
-    if (*it == "conditions") continue;
+    if (*it == "conditions" || *it == "globals") continue;
     m_action = 0;
     KConfigGroup task(&config, *it);
     if (!task.hasKey("recipient")) {
@@ -95,10 +101,8 @@ bool Koushin::ActionParser::parseRecipient(const QString& configLine)
     }
     if (++it == recipient.end()) { //create right actionClass
       if (object == "player") {
-// 	kDebug() << "Create PlayerAction";
 	m_action = new Koushin::PlayerAction(m_player);
       } else if (object == "town") {
-// 	kDebug() << "Create TonwAction";
 	m_action = new Koushin::TownAction(m_town);
       } else {
 	kDebug() << "Unknown recipient: can't create action";
@@ -139,6 +143,19 @@ bool Koushin::ActionParser::parseAction(const QString& actionString, int priorit
   }
   m_action->setPriority(priority);
   return 1;
+}
+
+bool Koushin::ActionParser::parseGlobals(const KConfigGroup& parameterList)
+{
+  kDebug() << parameterList.keyList();
+  foreach(QString parameter, parameterList.keyList()) {
+    m_player->getActionManager()->addGlobalParameter(parameter, parameterList.readEntry(parameter, QString()));
+  }
+  foreach(QString parameter, parameterList.keyList()) {
+//     store parameter -> pass to manager
+    m_player->getActionManager()->evalParameter(parameter);
+  }
+  return true;
 }
 
 void Koushin::ActionParser::addRequirementsToActions(QStringList conditionStrings, QMap< QString, Koushin::Action* > actions)
@@ -232,15 +249,16 @@ bool Koushin::ActionParser::possibleParametersGiven(QString actionName, QStringL
     kDebug() << "Wrong parameter Number: Expected = " << properties.parameterTypes.length() << "; Given = " << parameters.length();
     return 0;
   }
-  for (int i = 0; i <= properties.parameterTypes.length(); ++i) {
-    if (properties.parameterTypes.value(i) == "int") {
-      bool succes;
-      parameters.value(i).toInt(&succes);
-      if (!succes){
-	kDebug() << "Integer value expected: Can't generate Integer from " << parameters.value(i);
-	return 0;
-      }
-    }
-  }
+  //make proof later, when expression is evaluated: of course it is not possible to create int from parameterName
+//   for (int i = 0; i <= properties.parameterTypes.length(); ++i) {
+//     if (properties.parameterTypes.value(i) == "int") {
+//       bool succes;
+//       parameters.value(i).toInt(&succes);
+//       if (!succes){
+// 	kDebug() << "Integer value expected: Can't generate Integer from " << parameters.value(i);
+// 	return 0;
+//       }
+//     }
+//   }
   return 1;
 }

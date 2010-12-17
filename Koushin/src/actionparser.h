@@ -44,6 +44,7 @@ namespace Koushin {
   private:
       bool parseRecipient(const QString& configLine);
       bool parseAction(const QString& actionString, int priority);
+      bool parseGlobals(const KConfigGroup& parameterList);
       bool findPlayer(const QString& parameter);
       bool findTown(const QString& parameter);
       void addRequirementsToActions(QStringList conditionStrings, QMap<QString, Action* > actions);

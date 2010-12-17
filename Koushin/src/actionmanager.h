@@ -22,6 +22,7 @@
 #define ACTIONMANAGER_H
 
 #include <QMultiMap>
+#include <QString>
 
 namespace Koushin {
   class Action;
@@ -37,9 +38,15 @@ namespace Koushin {
       bool executeAction(Action* action);
       void setStatusOfDependensies(Action* failedAction);
       Player* getOwner() {return m_owner;}
+      bool addGlobalParameter(QString name, QString content);
+      QString getGlobalParameterValue(QString name) const {return m_globalParameters.value(name);}
+      int evalParameter(QString parameter);
     private:
+      QString expandParameter(QString line);
+      
       QMultiMap<int, Action* > m_actions;
       Player* m_owner;
+      QMap<QString, QString> m_globalParameters; //map with name and content
   };
 }
 

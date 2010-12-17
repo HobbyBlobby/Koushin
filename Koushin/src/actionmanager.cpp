@@ -23,6 +23,8 @@
 #include "player.h"
 #include <kdebug.h>
 
+#include <QScriptEngine>
+
 Koushin::ActionManager::ActionManager(Player* owner)
   : m_owner(owner)
 {
@@ -124,4 +126,41 @@ void Koushin::ActionManager::setStatusOfDependensies(Koushin::Action* action)
     }
     setStatusOfDependensies(dependency);
   }
+}
+
+bool Koushin::ActionManager::addGlobalParameter(QString name, QString content)
+{
+  if(m_globalParameters.keys().contains(name)) {
+    kDebug() << "Parameter allready in use. I do not overwright it: " << name;
+    return false;
+  }
+  if(name.contains(QRegExp("![A-Za-z0-9]*"))) {
+    kDebug() << "Use only letters and numbers for parameter names: " << name;
+    return false;
+  }
+  m_globalParameters.insert(name, content);
+  return true;
+}
+
+int Koushin::ActionManager::evalParameter(QString parameter)
+{
+  kDebug() << "Expand parameter: " << parameter << " = " << m_globalParameters.value(parameter);
+  parameter = expandParameter(m_globalParameters.value(parameter));
+  if(QScriptEngine::checkSyntax(parameter).state() != QScriptSyntaxCheckResult::Valid) {
+    kDebug() << "Sorry, but can not calculate string: " << parameter;
+  }
+  QScriptEngine calc;
+  QScriptValue result = calc.evaluate(parameter);
+  return result.toInteger();
+}
+
+QString Koushin::ActionManager::expandParameter(QString line)
+{
+  QString part;
+  while((part = line.section("#", 1, 1)) != "") {
+    kDebug() << "Found part = " << part;
+    line.replace("#" + part + "#", expandParameter(m_globalParameters.value(part)));
+    kDebug() << "Line after replacement = " << line;
+  }
+  return line;
 }
