@@ -52,8 +52,37 @@ bool Koushin::Action::requirementsFinished()
   return true;
 }
 
-// bool Koushin::Action::getFunctionName(QString function, int test)
-// {
-//   kDebug() << function;
-//   return 1;
-// }
+bool Koushin::Action::addRequirement(Koushin::Action* action, bool positiv)
+{
+  if(getRecursiveRequirements(action).contains(this)) {
+    kDebug() << "Can not insert requirement: it requires itself. This would cause a endless loop in action manager.";
+    return false;
+  }
+  m_requirements.insert(action, positiv);
+  if(!action->getDependencies().keys().contains(action)) {
+    action->setAsRequirementFor(this, positiv);
+  }
+  return true;
+}
+
+bool Koushin::Action::setAsRequirementFor(Koushin::Action* action, bool positiv)
+{
+  //this function is only used by addRequirement
+  m_requirementFor.insert(action, positiv);
+  return true;
+}
+
+QList< Koushin::Action* > Koushin::Action::getRecursiveRequirements(Koushin::Action* action)
+{
+  QList<Action* > allRequirements(action->getRequirements().keys());
+  foreach(Koushin::Action* action, action->getRequirements().keys()) {
+    allRequirements << action->getRecursiveRequirements(action);
+  }
+  return allRequirements;
+}
+
+void Koushin::Action::resetAction()
+{
+  m_status = actionNotStarted;
+  m_openRequirements = m_requirements.keys();
+}

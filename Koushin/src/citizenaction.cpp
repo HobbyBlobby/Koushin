@@ -46,17 +46,18 @@ QMap<QString, Koushin::ActionProperties > Koushin::CitizenAction::getPossibleAct
 
 
 #include <kdebug.h>
-void Koushin::CitizenAction::execute()
+bool Koushin::CitizenAction::execute()
 {
    if (m_action == "addCondition") {
       Koushin::citizenCondition parameter;
       if (!m_parameters.isEmpty() && (parameter = Koushin::Citizen::citizenConditionFromQString(m_parameters.first())))
-	m_citizen->addCondition(parameter);
+	return m_citizen->addCondition(parameter);
     } else if (m_action == "removeCondition") {
       Koushin::citizenCondition parameter;
       if (!m_parameters.isEmpty() && (parameter = Koushin::Citizen::citizenConditionFromQString(m_parameters.first())))
-	m_citizen->removeCondition(parameter);
+	return m_citizen->removeCondition(parameter);
     } else {
       kDebug() << "Undefined action called!";
   }
+  return false; //action not parsed -> return false
 }

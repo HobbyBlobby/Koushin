@@ -22,6 +22,7 @@
 
 #include <QMap>
 #include <QString>
+#include <QList>
 #include <QStringList>
 #include <kdebug.h>
 
@@ -74,24 +75,29 @@ namespace Koushin {
     public:
       Action();
       virtual ~Action();
-      virtual void execute() = 0;
+      virtual bool execute() = 0;
       virtual actionType getActionType() = 0;
       QMap<QString, ActionProperties> getPossibleActions();
             
-      void addAction(QString action) {m_action = action;}
+      void addAction(QString actionName) {m_action = actionName;}
       void addParameter(QString para) {m_parameters << para;}
       void addParameters(QStringList paras) {m_parameters << paras;}
-      void addRequirement(Action* action, bool positiv = true) {
-	m_requirements.insert(action, positiv); action->setAsRequirementFor(this, positiv);}
-      void setAsRequirementFor(Action* action, bool positiv = true) {
-	m_requirementFor.insert(action, positiv); action ->addRequirement(this, positiv);}
+      bool addRequirement(Action* action, bool positiv = true);
+      bool setAsRequirementFor(Action* action, bool positiv = true);
       actionStatus getStatus() const {return m_status;}
       void setPriority(int prio) {m_priority = prio;}
       int getPriority() const {return m_priority;}
-//       bool getFunctionName(QString function, int test = 0);
+      void setStatus(actionStatus status) {m_status = status;}
+      QMap<Action*, bool> getRequirements() const {return m_requirements;}
+      QMap<Action*, bool> getDependencies() const {return m_requirementFor;}
+      QString getActionString() const {return m_action;}
+      QStringList getParameters() const {return m_parameters;}
+      QList<Action* > getRecursiveRequirements(Action* action);
+      void closeRequirement(Action* action) {m_openRequirements.removeAll(action);}
+      bool noOpenRequirements() const {return m_openRequirements.isEmpty();}
       
       bool requirementsFinished();
-      void resetAction() {m_status = actionNotStarted;}
+      void resetAction();
     protected:
       QStringList m_parameters;
       QString m_action;
@@ -99,6 +105,7 @@ namespace Koushin {
       QMap<Action*, bool > m_requirements;
       QMap<Action*, bool > m_requirementFor;
       actionStatus m_status;
+      QList<Action* > m_openRequirements;
   };
 //   DEFINE_PUBLIC_ACTION(getFunctionName,QString action COMMA int a,action COMMA a)
 }

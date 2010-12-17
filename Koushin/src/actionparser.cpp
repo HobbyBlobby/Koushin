@@ -47,6 +47,7 @@ QList<Koushin::Action* > Koushin::ActionParser::parseConfig(const KConfigGroup& 
   QMap<QString, Koushin::Action*> actions;
   QStringList taskConfigList = config.groupList();
   for (QStringList::const_iterator it = taskConfigList.begin(); it != taskConfigList.end(); ++it) {
+    if (*it == "conditions") continue;
     m_action = 0;
     KConfigGroup task(&config, *it);
     if (!task.hasKey("recipient")) {
@@ -64,12 +65,14 @@ QList<Koushin::Action* > Koushin::ActionParser::parseConfig(const KConfigGroup& 
       kDebug() << "Can't parse action: " << actionString;
       continue;
     }
-    kDebug() << "Create Action for " << recipient << " to do " << actionString;
+    kDebug() << "Create Action " << *it << " for " << recipient << " to do " << actionString;
     actions.insert(*it, m_action);
   }
   //add Requirements after initializing all actions
   KConfigGroup conditions(&config, "conditions");
-  QStringList conditionStrings = conditions.keyList();
+  QStringList conditionStrings;
+  foreach(QString condition, conditions.keyList())
+    conditionStrings << conditions.readEntry(condition, QString());
   addRequirementsToActions(conditionStrings, actions);
   
   return actions.values();

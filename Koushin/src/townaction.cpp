@@ -48,23 +48,26 @@ QMap< QString, Koushin::ActionProperties> Koushin::TownAction::getPossibleAction
   return actions;
 }
 
-void Koushin::TownAction::execute()
+bool Koushin::TownAction::execute()
 {
   if(m_action == "increaseResource") {
     Koushin::ResourceType type = Koushin::Town::getResourceTypeFromQString(m_parameters[0]);
     int diff = m_parameters.value(1, QString("0")).toInt();
-    m_recipient->changeResource(type, diff);
+    return m_recipient->changeResource(type, diff);
   }
   if(m_action == "decreaseResource") {
     Koushin::ResourceType type = Koushin::Town::getResourceTypeFromQString(m_parameters[0]);
     int diff = m_parameters.value(1, QString("0")).toInt();
-    m_recipient->changeResource(type, -diff);
+    return m_recipient->changeResource(type, -diff);
   }
   if(m_action == "setResourceCapacity") {
     Koushin::ResourceType type = Koushin::Town::getResourceTypeFromQString(m_parameters[0]);
     int value = m_parameters.value(1, QString("-1")).toInt();
     if(value == -1) value = m_recipient->getResources().value(type)->maximumCapacity;
-    m_recipient->setResourceCapacity(type, value);
+    return m_recipient->setResourceCapacity(type, value);
+  } else {
+    kDebug() << "Unknown action " << m_action;
   }
+  return false; //action not parsed -> return false
 }
 

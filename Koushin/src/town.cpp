@@ -45,25 +45,26 @@ bool Koushin::Town::changeResource(Koushin::ResourceType type, int difference)
   Koushin::Resource* res = m_resources.value(type);
   if (res->type == Koushin::ResourceUnspezifed) {
     kDebug() << "Resource not found.";
-    return 0;
+    return false;
   }
   if (res->amount + difference > res->maximumCapacity) {
     kDebug() << "Capacity reached" << res->amount + difference << " of " << res->maximumCapacity;
     res->amount = res->maximumCapacity;
-    return 0;
+    return false;
   }
   if (res->amount + difference < 0) {
-    kDebug() << "Not enough resources: " << res->amount - difference;
-    return 0;
+    kDebug() << "Not enough resources: " << qAbs(difference) << " of " << res->amount - difference;
+    return false;
   }
   res->amount += difference;
-  return 1;
+  return true;
 }
 
-void Koushin::Town::setResourceCapacity(Koushin::ResourceType type, int value)
+bool Koushin::Town::setResourceCapacity(Koushin::ResourceType type, int value)
 {
   Koushin::Resource* res = m_resources.value(type);
   res->maximumCapacity = value;
+  return true; //nothing can go wrong, or?
 }
 
 Koushin::ResourceType Koushin::Town::getResourceTypeFromQString(QString resourceName)

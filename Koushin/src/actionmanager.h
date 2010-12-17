@@ -34,6 +34,8 @@ namespace Koushin {
       void addAction(Action* action);
       void addAction(QList<Action* > actions);
       void executeActions();
+      bool executeAction(Action* action);
+      void setStatusOfDependensies(Action* failedAction);
       Player* getOwner() {return m_owner;}
     private:
       QMultiMap<int, Action* > m_actions;

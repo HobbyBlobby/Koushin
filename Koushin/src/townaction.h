@@ -35,7 +35,7 @@ namespace Koushin {
       static QMap<QString, ActionProperties> getPossibleActions();
       
       actionType getActionType() {return Koushin::actionForTown;}
-      void execute();
+      bool execute();
     private:
       Town* m_recipient;
   };

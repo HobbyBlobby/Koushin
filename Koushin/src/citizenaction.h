@@ -34,7 +34,7 @@ namespace Koushin {
     public:
       CitizenAction(Citizen* citizen = 0, QString action = "");
       virtual ~CitizenAction();
-      void execute();
+      bool execute();
       static QMap<QString, ActionProperties> getPossibleActions();
       
     private:

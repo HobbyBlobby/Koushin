@@ -59,7 +59,7 @@ namespace Koushin {
 
 // Function to access also with parser      
       bool changeResource(ResourceType type, int difference);
-      void setResourceCapacity(ResourceType type, int value);
+      bool setResourceCapacity(ResourceType type, int value);
 //other functions
       QMap<ResourceType, Resource*> getResources() {return m_resources;}
       ::KoushinGUI::TownWidget* getTownWidget() const {return m_townWidget;}
