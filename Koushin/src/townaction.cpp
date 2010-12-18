@@ -20,6 +20,8 @@
 
 #include "townaction.h"
 #include "town.h"
+#include "player.h"
+#include "actionmanager.h"
 
 Koushin::TownAction::TownAction(Town* recipient)
   : m_recipient(recipient)
@@ -52,19 +54,28 @@ bool Koushin::TownAction::execute()
 {
   if(m_action == "increaseResource") {
     Koushin::ResourceType type = Koushin::Town::getResourceTypeFromQString(m_parameters[0]);
-    int diff = m_parameters.value(1, QString("0")).toInt();
-    return m_recipient->changeResource(type, diff);
+    try{
+      int diff = m_recipient->getOwner()->getActionManager()->evalContent(m_parameters.value(1, QString("0")));
+      return m_recipient->changeResource(type, diff);
+    }
+    catch (std::exception & e) {return false;}
   }
   if(m_action == "decreaseResource") {
     Koushin::ResourceType type = Koushin::Town::getResourceTypeFromQString(m_parameters[0]);
-    int diff = m_parameters.value(1, QString("0")).toInt();
-    return m_recipient->changeResource(type, -diff);
+    try{
+      int diff = m_recipient->getOwner()->getActionManager()->evalContent(m_parameters.value(1, QString("0")));
+      return m_recipient->changeResource(type, -diff);
+    }
+    catch (std::exception & e) {return false;}
   }
   if(m_action == "setResourceCapacity") {
     Koushin::ResourceType type = Koushin::Town::getResourceTypeFromQString(m_parameters[0]);
-    int value = m_parameters.value(1, QString("-1")).toInt();
-    if(value == -1) value = m_recipient->getResources().value(type)->maximumCapacity;
-    return m_recipient->setResourceCapacity(type, value);
+    try{
+      int value = m_recipient->getOwner()->getActionManager()->evalContent(m_parameters.value(1, QString("0")));
+      kDebug() << "####=> set Capacity to: " << value;
+      return m_recipient->setResourceCapacity(type, value);
+    }
+    catch (std::exception & e) {return false;}
   } else {
     kDebug() << "Unknown action " << m_action;
   }

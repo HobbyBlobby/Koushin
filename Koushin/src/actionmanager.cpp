@@ -141,19 +141,23 @@ bool Koushin::ActionManager::addGlobalParameter(QString name, QString content)
     return false;
   }
   //test for endless loops
-  if(expandParameter(content).contains("#" + name + "#"))
+  if(expandParameter(content, name) == "NOT_VALID")
   {
-    kDebug() << "Contect contains itself after expanding: " << name << " = " << expandParameter(content);
+    kDebug() << "Content of " << name << " is not expandable";
     return false;
   }
   m_globalParameters.insert(name, content);
   return true;
 }
 
-int Koushin::ActionManager::evalParameter(QString parameter)
+int Koushin::ActionManager::evalContent ( QString content, QString parameter )
 {
-  kDebug() << "Expand parameter: " << parameter << " = " << m_globalParameters.value(parameter);
-  parameter = expandParameter(m_globalParameters.value(parameter));
+  content = expandParameter(content, parameter);
+  if (content == "NOT_VALID") {
+    kDebug() << "Can not  expand parameter: " << parameter;
+    throw std::runtime_error(QString("Parameter not expandable:" + parameter).toAscii().constData());
+    return 0;
+  }
 #if 0 
 //TODO: use this code later when QScriptEngine works
   if(QScriptEngine::checkSyntax(parameter).state() != QScriptSyntaxCheckResult::Valid) {
@@ -162,28 +166,39 @@ int Koushin::ActionManager::evalParameter(QString parameter)
   QScriptEngine calc;
   int result = calc.evaluate(parameter).toInteger();
 #else
-  Parser calc(parameter.toAscii().constData());
-  int result = 0;
+  Parser calc(content.toAscii().constData());
   try {
-    int result = (int)calc.Evaluate();
+    return (int)calc.Evaluate();
   }
   catch (std::exception & e)
   {
-    kDebug() << "Can not calculate " << parameter << ". Reason: " << e.what ();
+    kDebug() << "Can not calculate " << parameter << "=" << content << ". Reason: " << e.what ();
+    throw std::runtime_error(QString("Evaluation of parameter not possible: " + parameter).toAscii().constData());
+    return 0;
   }
-  return result;
 #endif
-    return result;
 }
 
-QString Koushin::ActionManager::expandParameter(QString line)
+
+int Koushin::ActionManager::evalParameter(QString parameter)
+{
+  //Do not write expanded content to m_globalParameters: later manipulation of values should be possible
+//   kDebug() << "Expand parameter: " << parameter << " = " << m_globalParameters.value(parameter);
+  return evalContent(m_globalParameters.value(parameter), parameter);
+}
+
+QString Koushin::ActionManager::expandParameter(QString line, QString name)
 {
   QString part;
   int replacePart = 1;
   while((part = line.section("#", replacePart, replacePart)) != "") {
-    kDebug() << "Found part = " << part;
-    if(m_globalParameters.keys().contains("#" + part + "#")) {
-      line.replace("#" + part + "#", expandParameter(m_globalParameters.value(part)));
+    kDebug() << "Found part = " << part << " in " << line;
+    if (line.contains("#" + name + "#")) {
+      kDebug() << "Found recursion." << line << " contains " << name;
+      return QString("NO_VALID");
+    }
+    if(m_globalParameters.keys().contains(part)) {
+      line.replace("#" + part + "#", expandParameter(m_globalParameters.value(part), part));
     } else {
       replacePart += 2; //jump to next part => skip unknown Parameter
     }

@@ -149,11 +149,12 @@ bool Koushin::ActionParser::parseGlobals(const KConfigGroup& parameterList)
 {
   kDebug() << parameterList.keyList();
   foreach(QString parameter, parameterList.keyList()) {
+    kDebug() << "################## Add Global " << parameter << "=" << parameterList.readEntry(parameter, QString()) << "########";
     m_player->getActionManager()->addGlobalParameter(parameter, parameterList.readEntry(parameter, QString()));
   }
   foreach(QString parameter, parameterList.keyList()) {
 //     store parameter -> pass to manager
-    m_player->getActionManager()->evalParameter(parameter);
+//     m_player->getActionManager()->evalParameter(parameter);
   }
   return true;
 }

@@ -41,8 +41,9 @@ namespace Koushin {
       bool addGlobalParameter(QString name, QString content);
       QString getGlobalParameterValue(QString name) const {return m_globalParameters.value(name);}
       int evalParameter(QString parameter);
+      int evalContent(QString content, QString parameter = "NOT_IN_LIST");
     private:
-      QString expandParameter(QString line);
+      QString expandParameter( QString line, QString name);
       
       QMultiMap<int, Action* > m_actions;
       Player* m_owner;
