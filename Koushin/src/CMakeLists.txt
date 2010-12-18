@@ -16,7 +16,11 @@ set(Koushin_SRCS
   GUI/constructionmenu.cpp
   GUI/resourceinfowidget.cpp
   GUI/townwidget.cpp
+  Extern/parser/parser.cpp
 )
+
+set(QT_USE_QTSCRIPTTOOLS TRUE)
+set(CMAKE_CXX_FLAGS "-fexceptions")
 
 kde4_add_executable(Koushin ${Koushin_SRCS} ${Koushin_GUI})
 target_link_libraries(Koushin ${KDE4_KDEUI_LIBS} ${KDEGAMES_LIBRARY})

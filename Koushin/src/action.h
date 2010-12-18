@@ -27,6 +27,7 @@
 #include <kdebug.h>
 
 // this macro i will use later, but now I makes more Problems then solutions
+#if 0
 #define PUBLIC_ACTION getFunctionName(__FUNCTION__)
 #define COMMA ,
 #define DEFINE_PUBLIC_ACTION(name, paramTypes, params)			\
@@ -36,7 +37,8 @@
     using FunctionBase::executeFunction;				\
     Action* m_action;							\
   };									
-
+#endif
+  
 namespace Koushin {
   enum actionType {
     noActionType = 0,

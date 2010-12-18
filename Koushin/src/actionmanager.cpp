@@ -23,7 +23,9 @@
 #include "player.h"
 #include <kdebug.h>
 
-#include <QScriptEngine>
+#include <cstring>
+// #include <QScriptEngine>
+#include "Extern/parser/parser.h"
 
 Koushin::ActionManager::ActionManager(Player* owner)
   : m_owner(owner)
@@ -146,12 +148,18 @@ int Koushin::ActionManager::evalParameter(QString parameter)
 {
   kDebug() << "Expand parameter: " << parameter << " = " << m_globalParameters.value(parameter);
   parameter = expandParameter(m_globalParameters.value(parameter));
+#if 0 
+//TODO: use this code later when QScriptEngine works
   if(QScriptEngine::checkSyntax(parameter).state() != QScriptSyntaxCheckResult::Valid) {
     kDebug() << "Sorry, but can not calculate string: " << parameter;
   }
   QScriptEngine calc;
-  QScriptValue result = calc.evaluate(parameter);
-  return result.toInteger();
+  int result = calc.evaluate(parameter).toInteger();
+#else
+  Parser calc(parameter.toLatin1().data());
+  int result = (int)calc.Evaluate();
+#endif
+    return result;
 }
 
 QString Koushin::ActionManager::expandParameter(QString line)
