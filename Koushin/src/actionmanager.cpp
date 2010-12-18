@@ -140,6 +140,12 @@ bool Koushin::ActionManager::addGlobalParameter(QString name, QString content)
     kDebug() << "Use only letters and numbers for parameter names: " << name;
     return false;
   }
+  //test for endless loops
+  if(expandParameter(content).contains("#" + name + "#"))
+  {
+    kDebug() << "Contect contains itself after expanding: " << name << " = " << expandParameter(content);
+    return false;
+  }
   m_globalParameters.insert(name, content);
   return true;
 }
@@ -156,8 +162,16 @@ int Koushin::ActionManager::evalParameter(QString parameter)
   QScriptEngine calc;
   int result = calc.evaluate(parameter).toInteger();
 #else
-  Parser calc(parameter.toLatin1().data());
-  int result = (int)calc.Evaluate();
+  Parser calc(parameter.toAscii().constData());
+  int result = 0;
+  try {
+    int result = (int)calc.Evaluate();
+  }
+  catch (std::exception & e)
+  {
+    kDebug() << "Can not calculate " << parameter << ". Reason: " << e.what ();
+  }
+  return result;
 #endif
     return result;
 }
@@ -165,10 +179,15 @@ int Koushin::ActionManager::evalParameter(QString parameter)
 QString Koushin::ActionManager::expandParameter(QString line)
 {
   QString part;
-  while((part = line.section("#", 1, 1)) != "") {
+  int replacePart = 1;
+  while((part = line.section("#", replacePart, replacePart)) != "") {
     kDebug() << "Found part = " << part;
-    line.replace("#" + part + "#", expandParameter(m_globalParameters.value(part)));
-    kDebug() << "Line after replacement = " << line;
+    if(m_globalParameters.keys().contains("#" + part + "#")) {
+      line.replace("#" + part + "#", expandParameter(m_globalParameters.value(part)));
+    } else {
+      replacePart += 2; //jump to next part => skip unknown Parameter
+    }
   }
+  kDebug() << "Line after replacement = " << line;
   return line;
 }
