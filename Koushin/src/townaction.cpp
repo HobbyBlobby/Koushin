@@ -60,7 +60,7 @@ bool Koushin::TownAction::execute()
     }
     catch (std::exception & e) {return false;}
   }
-  if(m_action == "decreaseResource") {
+  else if(m_action == "decreaseResource") {
     Koushin::ResourceType type = Koushin::Town::getResourceTypeFromQString(m_parameters[0]);
     try{
       int diff = m_recipient->getOwner()->getActionManager()->evalContent(m_parameters.value(1, QString("0")));
@@ -68,7 +68,7 @@ bool Koushin::TownAction::execute()
     }
     catch (std::exception & e) {return false;}
   }
-  if(m_action == "setResourceCapacity") {
+  else if(m_action == "setResourceCapacity") {
     Koushin::ResourceType type = Koushin::Town::getResourceTypeFromQString(m_parameters[0]);
     try{
       int value = m_recipient->getOwner()->getActionManager()->evalContent(m_parameters.value(1, QString("0")));

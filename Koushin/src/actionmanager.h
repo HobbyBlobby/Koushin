@@ -40,6 +40,8 @@ namespace Koushin {
       Player* getOwner() {return m_owner;}
       bool addGlobalParameter(QString name, QString content);
       QString getGlobalParameterValue(QString name) const {return m_globalParameters.value(name);}
+      bool setGlobalParameterContent(QString name, QString content);
+      bool addContentToGlobalParameter(QString name, QString content);
       int evalParameter(QString parameter);
       int evalContent(QString content, QString parameter = "NOT_IN_LIST");
     private:

@@ -133,7 +133,7 @@ void Koushin::ActionManager::setStatusOfDependensies(Koushin::Action* action)
 bool Koushin::ActionManager::addGlobalParameter(QString name, QString content)
 {
   if(m_globalParameters.keys().contains(name)) {
-    kDebug() << "Parameter allready in use. I do not overwright it: " << name;
+    kDebug() << "Parameter allready in use. I do not overwright it. Use instead addToGlobal or setGlobalTo or addToGlobal. " << name;
     return false;
   }
   if(name.contains(QRegExp("![A-Za-z0-9]*"))) {
@@ -205,4 +205,25 @@ QString Koushin::ActionManager::expandParameter(QString line, QString name)
   }
   kDebug() << "Line after replacement = " << line;
   return line;
+}
+
+bool Koushin::ActionManager::addContentToGlobalParameter ( QString name, QString content )
+{
+  if(!m_globalParameters.keys().contains(name)) {
+    kDebug() << "Global not known: " << name;
+    return false;
+  }
+  m_globalParameters.insert(name, m_globalParameters.value(name) + content);
+  kDebug() << "new content is " << m_globalParameters.value(name);
+  return true;
+}
+
+bool Koushin::ActionManager::setGlobalParameterContent ( QString name, QString content )
+{
+  if(!m_globalParameters.keys().contains(name)) {
+    kDebug() << "Global not known: " << name;
+    return false;
+  }
+  m_globalParameters.insert(name, content); //overwrites content, because it is not a QMultiMap
+  return true;
 }

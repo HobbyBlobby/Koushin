@@ -34,7 +34,7 @@ namespace Koushin {
       virtual ~PlayerAction();
       static QMap<QString, ActionProperties> getPossibleActions();
       actionType getActionType() {return Koushin::actionForPlayer;}
-      bool execute() {return false;}
+      bool execute();
     private:  
       Player* m_recipient;
   };

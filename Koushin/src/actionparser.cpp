@@ -152,10 +152,6 @@ bool Koushin::ActionParser::parseGlobals(const KConfigGroup& parameterList)
     kDebug() << "################## Add Global " << parameter << "=" << parameterList.readEntry(parameter, QString()) << "########";
     m_player->getActionManager()->addGlobalParameter(parameter, parameterList.readEntry(parameter, QString()));
   }
-  foreach(QString parameter, parameterList.keyList()) {
-//     store parameter -> pass to manager
-//     m_player->getActionManager()->evalParameter(parameter);
-  }
   return true;
 }
 
@@ -186,10 +182,15 @@ void Koushin::ActionParser::addRequirementsToActions(QStringList conditionString
 
 bool Koushin::ActionParser::findPlayer(const QString& parameter)
 {
-  if (parameter.isEmpty()) return 0;
   if (parameter == "current" || parameter == "") {//current is default, of no parameter is given
-    m_player = ((Building*)m_owner)->getTown()->getOwner();
-    return 1;
+    switch(m_owner->getActionOwnerType()) {
+      case Koushin::actionOwnerIsBuilding:
+	m_player = ((Building*)m_owner)->getTown()->getOwner();
+	return true;
+      default:
+	kDebug() << "The ActionOwner is not kwown.";
+	return false;
+    }
   }
   return 0;
 }
@@ -200,13 +201,13 @@ bool Koushin::ActionParser::findTown(const QString& parameter)
     switch(m_owner->getActionOwnerType()) {
       case Koushin::actionOwnerIsBuilding:
 	m_town = ((Building*)m_owner)->getTown();
-	return 1;
+	return true;
       case Koushin::actionOwnerIsSpell:
 	kDebug() << "Spells is still not handeled. Sorry.";
-	return 0;
+	return false;
       default:
 	kDebug() << "The ActionOwner is not kwown.";
-	return 0;
+	return false;
     }
   } else if (parameter == "random") {
     switch(m_owner->getActionOwnerType()) {
