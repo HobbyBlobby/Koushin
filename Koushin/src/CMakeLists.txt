@@ -23,5 +23,5 @@ set(QT_USE_QTSCRIPTTOOLS TRUE)
 set(CMAKE_CXX_FLAGS "-fexceptions")
 
 kde4_add_executable(Koushin ${Koushin_SRCS} ${Koushin_GUI})
-target_link_libraries(Koushin ${KDE4_KDEUI_LIBS} ${KDEGAMES_LIBRARY})
+target_link_libraries(Koushin ${KDE4_KDEUI_LIBS} ${KDEGAMES_LIBRARY} ${QT_QTSCRIPT_TOOLS_LIBRARY_RELEASE})
 install(TARGETS Koushin ${INSTALL_TARGETS_DEFAULT_ARGS} )

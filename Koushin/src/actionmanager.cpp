@@ -24,7 +24,7 @@
 #include <kdebug.h>
 
 #include <cstring>
-// #include <QScriptEngine>
+#include <QScriptEngine>
 #include "Extern/parser/parser.h"
 
 Koushin::ActionManager::ActionManager(Player* owner)
@@ -158,13 +158,12 @@ int Koushin::ActionManager::evalContent ( QString content, QString parameter )
     throw std::runtime_error(QString("Parameter not expandable:" + parameter).toAscii().constData());
     return 0;
   }
-#if 0 
-//TODO: use this code later when QScriptEngine works
-  if(QScriptEngine::checkSyntax(parameter).state() != QScriptSyntaxCheckResult::Valid) {
-    kDebug() << "Sorry, but can not calculate string: " << parameter;
+#if 1
+  if(QScriptEngine::checkSyntax(content).state() != QScriptSyntaxCheckResult::Valid) {
+    kDebug() << "Sorry, but can not calculate string: " << content;
   }
   QScriptEngine calc;
-  int result = calc.evaluate(parameter).toInteger();
+  return calc.evaluate(content).toInteger();
 #else
   Parser calc(content.toAscii().constData());
   try {
