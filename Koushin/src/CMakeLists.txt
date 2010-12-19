@@ -16,7 +16,6 @@ set(Koushin_SRCS
   GUI/constructionmenu.cpp
   GUI/resourceinfowidget.cpp
   GUI/townwidget.cpp
-  Extern/parser/parser.cpp
 )
 
 set(QT_USE_QTSCRIPTTOOLS TRUE)
