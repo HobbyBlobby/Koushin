@@ -23,7 +23,8 @@
 #include "actionmanager.h"
 
 Koushin::PlayerAction::PlayerAction(Player* recipient)
-  : m_recipient(recipient)
+  : Koushin::Action()
+  , m_recipient(recipient)
 {
 
 }

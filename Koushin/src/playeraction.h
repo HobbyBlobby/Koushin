@@ -37,6 +37,7 @@ namespace Koushin {
       bool execute();
     private:  
       Player* m_recipient;
+      QList<Player* > m_recipients;
   };
 }
 #endif // PLAYERACTION_H

@@ -86,6 +86,17 @@ QList<Koushin::Action* > Koushin::ActionParser::parseConfig(const KConfigGroup& 
 
 bool Koushin::ActionParser::parseRecipient(const QString& configLine)
 {
+  QString linePart;
+  bool succes;
+  if(!(linePart = configLine.section(QRegExp("player([A-Za-z0-9\,=]*)"))).isEmpty()) { //find: player(all,minPoints=1000)
+    succes = findPlayer(linePart);
+  } else {
+    succes = findPlayer("player()");
+  }
+  if(!succes) {
+    kDebug() << "No reasonable player found" << linePart;
+    return false;
+  }
   QStringList recipient = configLine.split("->");
   for (QStringList::const_iterator it = recipient.begin(); it != recipient.end();) {
     QPair<QString, QStringList> pair =  separateNameAndParameters(*it);

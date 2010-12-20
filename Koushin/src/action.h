@@ -73,6 +73,8 @@ namespace Koushin {
 //   FunctionBase::~FunctionBase() {}
 #endif // FUNCTION_BASE
 
+  ///@todo store all parameter as strings -> call parser while execution!!!
+  
   class Action {
     public:
       Action();
@@ -102,9 +104,10 @@ namespace Koushin {
       void resetAction();
     protected:
       QStringList m_parameters;
-      QString m_action;
+      QString m_action; ///good start!
+      QStringList m_recipients; ///@todo create get'ter and set'ter
       int m_priority;
-      QMap<Action*, bool > m_requirements;
+      QMap<Action*, bool > m_requirements; ///keep this system -> action pointers can not change in runtime!
       QMap<Action*, bool > m_requirementFor;
       actionStatus m_status;
       QList<Action* > m_openRequirements;
