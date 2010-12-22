@@ -61,8 +61,10 @@ namespace Koushin {
        * 
        * @return QString The name of the action
        **/
-      QString getActionString() const {return ActionParser::separateNameAndParameters(m_config->readEntry("action", QString())).first;}
-      QStringList getParameters() const {return ActionParser::separateNameAndParameters(m_config->readEntry("action", QString())).second;}
+      QString getActionString() const {
+	return ActionParser::separateNameAndParameters(m_config->readEntry("action", QString())).first;}
+      QStringList getParameters() const {
+	return ActionParser::separateNameAndParameters(m_config->readEntry("action", QString())).second;}
       
       /**
        * @brief This function executes the specified action.

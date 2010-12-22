@@ -88,10 +88,10 @@ void Koushin::Player::buildingChosen(QString buildingConfig)
   }
   Koushin::Building* newBuilding = new Koushin::Building(m_townList.first());
   m_townList.first()->addBuilding(newBuilding, m_buildingLot);
-  KConfig config(buildingConfig);
-  newBuilding->setName(KConfigGroup(&config , "general").readEntry("name", QString("NoName")));
+  KConfig* config = new KConfig(buildingConfig);
+  newBuilding->setName(KConfigGroup(config , "general").readEntry("name", QString("NoName")));
 
-  KConfigGroup tasksGroup(&config, "tasks");
+  KConfigGroup tasksGroup(config, "tasks");
   QList<Action* > actions = ActionParser::createActionsFromConfig(tasksGroup, newBuilding);
   m_actionManager->addAction(actions);
   Koushin::ActionParser::parseGlobals(tasksGroup.group("globals"), m_actionManager);
