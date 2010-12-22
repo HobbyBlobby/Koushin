@@ -25,27 +25,17 @@
 #include <QList>
 #include <QStringList>
 #include <kdebug.h>
+#include <KConfigGroup>
+#include <kconfig.h>
+#include "actionparser.h"
 
-// this macro i will use later, but now I makes more Problems then solutions
-#if 0
-#define PUBLIC_ACTION getFunctionName(__FUNCTION__)
-#define COMMA ,
-#define DEFINE_PUBLIC_ACTION(name, paramTypes, params)			\
-  class name: public FunctionBase { public:				\
-    name(Action* action) : m_action(action) {}				\
-    bool executeFunction(paramTypes) {return m_action->name(params);}	\
-    using FunctionBase::executeFunction;				\
-    Action* m_action;							\
-  };									
-#endif
-  
 namespace Koushin {
-  enum actionType {
-    noActionType = 0,
-    actionForPlayer,
-    actionForTown,
-    actionForCitizen
-  };
+  class Town;
+  class Player;
+  class Building;
+  class Town;
+  class ActionManager;
+  class ActionObject;
 
   enum actionStatus {
     actionNotStarted = 0,
@@ -54,65 +44,68 @@ namespace Koushin {
     actionWaitsForRequirement
   };
   
-  class ActionProperties {
-    public:
-      ActionProperties(QStringList parameterTypes = QStringList(), QString description = "")
-	: parameterTypes(parameterTypes)
-	, description(description) {}
-      QStringList parameterTypes;
-      QString description;
-  };
-
-#ifndef FUNCTION_BASE
-#define FUNCTION_BASE
-  class FunctionBase {
-    public:
-      virtual bool executeFunction() = 0;
-      virtual ~FunctionBase() = 0;
-  };
-//   FunctionBase::~FunctionBase() {}
-#endif // FUNCTION_BASE
-
-  ///@todo store all parameter as strings -> call parser while execution!!!
-  
   class Action {
     public:
       Action();
       virtual ~Action();
-      virtual bool execute() = 0;
-      virtual actionType getActionType() = 0;
-      QMap<QString, ActionProperties> getPossibleActions();
             
-      void addAction(QString actionName) {m_action = actionName;}
-      void addParameter(QString para) {m_parameters << para;}
-      void addParameters(QStringList paras) {m_parameters << paras;}
-      bool addRequirement(Action* action, bool positiv = true);
-      bool setAsRequirementFor(Action* action, bool positiv = true);
       actionStatus getStatus() const {return m_status;}
-      void setPriority(int prio) {m_priority = prio;}
-      int getPriority() const {return m_priority;}
-      void setStatus(actionStatus status) {m_status = status;}
+      int getPriority() const {return m_config->readEntry("priority", QString(10)).toInt();}
       QMap<Action*, bool> getRequirements() const {return m_requirements;}
       QMap<Action*, bool> getDependencies() const {return m_requirementFor;}
-      QString getActionString() const {return m_action;}
-      QStringList getParameters() const {return m_parameters;}
       QList<Action* > getRecursiveRequirements(Action* action);
+ 
+      /**
+       * @brief This functions reads the action name from the configuration.
+       *The configuration must contain a key called \c action that holds a value like <tt>functionName(para1, para2,...)</tt>. To separate the function name from the parameters it uses the static \c separateNameAndParameters from the ActionParser.
+       * 
+       * @return QString The name of the action
+       **/
+      QString getActionString() const {return ActionParser::separateNameAndParameters(m_config->readEntry("action", QString())).first;}
+      QStringList getParameters() const {return ActionParser::separateNameAndParameters(m_config->readEntry("action", QString())).second;}
+      
+      /**
+       * @brief This function executes the specified action.
+       * At first it checks, if all necessary parameters are given. Then it uses the parser to create the right objects to the parameter. Finally it calls the belonging execution action.
+       * 
+       * Checking the status and the requirements is part of the ActionManager.
+       *
+       * @return bool The execution status. If all parameters are correct and the sub-execution gives \c true this functions returns \c true, else \c false.
+       **/
+      bool execute(bool failIfOneRecipientFail = false);
+      /**
+       * @brief Use this function to store the configuration.
+       *
+       * @param config The configuration part of the <tt>[tasks][taskname]</tt> group.
+       * @return void
+       **/
+      void setConfiguration(KConfigGroup* config) {m_config = config;}
+      void setOwner(ActionObject* owner) {m_owner = owner;}
+      ActionObject* getOwner() {return m_owner;}
+      void setStatus(actionStatus status) {m_status = status;}
+      bool addRequirement(Action* action, bool positiv = true);
+      
       void closeRequirement(Action* action) {m_openRequirements.removeAll(action);}
       bool noOpenRequirements() const {return m_openRequirements.isEmpty();}
-      
+
       bool requirementsFinished();
       void resetAction();
     protected:
-      QStringList m_parameters;
-      QString m_action; ///good start!
-      QStringList m_recipients; ///@todo create get'ter and set'ter
-      int m_priority;
+      KConfigGroup* m_config;
+      actionStatus m_status;
+      ActionObject* m_owner; //need this information to parse recipient using "current"
       QMap<Action*, bool > m_requirements; ///keep this system -> action pointers can not change in runtime!
       QMap<Action*, bool > m_requirementFor;
-      actionStatus m_status;
       QList<Action* > m_openRequirements;
+      
+    private:
+      bool executePlayerAction(Player* recipient, const QPair<QString, QStringList>& action);
+      bool executeTownAction(Town* recipient, const QPair<QString, QStringList>& action);
+      bool executeBuildingAction(Building* recipient, const QPair<QString, QStringList>& action);
+      bool executeActionObjectAction(ActionObject* recipient, const QPair<QString, QStringList>& action);
+      bool setAsRequirementFor(Action* action, bool positiv = true);
+      bool possibleParametersGiven(ActionObject* recipient, QString actionName, QStringList parameters);
   };
-//   DEFINE_PUBLIC_ACTION(getFunctionName,QString action COMMA int a,action COMMA a)
 }
 
 

@@ -23,6 +23,7 @@
 
 #include <QMap>
 #include <QPoint>
+#include "actionobject.h"
 
 namespace KoushinGUI {
   class TownWidget;
@@ -51,7 +52,7 @@ namespace Koushin {
   
   class Building;
   class Player;
-  class Town {
+  class Town : public ActionObject {
     public:
       Town(Player* owner);
       virtual ~Town();
@@ -69,6 +70,10 @@ namespace Koushin {
       
       static ResourceType getResourceTypeFromQString(QString resourceName);
       
+      const actionObjectType getActionObjectType() {return actionObjectIsTown;};
+      const QMap<QString, ActionProperties> getPossibleActions() const;
+      const QString getLocal(QString name, QString additionalContent = QString());
+
     private:
       Player* m_owner;
       QMap<ResourceType, Resource*> m_resources;

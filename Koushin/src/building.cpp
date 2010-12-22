@@ -37,6 +37,20 @@ Koushin::Building::~Building()
 
 }
 
+const QMap< QString, Koushin::ActionProperties > Koushin::Building::getPossibleActions() const
+{
+  return Koushin::ActionObject::getPossibleActions();
+}
+
+const QString Koushin::Building::getLocal(QString name, QString additionalContent)
+{
+  if(m_globalReplacements.contains(name))
+    return m_globalReplacements.value(name);
+  if(m_globalAdditions.contains(name))
+    additionalContent += m_globalAdditions.value(name);
+  return m_town->getLocal(name, additionalContent);
+}
+
 void Koushin::Building::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget)
 {
   Q_UNUSED(option)
@@ -45,8 +59,6 @@ void Koushin::Building::paint(QPainter* painter, const QStyleOptionGraphicsItem*
   m_textItem->setPlainText(m_name);
   m_textItem->setScale(1 / m_textItem->boundingRect().width());
   m_textItem->setPos(0, 0.5 - m_textItem->boundingRect().height()/(2*m_textItem->boundingRect().width()));
-//   kDebug() << "Update of Building " << m_name;
-  // yPos = 0.5 - (textheight/2 * scalefactor)
 }
 
 QRectF Koushin::Building::boundingRect() const

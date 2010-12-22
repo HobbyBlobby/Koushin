@@ -26,6 +26,8 @@
 #include <QPoint>
 #include <QMap>
 
+#include "actionobject.h"
+
 namespace KoushinGUI {
   class ConstructionMenu;
 class ResourceInfoWidget;
@@ -34,7 +36,7 @@ class ResourceInfoWidget;
 namespace Koushin {
   class ActionManager;
   class Town;
-  class Player : public QObject {
+  class Player : public QObject, public ActionObject {
     Q_OBJECT
     public:
       Player();
@@ -45,6 +47,10 @@ namespace Koushin {
       void addTown(Town* town) {m_townList << town;}
       void setBuildingList(QMap<QString, QString> buildings) {m_listOfAllBuildings = buildings;}
       void setResourceInfoWidget(KoushinGUI::ResourceInfoWidget* widget) {m_resourceInfo = widget;}
+      
+      const actionObjectType getActionObjectType() {return actionObjectIsPlayer;}
+      const QMap<QString, ActionProperties> getPossibleActions() const;
+      const QString getLocal(QString name, QString additionalContent = QString());
       
     public Q_SLOTS:
       void townClicked(QPoint point);

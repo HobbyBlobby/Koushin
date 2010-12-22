@@ -49,7 +49,6 @@ int main(int argc, char** argv)
     qsrand(std::time(0));
     
     Koushin::Player* tester = new Koushin::Player;
-    new Koushin::ActionManager(tester);
     Koushin::Town* town = new Koushin::Town(tester);
 //     Koushin::Building* testbldg = new Koushin::Building(town);
     

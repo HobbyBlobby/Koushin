@@ -23,23 +23,24 @@
 
 #include <QGraphicsItem>
 
-#include "actionowner.h"
 #include "town.h"
+#include "actionobject.h"
 
 namespace Koushin {
-  class Building : public QGraphicsItem, public ActionOwner
-  {
+  class Building : public QGraphicsItem, public ActionObject {
     public:
       Building(Town* town);
       virtual ~Building();
-      actionOwnerType getActionOwnerType() {return actionOwnerIsBuilding;};
       
       void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget = 0);
       QRectF boundingRect() const;
       void setName(QString name) {m_name = name;}
       QString getName() const {return m_name;}
-      
       Town* getTown() {return m_town;}
+
+      const actionObjectType getActionObjectType() {return actionObjectIsBuiling;};
+      const QMap<QString, ActionProperties> getPossibleActions() const;
+      const QString getLocal(QString name, QString additionalContent = QString());
     private:
       Town* m_town;
       QString m_name;

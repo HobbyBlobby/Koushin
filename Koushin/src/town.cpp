@@ -40,6 +40,33 @@ Koushin::Town::~Town()
 
 }
 
+const QMap< QString, Koushin::ActionProperties > Koushin::Town::getPossibleActions() const
+{
+  QMap<QString, Koushin::ActionProperties> actions;
+  actions.insert("increaseResource", Koushin::ActionProperties(
+    QStringList() << "string" << "int",
+    "Town: Add the given parameter to the given resource. string=ResourceName, int=difference"));
+  actions.insert("decreaseResource", Koushin::ActionProperties(
+    QStringList() << "string" << "int",
+    "Town: Removes the given parameter from the given resource. string=ResourceName, int=difference"));
+  actions.insert("setResourceCapacity", Koushin::ActionProperties(
+    QStringList() << "string" << "int",
+    "Town: Sets the capacity of a given resource to the given value. string=ResourceName, int=new value"));
+  foreach(QString name, Koushin::ActionObject::getPossibleActions().keys())
+    actions.insert(name, Koushin::ActionObject::getPossibleActions().value(name));
+  return actions;
+}
+
+const QString Koushin::Town::getLocal(QString name, QString additionalContent)
+{
+  if(m_globalReplacements.contains(name))
+    return m_globalReplacements.value(name);
+  if(m_globalAdditions.contains(name))
+    additionalContent += m_globalAdditions.value(name);
+  return m_owner->getLocal(name, additionalContent);
+}
+
+
 bool Koushin::Town::changeResource(Koushin::ResourceType type, int difference)
 {
   Koushin::Resource* res = m_resources.value(type);

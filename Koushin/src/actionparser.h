@@ -30,6 +30,10 @@
 #include <KConfigGroup>
 
 namespace Koushin {
+  class Building;
+  class Player;
+  class ActionObject;
+  class ActionManager;
   class Action;
   class ActionOwner;
   class Player;
@@ -71,9 +75,18 @@ namespace Koushin {
        *
        * @param owner The owner is user to parse the recipient. Only with the owner it is possible to find the "current" player or town. Possible owners are in the moment only \class Building s.
        **/
-      ActionParser(ActionOwner* owner);
-      virtual ~ActionParser();
+//       ActionParser(ActionOwner* owner);
+//       virtual ~ActionParser();
       
+      static QList<Action* > createActionsFromConfig(const KConfigGroup& tasksGroup, ActionObject* newOwner);
+      static QPair< QString, QStringList > separateNameAndParameters(QString string);
+      static QList<ActionObject* > parseRecipient(const QString& configLine, ActionObject* owner);
+      static void addRequirementsToActions(QStringList conditionStrings, QMap<QString, Action* > actions);
+      static bool parseGlobals(const KConfigGroup& parameterList, ActionManager* manager);
+      static QList<Player* > findPlayers(QStringList parameters, ActionObject* owner);
+      static QList<Town* > findTowns(QStringList parameters, ActionObject* owner, QList<Player* > players);
+      static QList<Building* > findBuildings(QStringList parameters, ActionObject* owner, QList<Town* > towns);
+
       /**
        * @brief This function organizes the main work.
        *Organizing the main work means, that this function read the appropriate keys from the KConfigGroup \c config and gives it to the correct functions. It is necessary to keep the right order of parsing. For example it is not possible to parse the action before the recipient, because only with a recipient the Action can be created.
@@ -82,8 +95,14 @@ namespace Koushin {
        * 
        * @return :Action* > The returned Action contains all parsed configurations given by \c config.
        **/
-      QList<Action* > parseConfig(const KConfigGroup& config);
-
+//       QList<Action* > parseConfig(const KConfigGroup& config);
+    /**
+     * @brief This functions separates a function name and his parameters.
+     *
+     * @param string This string normally has the form <tt>functionName(para1, para2)<tt>.
+     * 
+     * @return QPair< QString, QStringList > The QPair contains the function name and a list of all parameters.
+     **/
   private:
     /**
      * @brief This function finds the right recipient for the Action. 
@@ -93,7 +112,6 @@ namespace Koushin {
      * 
      * @return bool The status of parsing the recipient. \c false means, it is not possible to find a reasonable recipient.
      **/
-    bool parseRecipient(const QString& configLine);
     /**
      * @brief This function parses the action name.
      * The string is divided into his name and his parameters. This function also tests, if the name is in the list of possible actions (provided by the corresponding Action class) and if the number of parameters is correct.
@@ -105,7 +123,7 @@ namespace Koushin {
      * 
      * @return bool The status of parsing. \c false means, it is not possible to parse action (e.g. the parameter number is given or the action name is unknown).
      **/
-    bool parseAction(const QString& actionString, int priority);
+//     bool parseAction(const QString& actionString, int priority);
     /**
      * @brief The function parses the global variables.
      * The global variables (here called \b globals) provide a system to influence other actions. Before you use globals, it is necessary to register the globals in the ActionManager (provided by the \c owner). This function parses the configuration groups called \c globals, given in the configuration file like here:
@@ -120,7 +138,6 @@ namespace Koushin {
      * 
      * @return bool The status of parsing. There is nothing to check, so it will always return \c true.
      **/
-    bool parseGlobals(const KConfigGroup& parameterList);
     /**
      * @brief This function searches a reasonable player.
      * The behaviour of this function depends on the given owner type. In that moment only the Building is implemented as ActionOwner. For this type the player will result from the the owner of the Town the Building belongs to.
@@ -130,7 +147,7 @@ namespace Koushin {
      * 
      * @return bool The status of parsing. Of it is possible to find a player then the function return \c true, else \c false.
      **/
-    bool findPlayer(const QString& parameter);
+//     bool findPlayer(const QString& parameter);
     /**
      * @brief This function searches a reasonable town.
      * Later it should by possible to influence other players (e.q. with a spell or technology).
@@ -139,7 +156,7 @@ namespace Koushin {
      * 
      * @return bool The status of parsing. Of it is possible to find a player then the function return \c true, else \c false.
      **/
-    bool findTown(const QString& parameter);
+//     bool findTown(const QString& parameter);
     /**
      * @brief This functions parses the conditions for actions.
      * It is possible to add conditions to actions. Theses conditions can influence the order of executing actions. Independent from the priority the actions waits until the requirements are executed. You can decide if the actions is executed if the requirement succeeded of failed.
@@ -150,34 +167,6 @@ namespace Koushin {
      * 
      * @return void
      **/
-    void addRequirementsToActions(QStringList conditionStrings, QMap<QString, Action* > actions);
-      
-    /**
-     * @brief This functions separates a function name and his parameters.
-     *
-     * @param string This string normally has the form <tt>functionName(para1, para2)<tt>.
-     * 
-     * @return QPair< QString, QStringList > The QPair contains the function name and a list of all parameters.
-     **/
-    QPair<QString, QStringList > separateNameAndParameters(QString string);
-    /**
-     * @brief This functions checks if the given parameter are possible.
-     * Now this function checks only if the number of parameters are like expected and the function is defined.
-     * \todo try to evaluate the parameter
-     * 
-     *
-     * @param actionName With this action name the ActionProperties are received. These properties contain the number and type of parameter expected.
-     * 
-     * @param parameters The parameters which should be used to call the action \c actionName.
-     * 
-     * @return bool If the parameter are possible the function return \c true, else \c false.
-     **/
-    bool possibleParametersGiven(QString actionName, QStringList parameters);
-      
-    Action* m_action;
-      Player* m_player;
-      Town* m_town;
-      ActionOwner* m_owner;
   };
 }
 

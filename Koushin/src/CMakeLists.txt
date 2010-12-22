@@ -1,18 +1,19 @@
 set(Koushin_SRCS
   action.cpp
   actionmanager.cpp
-  actionowner.cpp
+  actionobject.cpp
+#   actionowner.cpp
   actionparser.cpp
   building.cpp
   citizen.cpp
-  citizenaction.cpp
+#   citizenaction.cpp
   Koushin.cpp
   main.cpp
   player.cpp
-  playeraction.cpp
+#   playeraction.cpp
   population.cpp
   town.cpp
-  townaction.cpp
+#   townaction.cpp
   GUI/constructionmenu.cpp
   GUI/resourceinfowidget.cpp
   GUI/townwidget.cpp

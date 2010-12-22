@@ -29,9 +29,10 @@
 #include "actionparser.h"
 #include "actionmanager.h"
 #include "GUI/resourceinfowidget.h"
+#include "action.h"
 
 Koushin::Player::Player()
-  : m_actionManager(0)
+  : m_actionManager(new Koushin::ActionManager(this))
   , m_buildingLot(QPoint(0,0))
   , m_constructionMenu(0)
 {
@@ -40,7 +41,31 @@ Koushin::Player::Player()
 
 Koushin::Player::~Player()
 {
+  delete m_actionManager;
+}
 
+
+const QMap< QString, Koushin::ActionProperties > Koushin::Player::getPossibleActions() const
+{
+  QMap<QString, Koushin::ActionProperties> actions;
+  actions.insert("setGlobalTo", Koushin::ActionProperties(
+    QStringList() << "string" << "string",
+    "Player: overwrites a value. string=NameOfGlobal, string=NewValue "));
+  actions.insert("addToGlobal", Koushin::ActionProperties(
+    QStringList() << "string" << "string",
+    "Player: add a string to a global. string=NameOfGlobal, string=AdditionalContent"));
+  foreach(QString name, Koushin::ActionObject::getPossibleActions().keys())
+    actions.insert(name, Koushin::ActionObject::getPossibleActions().value(name));
+  return actions;
+}
+
+const QString Koushin::Player::getLocal(QString name, QString additionalContent)
+{
+  if(m_globalReplacements.contains(name))
+    return m_globalReplacements.value(name);
+  if(m_globalAdditions.contains(name))
+    additionalContent += m_globalAdditions.value(name);
+  return m_actionManager->getGlobalParameterValue(name) + additionalContent;
 }
 
 void Koushin::Player::townClicked(QPoint point) //create member with active town
@@ -65,12 +90,12 @@ void Koushin::Player::buildingChosen(QString buildingConfig)
   m_townList.first()->addBuilding(newBuilding, m_buildingLot);
   KConfig config(buildingConfig);
   newBuilding->setName(KConfigGroup(&config , "general").readEntry("name", QString("NoName")));
-  KConfigGroup tasksGroup(&config, "tasks");
 
-  Koushin::ActionParser parser(newBuilding);
-    QList<Koushin::Action* > actions = parser.parseConfig(tasksGroup);
-    m_actionManager->addAction(actions);
-//   }
+  KConfigGroup tasksGroup(&config, "tasks");
+  QList<Action* > actions = ActionParser::createActionsFromConfig(tasksGroup, newBuilding);
+  m_actionManager->addAction(actions);
+  Koushin::ActionParser::parseGlobals(tasksGroup.group("globals"), m_actionManager);
+
   m_townList.first()->getTownWidget()->drawBuildings(m_townList.first()->getBuildings());
 
 //   m_townList.first()->getTownWidget()->scene()->removeWidget(m_constructionMenu);
