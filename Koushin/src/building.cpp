@@ -37,7 +37,7 @@ Koushin::Building::~Building()
 
 }
 
-const QMap< QString, Koushin::ActionProperties > Koushin::Building::getPossibleActions() const
+const QMap< QString, Koushin::ActionProperties > Koushin::Building::getPossibleActions()
 {
   return Koushin::ActionObject::getPossibleActions();
 }

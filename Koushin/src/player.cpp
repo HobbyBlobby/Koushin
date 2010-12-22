@@ -45,7 +45,7 @@ Koushin::Player::~Player()
 }
 
 
-const QMap< QString, Koushin::ActionProperties > Koushin::Player::getPossibleActions() const
+const QMap< QString, Koushin::ActionProperties > Koushin::Player::getPossibleActions()
 {
   QMap<QString, Koushin::ActionProperties> actions;
   actions.insert("setGlobalTo", Koushin::ActionProperties(

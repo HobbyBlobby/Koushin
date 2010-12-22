@@ -40,7 +40,7 @@ Koushin::Town::~Town()
 
 }
 
-const QMap< QString, Koushin::ActionProperties > Koushin::Town::getPossibleActions() const
+const QMap< QString, Koushin::ActionProperties > Koushin::Town::getPossibleActions()
 {
   QMap<QString, Koushin::ActionProperties> actions;
   actions.insert("increaseResource", Koushin::ActionProperties(

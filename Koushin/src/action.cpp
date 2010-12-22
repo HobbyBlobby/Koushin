@@ -26,6 +26,7 @@
 #include "town.h"
 #include "actionmanager.h"
 #include "player.h"
+#include "building.h"
 
 Koushin::Action::Action()
   : m_config(0)
@@ -218,11 +219,19 @@ bool Koushin::Action::executeActionObjectAction(Koushin::ActionObject* recipient
 
 bool Koushin::Action::possibleParametersGiven(Koushin::ActionObject* recipient, QString actionName, QStringList parameters)
 {
-  if(!recipient || !recipient->getPossibleActions().contains(actionName)) {
-    kDebug() << "Action is not in list of possible action";
+  QMap<QString, Koushin::ActionProperties> possibleActions;
+  if(recipient->getActionObjectType() == Koushin::actionObjectIsBuiling)
+    possibleActions = Koushin::Building::getPossibleActions();
+  if(recipient->getActionObjectType() == Koushin::actionObjectIsTown)
+    possibleActions = Koushin::Town::getPossibleActions();
+  if(recipient->getActionObjectType() == Koushin::actionObjectIsPlayer)
+    possibleActions = Koushin::Player::getPossibleActions();
+  
+  if(!recipient || !possibleActions.contains(actionName)) {
+    kDebug() << "Action is not in list of possible actions: " << actionName;
     return false;
   }
-  Koushin::ActionProperties properties = recipient->getPossibleActions().value(actionName);
+  Koushin::ActionProperties properties = possibleActions.value(actionName);
   if (parameters.length() != properties.parameterTypes.length()) {
     kDebug() << "Wrong parameter Number: Expected = " << properties.parameterTypes.length() << "; Given = " << parameters.length();
     return false;

@@ -219,7 +219,6 @@ QList< Koushin::Building* > Koushin::ActionParser::findBuildings(QStringList par
   return buildings;
 }
 
-
 /*  
   QStringList recipient = configLine.split("->");
   for (QStringList::const_iterator it = recipient.begin(); it != recipient.end();) {

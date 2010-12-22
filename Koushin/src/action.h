@@ -50,7 +50,7 @@ namespace Koushin {
       virtual ~Action();
             
       actionStatus getStatus() const {return m_status;}
-      int getPriority() const {return m_config->readEntry("priority", QString(10)).toInt();}
+      int getPriority() const {return m_config->readEntry("priority", QString("10")).toInt();}
       QMap<Action*, bool> getRequirements() const {return m_requirements;}
       QMap<Action*, bool> getDependencies() const {return m_requirementFor;}
       QList<Action* > getRecursiveRequirements(Action* action);

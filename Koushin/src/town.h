@@ -71,7 +71,7 @@ namespace Koushin {
       static ResourceType getResourceTypeFromQString(QString resourceName);
       
       const actionObjectType getActionObjectType() {return actionObjectIsTown;};
-      const QMap<QString, ActionProperties> getPossibleActions() const;
+      static const QMap<QString, ActionProperties> getPossibleActions();
       const QString getLocal(QString name, QString additionalContent = QString());
 
     private:

@@ -39,7 +39,7 @@ namespace Koushin {
       Town* getTown() {return m_town;}
 
       const actionObjectType getActionObjectType() {return actionObjectIsBuiling;};
-      const QMap<QString, ActionProperties> getPossibleActions() const;
+      static const QMap<QString, ActionProperties> getPossibleActions();
       const QString getLocal(QString name, QString additionalContent = QString());
     private:
       Town* m_town;

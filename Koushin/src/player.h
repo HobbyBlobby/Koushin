@@ -49,7 +49,7 @@ namespace Koushin {
       void setResourceInfoWidget(KoushinGUI::ResourceInfoWidget* widget) {m_resourceInfo = widget;}
       
       const actionObjectType getActionObjectType() {return actionObjectIsPlayer;}
-      const QMap<QString, ActionProperties> getPossibleActions() const;
+      static const QMap<QString, ActionProperties> getPossibleActions();
       const QString getLocal(QString name, QString additionalContent = QString());
       
     public Q_SLOTS:
