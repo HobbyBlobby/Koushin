@@ -42,7 +42,7 @@ namespace Koushin {
    * @class ActionParser
    * @brief This class interprets the tasks configuration and creates a appropriate Action.
    * 
-   * This class handles all string interpretation work. It also check, if the number of given parameter are possible and if the given action name is known. Therefor it use the \c getPossibleActions() function provided by the associated Action class.
+   * This class handles all string interpretation work. It is pure static. So nothing is stored here.
    * 
    * The configuration should contain a group with:
    * \code
