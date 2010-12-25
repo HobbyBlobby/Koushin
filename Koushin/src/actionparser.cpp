@@ -42,7 +42,7 @@ QPair< QString, QStringList > Koushin::ActionParser::separateNameAndParameters(Q
   return QPair<QString, QStringList>(actionName, parameters);
 }
 
-QList< Koushin::Action* > Koushin::ActionParser::createActionsFromConfig(const KConfigGroup& tasksGroup, ActionObject* newOwner)
+QList< Koushin::Action* > Koushin::ActionParser::createActionsFromConfig(const KConfigGroup& tasksGroup, ActionObject* newOwner, int currentRound)
 {
   QMap<QString, Koushin::Action* > actions;
   QStringList actionNames = tasksGroup.groupList();
@@ -53,17 +53,46 @@ QList< Koushin::Action* > Koushin::ActionParser::createActionsFromConfig(const K
     Koushin::Action* newAction = new Koushin::Action();
     newAction->setOwner(newOwner);
     newAction->setConfiguration(actionGroup);
+    setRoundLimit(newAction, *actionGroup, currentRound);
     actions.insert(actionName, newAction);
   }
-//Add condtions to actions:
+//write conditions to action:
   KConfigGroup conditionGroup = tasksGroup.group("conditions");
   QStringList conditionsList;
   foreach(QString condition, conditionGroup.keyList())
     conditionsList << conditionGroup.readEntryUntranslated(condition, QString());
   addRequirementsToActions(conditionsList, actions);
-//return the actions:
+  
   return actions.values();
 }
+
+void Koushin::ActionParser::setRoundLimit(Koushin::Action* action, KConfigGroup config, int currentRound)
+{
+  if(!action) return;
+  int fromRound = config.readEntry("fromRound", int(-1));
+  int toRound = config.readEntry("toRound", int(-1));
+  int intervall = config.readEntry("intervall", int(-1));
+  if(fromRound + toRound + intervall == -3)
+    action->executeInEveryRound(true);
+  else {
+    if(fromRound <= 0)
+      fromRound = currentRound + 1; //execute next round the first time
+    else
+      fromRound += currentRound;
+    if(toRound < fromRound)
+      toRound = fromRound;
+    else
+      toRound += currentRound;
+    if(intervall <= 0)
+      intervall = 1;
+    QList<int > roundList;
+    for(int i = fromRound; i <= toRound; i += intervall)
+      roundList << i;
+    action->executeInRounds(roundList);
+    action->executeInEveryRound(false);
+  }
+}
+
 
 void Koushin::ActionParser::addRequirementsToActions(QStringList conditionStrings, QMap< QString, Koushin::Action* > actions)
 {

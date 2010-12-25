@@ -78,9 +78,11 @@ namespace Koushin {
        * 
        * @param newOwner The owner must be ActionObject and is neseccary to find the propper recipient.
        * 
+       * @param currentRound The round the Action is created.
+       * 
        * @return QList<Action* > The list containing all actions from the configuration.
        **/
-      static QList<Action* > createActionsFromConfig(const KConfigGroup& tasksGroup, ActionObject* newOwner);
+      static QList<Action* > createActionsFromConfig(const KConfigGroup& tasksGroup, ActionObject* newOwner, int currentRound);
       /**
        * @brief This function finds the recipients.
        * It is possible to have multiple recipients, e.g. all town containing a port.
@@ -163,6 +165,18 @@ namespace Koushin {
        * @return void
        **/
       static void addRequirementsToActions(QStringList conditionStrings, QMap<QString, Action* > actions);
+      /**
+       * @brief This function reads the round limits and prepares the Action.
+       *
+       * @param action The configuration of this Action will be changes.
+       * 
+       * @param config From this configuration group the parameters are read.
+       * 
+       * @param currentRount the current round to calculate the right round limitations
+       * 
+       * @return void
+       **/
+      static void setRoundLimit(Action* action, KConfigGroup config, int currentRound);
   };
 }
 

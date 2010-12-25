@@ -38,7 +38,7 @@ Koushin::ActionManager::~ActionManager()
 
 }
 
-void Koushin::ActionManager::executeActions()
+void Koushin::ActionManager::executeActions(int currentRound)
 {
 //reset all action before executing
   foreach(Action* action, m_actions.values()) { 
@@ -53,6 +53,10 @@ void Koushin::ActionManager::executeActions()
     actionsToExecute << m_actions.values(*it); //apend actions to ToDo-List
     kDebug() << "Execute jobs with priority = " << *it;
     foreach(Koushin::Action* action, actionsToExecute) {
+      if(!action->shouldExecuteInEveryRound() && !action->getExecutionRounds().contains(currentRound)) {
+	actionsToExecute.removeAll(action);
+	continue;
+      }
       if(executeAction(action)) {
 	actionsToExecute.removeAll(action); //action executed, remove from list (and all [not possible] duplicates)
       }

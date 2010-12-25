@@ -63,6 +63,7 @@ namespace Koushin {
       QPoint m_buildingLot;
       KoushinGUI::ConstructionMenu* m_constructionMenu;
       KoushinGUI::ResourceInfoWidget* m_resourceInfo;
+      int m_currentRound;
   };
 }
 

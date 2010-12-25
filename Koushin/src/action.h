@@ -86,6 +86,11 @@ namespace Koushin {
       ActionObject* getOwner() {return m_owner;}
       void setStatus(actionStatus status) {m_status = status;}
       bool addRequirement(Action* action, bool positiv = true);
+      void executeInRounds(QList<int > rounds) {m_executionRounds = rounds;}
+      void executeInEveryRound(bool execute) {m_executeInEveryRound = execute;}
+      const QList<int > getExecutionRounds() const {return m_executionRounds;}
+      bool shouldExecuteInEveryRound() const {return m_executeInEveryRound;}
+      
       
       void closeRequirement(Action* action) {m_openRequirements.removeAll(action);}
       bool noOpenRequirements() const {return m_openRequirements.isEmpty();}
@@ -99,6 +104,9 @@ namespace Koushin {
       QMap<Action*, bool > m_requirements; ///keep this system -> action pointers can not change in runtime!
       QMap<Action*, bool > m_requirementFor;
       QList<Action* > m_openRequirements;
+      
+      QList<int > m_executionRounds;
+      bool m_executeInEveryRound;
       
     private:
       bool executePlayerAction(Player* recipient, const QPair<QString, QStringList>& action);

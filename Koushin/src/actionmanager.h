@@ -34,7 +34,7 @@ namespace Koushin {
       
       void addAction(Action* action);
       void addAction(QList<Action* > actions);
-      void executeActions();
+      void executeActions(int currentRound);
       bool executeAction(Action* action);
       void setStatusOfDependensies(Action* failedAction);
       Player* getOwner() {return m_owner;}

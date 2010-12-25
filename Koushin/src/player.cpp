@@ -35,6 +35,7 @@ Koushin::Player::Player()
   : m_actionManager(new Koushin::ActionManager(this))
   , m_buildingLot(QPoint(0,0))
   , m_constructionMenu(0)
+  , m_currentRound(0)
 {
 
 }
@@ -92,7 +93,7 @@ void Koushin::Player::buildingChosen(QString buildingConfig)
   newBuilding->setName(KConfigGroup(config , "general").readEntry("name", QString("NoName")));
 
   KConfigGroup tasksGroup(config, "tasks");
-  QList<Action* > actions = ActionParser::createActionsFromConfig(tasksGroup, newBuilding);
+  QList<Action* > actions = ActionParser::createActionsFromConfig(tasksGroup, newBuilding, m_currentRound);
   m_actionManager->addAction(actions);
   Koushin::ActionParser::parseGlobals(tasksGroup.group("globals"), m_actionManager);
 
@@ -109,7 +110,8 @@ void Koushin::Player::buildingChosen(QString buildingConfig)
 
 void Koushin::Player::endRound()
 {
-  m_actionManager->executeActions();
+  ++m_currentRound;
+  m_actionManager->executeActions(m_currentRound);
   m_resourceInfo->updateInfos(m_townList.first()->getResources().values());
 }
 
