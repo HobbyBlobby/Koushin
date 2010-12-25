@@ -173,7 +173,7 @@ QList< Koushin::Player* > Koushin::ActionParser::findPlayers(QStringList paramet
     else if(owner->getActionObjectType() == Koushin::actionObjectIsPlayer)
       players << (Koushin::Player*)owner;
   }
-  ///TODO: implement filters for players here
+  ///@todo implement filters for players here
   return players;
 }
 
@@ -194,7 +194,7 @@ QList<Koushin::Town* > Koushin::ActionParser::findTowns(QStringList parameters, 
   foreach(Koushin::Town* town, towns) {
     if(!players.contains(town->getOwner())) towns.removeAll(town);
   }
-  ///TODO: implement filters for towns here
+  ///@todo implement filters for towns here
   return towns;
 }
 
@@ -215,7 +215,7 @@ QList< Koushin::Building* > Koushin::ActionParser::findBuildings(QStringList par
   foreach(Koushin::Building* building, buildings) {
     if(!towns.contains(building->getTown())) buildings.removeAll(building);
   }
-  ///TODO: implement filters for towns here
+  ///@todo implement filters for towns here
   return buildings;
 }
 

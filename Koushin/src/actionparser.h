@@ -70,14 +70,99 @@ namespace Koushin {
    **/
   class ActionParser {
     public:
+      /**
+       * @brief This function creats all Action objects given in the "tasks" configuration group.
+       * This function also adds all conditions to the Action. So the Action is ready to use.
+       *
+       * @param tasksGroup This configuration group should contain all actions, so pass the whole "tasks" group to this function.
+       * 
+       * @param newOwner The owner must be ActionObject and is neseccary to find the propper recipient.
+       * 
+       * @return QList<Action* > The list containing all actions from the configuration.
+       **/
       static QList<Action* > createActionsFromConfig(const KConfigGroup& tasksGroup, ActionObject* newOwner);
-      static QPair< QString, QStringList > separateNameAndParameters(QString string);
+      /**
+       * @brief This function finds the recipients.
+       * It is possible to have multiple recipients, e.g. all town containing a port.
+       *
+       * @param configLine The configuration line discribing the recipient/s.
+       * 
+       * @param owner Because the owner is not stored in this static class you have to give the owner again, to find the appropriate recipient.
+       * 
+       * @return QList<ActionObject* > The list of all recipients. This list can be empty.
+       **/
       static QList<ActionObject* > parseRecipient(const QString& configLine, ActionObject* owner);
-      static void addRequirementsToActions(QStringList conditionStrings, QMap<QString, Action* > actions);
+      /**
+       * @brief This function just adds all given parameters to the manager.
+       * @todo remove this function, because here is nothing to parse
+       *
+       * @param parameterList List of all parameters.
+       * 
+       * @param manager The manager who stores the parameters.
+       * 
+       * @return bool Returns true when function succeeded (everytime true).
+       **/
       static bool parseGlobals(const KConfigGroup& parameterList, ActionManager* manager);
+      /**
+       * @brief This function tries to find the wanted player for the recipient.
+       * \n If the owner is a Building the following parameters are knwon:
+       * - current (standard) -- the player constructed the Building
+       *
+       * @todo reorder the test: first check the owner type, then check the parameter.
+       * 
+       * @param parameters The list of the parameters to choose the player.
+       * 
+       * @param owner For some parameters it is nessecary to know the owner (like for "current").
+       * 
+       * @return QList<:Player* > All players fitting in the given parameters.
+       **/
       static QList<Player* > findPlayers(QStringList parameters, ActionObject* owner);
+      /**
+       * @brief This function tries to find the wanted town for the recipient.
+       * \n If the owner is a Building the following parameters are knwon:
+       * - current (standard) -- the town the Building belongs to
+       *
+       * @todo reorder the test: first check the owner type, then check the parameter.
+       * 
+       * @param parameters The list of the parameters to choose the town.
+       * 
+       * @param owner For some parameters it is nessecary to know the owner (like for "current").
+       * 
+       * @return QList<:Town* > All towns fitting in the given parameters.
+       **/
       static QList<Town* > findTowns(QStringList parameters, ActionObject* owner, QList<Player* > players);
+      /**
+       * @brief This function tries to find the wanted building for the recipient.
+       * \n If the owner is a Building the following parameters are knwon:
+       * - current (standard) -- the building itself
+       *
+       * @todo reorder the test: first check the owner type, then check the parameter.
+       * 
+       * @param parameters The list of the parameters to choose the building.
+       * 
+       * @param owner For some parameters it is nessecary to know the owner (like for "current").
+       * 
+       * @return QList<:Player* > All buildings fitting in the given parameters.
+       **/
       static QList<Building* > findBuildings(QStringList parameters, ActionObject* owner, QList<Town* > towns);
+      /**
+       * @brief This functions separates a function name and his parameter.
+       *
+       * @param string The line to separate in the form "functionName(para1, para2,...)".
+       * 
+       * @return QPair< QString, QStringList > The name a all parameters as list.
+       **/
+      static QPair< QString, QStringList > separateNameAndParameters(QString string);
+      /**
+       * @brief This function adds all requirements to the actions.
+       *
+       * @param conditionStrings The list of all conditions.
+       * 
+       * @param actions All actions as a pair of name and pointer.
+       * 
+       * @return void
+       **/
+      static void addRequirementsToActions(QStringList conditionStrings, QMap<QString, Action* > actions);
   };
 }
 
