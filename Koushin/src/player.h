@@ -27,19 +27,20 @@
 #include <QMap>
 
 #include "actionobject.h"
+#include "GUI/resourceinfowidget.h"
 
 namespace KoushinGUI {
   class ConstructionMenu;
-class ResourceInfoWidget;
 }
 
 namespace Koushin {
   class ActionManager;
   class Town;
+  class Game;
   class Player : public QObject, public ActionObject {
     Q_OBJECT
     public:
-      Player();
+      Player(QString name, Game* game);
       virtual ~Player();
       QList<Town* > getTowns() const {return m_townList;}
       ActionManager* getActionManager() const {return m_actionManager;}
@@ -47,6 +48,8 @@ namespace Koushin {
       void addTown(Town* town) {m_townList << town;}
       void setBuildingList(QMap<QString, QString> buildings) {m_listOfAllBuildings = buildings;}
       void setResourceInfoWidget(KoushinGUI::ResourceInfoWidget* widget) {m_resourceInfo = widget;}
+      KoushinGUI::ResourceInfoWidget* getResourceInfoWidget() const {return m_resourceInfo;}
+      QString getName() const {return m_name;}
       
       const actionObjectType getActionObjectType() {return actionObjectIsPlayer;}
       static const QMap<QString, ActionProperties> getPossibleActions();
@@ -63,7 +66,9 @@ namespace Koushin {
       QPoint m_buildingLot;
       KoushinGUI::ConstructionMenu* m_constructionMenu;
       KoushinGUI::ResourceInfoWidget* m_resourceInfo;
-      int m_currentRound;
+//       int m_currentRound;
+      QString m_name;
+      Game* m_game;
   };
 }
 

@@ -11,7 +11,7 @@
 #include <KStandardDirs>
 #include <KMainWindow>
 
-#include "Koushin.h"
+// #include "Koushin.h"
 
 #include "actionmanager.h"
 #include "actionparser.h"
@@ -33,6 +33,7 @@
 #include <QVBoxLayout>
 #include "GUI/resourceinfowidget.h"
 #include <QPushButton>
+#include "game.h"
 
 static const char description[] =
     I18N_NOOP("A round based strategy game.");
@@ -48,7 +49,11 @@ int main(int argc, char** argv)
     KApplication app;
     qsrand(std::time(0));
     
-    Koushin::Player* tester = new Koushin::Player;
+    Koushin::Game* game = new Koushin::Game;
+    game->addPlayer("Felix");
+    
+    Koushin::Player* tester = game->getPlayers().first();
+//     Koushin::Player* tester = new Koushin::Player;
     Koushin::Town* town = new Koushin::Town(tester);
 //     Koushin::Building* testbldg = new Koushin::Building(town);
     
@@ -123,5 +128,6 @@ int main(int argc, char** argv)
     
     window->show();
     
+    game->startRound();
     return app.exec();
 }

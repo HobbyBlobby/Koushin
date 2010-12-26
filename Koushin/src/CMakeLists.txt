@@ -6,8 +6,9 @@ set(Koushin_SRCS
   actionparser.cpp
   building.cpp
   citizen.cpp
+  game.cpp
 #   citizenaction.cpp
-  Koushin.cpp
+#   Koushin.cpp
   main.cpp
   player.cpp
 #   playeraction.cpp
