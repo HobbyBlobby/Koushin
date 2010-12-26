@@ -25,11 +25,13 @@
 #include <QPoint>
 #include "actionobject.h"
 
+
 namespace KoushinGUI {
   class TownWidget;
 }
 
 namespace Koushin {
+
   enum ResourceType {
     ResourceUnspezifed = 0,
     ResourceWood,
@@ -51,6 +53,7 @@ namespace Koushin {
   };
   
   class Building;
+  class Field;
   class Player;
   class Town : public ActionObject {
     public:
@@ -78,6 +81,7 @@ namespace Koushin {
       Player* m_owner;
       QMap<ResourceType, Resource*> m_resources;
       QMap<Building*, QPoint> m_buildings;
+      QMap<QPoint, Field* > m_fields;
       ::KoushinGUI::TownWidget* m_townWidget;
   };
 }

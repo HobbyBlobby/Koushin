@@ -38,6 +38,7 @@ namespace Koushin {
     actionObjectIsBuiling,
     actionObjectIsTown,
     actionObjectIsPlayer,
+    actionObjectIsField,
     actionObjectNumber
   };
 

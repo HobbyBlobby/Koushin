@@ -19,14 +19,12 @@
 
 
 #include "action.h"
-// #include "citizenaction.h"
-// #include "townaction.h"
-// #include "playeraction.h"
 #include "actionobject.h"
 #include "town.h"
 #include "actionmanager.h"
 #include "player.h"
 #include "building.h"
+#include "field.h"
 
 Koushin::Action::Action()
   : m_config(0)
@@ -126,6 +124,11 @@ bool Koushin::Action::execute(bool failIfOneRecipientFailed)
 	else
 	  oneRecipientFailed = true;
 	break;
+      case Koushin::actionObjectIsField:
+	if(executeFieldAction((Koushin::Field*)recipient, action))
+	  allRecipientsFailed = false;
+	else
+	  oneRecipientFailed = true;
       default:
 	oneRecipientFailed = true;
     }
@@ -195,6 +198,33 @@ bool Koushin::Action::executeBuildingAction(Koushin::Building* recipient, const 
   kDebug() << "No building actions specified.";
   return false;
 }
+
+bool Koushin::Action::executeFieldAction(Koushin::Field* recipient, const QPair< QString, QStringList >& action)
+{
+  if(action.first == "gatherResource") {
+    Koushin::ResourceType type = Koushin::Town::getResourceTypeFromQString(action.second[0]);
+    try{
+      int value = recipient->getTown()->getOwner()->getActionManager()->evalContent(action.second.value(1, QString("0")));
+      return recipient->gatherResource(type, value);
+    }
+    catch (std::exception & e) {
+      kDebug() << "Can not calculate " << action.second[1] << ". Reason: " << e.what();
+      return false;
+    }
+  }
+  else if(action.first == "growResource") {
+    Koushin::ResourceType type = Koushin::Town::getResourceTypeFromQString(action.second[0]);
+    try{
+      int value = recipient->getTown()->getOwner()->getActionManager()->evalContent(action.second.value(1, QString("0")));
+      return recipient->growResource(type, value);
+    }
+    catch (std::exception & e) {
+      kDebug() << "Can not calculate " << action.second[1] << ". Reason: " << e.what();
+      return false;
+    }
+  }
+}
+
 
 bool Koushin::Action::executeActionObjectAction(Koushin::ActionObject* recipient, const QPair< QString, QStringList >& action)
 {

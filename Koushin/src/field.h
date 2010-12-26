@@ -24,7 +24,9 @@
 #include "actionobject.h"
 #include <QString>
 #include "town.h"
+#include <qgraphicsitem.h>
 
+class QGraphicsRectItem;
 class QGraphicsWidget;
 class QGraphicsItem;
 namespace Koushin {
@@ -44,31 +46,34 @@ class Building;
   class Field : public ActionObject {
     public:
       Field(Town* town, FieldType type = plainField);
-      drawField(QGraphicsItem* parent);
       
 //virtual functions from ActionObject:
       virtual const actionObjectType getActionObjectType();
       virtual const QString getLocal(QString name, QString additionalContent = QString());
+      static const QMap<QString, ActionProperties> getPossibleActions();
       
 //getters and setters:
-      void setType(ResourceType type) {m_type = type;}
+      void setType(FieldType type) {m_type = type;}
       void setResource(ResourceType type, int newValue) {m_resources.insert(type, newValue);}
       void addToResource(ResourceType type, int value) {value += getResource(type); m_resources.insert(type, value);}
       int getResource(ResourceType type) {m_resources.value(type, 0);}
       void addBuilding(Building* building) {m_building = building;}
       Building* getBuilding() const {return m_building;}
+      Town* getTown() const {return m_town;}
+      void setPos(QPoint pos) {m_rect->setPos(pos);}
       
       static QString fieldTypeToQString(FieldType type);
       static FieldType QStringToFieldType(QString string);
       
 //actions for parser:
-      bool gatherResource(type, value);
-      bool growResource(type, value);
+      bool gatherResource(ResourceType type, int value);
+      bool growResource(ResourceType type, int value);
     private:
-      ResourceType m_type;
+      FieldType m_type;
       Town* m_town;
       QMap<ResourceType, int > m_resources;
       Building* m_building;
+      QGraphicsRectItem* m_rect;
   };
 }
 

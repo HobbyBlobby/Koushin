@@ -17,12 +17,22 @@
     Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-
 #include "town.h"
 #include "GUI/townwidget.h"
 #include "player.h"
 
 #include <KDebug>
+#include "field.h"
+
+//define operator "<" for QPoint after lexigographic order for using it as key in QMap:
+bool operator<(const QPoint& lPoint, const QPoint& rPoint) {
+  if(lPoint.x() < rPoint.x())
+    return true;
+  if(lPoint.x() == rPoint.x() && lPoint.y() < rPoint.y())
+    return true;
+  return false;
+}
+
 Koushin::Town::Town(Player* owner)
   : m_owner(owner)
   , m_townWidget(new KoushinGUI::TownWidget)
@@ -33,6 +43,13 @@ Koushin::Town::Town(Player* owner)
     m_resources.insert(type, new Koushin::Resource(type));
   }
   m_owner->addTown(this);
+  for (int i = 0; i < 10; ++i) {
+    for(int j = 0; j < 10; ++j) {
+      Koushin::Field* field =  new Koushin::Field(this);
+      field->setPos(QPoint(i, j));
+      m_fields.insert(QPoint(i,j), field);
+    }
+  }
 }
 
 Koushin::Town::~Town()
@@ -113,6 +130,9 @@ bool Koushin::Town::addBuilding(Koushin::Building* building, QPoint pos)
     return 0;
   }
   m_buildings.insert(building, pos);
+  Koushin::Field* field = m_fields.value(pos, 0);
+  if(field)
+    field->addBuilding(building);
   return 1;
 }
 

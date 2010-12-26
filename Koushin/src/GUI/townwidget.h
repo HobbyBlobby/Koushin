@@ -34,6 +34,7 @@ namespace Koushin {
 namespace KoushinGUI {
   class TownWidget : public QObject, public QGraphicsItem {
     Q_OBJECT
+    Q_INTERFACES(QGraphicsItem)
     public:
       TownWidget(QGraphicsItem* parent = 0);
       virtual ~TownWidget();

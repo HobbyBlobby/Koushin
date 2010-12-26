@@ -27,17 +27,21 @@
 #include <QGraphicsSceneMouseEvent>
 
 #include "building.h"
+#include "field.h"
 #include <QGraphicsScene>
 
 KoushinGUI::TownWidget::TownWidget(QGraphicsItem* parent)
   : QGraphicsItem(parent)
 {
-  QGraphicsRectItem* rect = new QGraphicsRectItem(0.0, 0.0, 10.0, 10.0, this);
-  rect->setBrush(Qt::cyan);
-  for (int i = 1; i < 10; ++i) {
-    new QGraphicsLineItem(0.0, i, 10.0, i, this);
-    new QGraphicsLineItem(i, 0.0, i, 10.0, this);
-  }
+//   QGraphicsRectItem* rect = new QGraphicsRectItem(0.0, 0.0, 10.0, 10.0, this);
+//   rect->setBrush(Qt::cyan);
+//   for (int i = 1; i < 10; ++i) {
+//     for(int j = 0; j < 10; ++j) {
+//       new Koushin::Field();
+//     }
+//     new QGraphicsLineItem(0.0, i, 10.0, i, this);
+//     new QGraphicsLineItem(i, 0.0, i, 10.0, this);
+//   }
 //  setGeometry(0, 0, 10, 10);
 }
 

@@ -30,6 +30,9 @@
 #include "actionparser.h"
 
 namespace Koushin {
+
+class Field;
+
   class Town;
   class Player;
   class Building;
@@ -112,6 +115,7 @@ namespace Koushin {
       bool executePlayerAction(Player* recipient, const QPair<QString, QStringList>& action);
       bool executeTownAction(Town* recipient, const QPair<QString, QStringList>& action);
       bool executeBuildingAction(Building* recipient, const QPair<QString, QStringList>& action);
+      bool executeFieldAction(Field* recipient, const QPair<QString, QStringList>& action);
       bool executeActionObjectAction(ActionObject* recipient, const QPair<QString, QStringList>& action);
       bool setAsRequirementFor(Action* action, bool positiv = true);
       bool possibleParametersGiven(ActionObject* recipient, QString actionName, QStringList parameters);
