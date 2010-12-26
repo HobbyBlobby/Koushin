@@ -21,7 +21,7 @@
 #ifndef TOWNWIDGET_H
 #define TOWNWIDGET_H
 
-#include <QGraphicsWidget>
+#include <QGraphicsItem>
 #include <QMap>
 #include <QPoint>
 
@@ -32,11 +32,13 @@ namespace Koushin {
 }
 
 namespace KoushinGUI {
-  class TownWidget : public QGraphicsWidget {
+  class TownWidget : public QObject, public QGraphicsItem {
     Q_OBJECT
     public:
-      TownWidget(QGraphicsItem* parent = 0, Qt::WindowFlags wFlags = 0);
+      TownWidget(QGraphicsItem* parent = 0);
       virtual ~TownWidget();
+      QRectF boundingRect() const;
+      void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget = 0);
       
       void drawBuildings(QMap< ::Koushin::Building*, QPoint> buildingMap = QMap< ::Koushin::Building*, QPoint>());
     protected:

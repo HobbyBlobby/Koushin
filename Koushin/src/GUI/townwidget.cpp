@@ -29,8 +29,8 @@
 #include "building.h"
 #include <QGraphicsScene>
 
-KoushinGUI::TownWidget::TownWidget(QGraphicsItem* parent, Qt::WindowFlags wFlags)
-  : QGraphicsWidget(parent, wFlags)
+KoushinGUI::TownWidget::TownWidget(QGraphicsItem* parent)
+  : QGraphicsItem(parent)
 {
   QGraphicsRectItem* rect = new QGraphicsRectItem(0.0, 0.0, 10.0, 10.0, this);
   rect->setBrush(Qt::cyan);
@@ -38,13 +38,26 @@ KoushinGUI::TownWidget::TownWidget(QGraphicsItem* parent, Qt::WindowFlags wFlags
     new QGraphicsLineItem(0.0, i, 10.0, i, this);
     new QGraphicsLineItem(i, 0.0, i, 10.0, this);
   }
- setGeometry(0, 0, 10, 10);
+//  setGeometry(0, 0, 10, 10);
 }
 
 KoushinGUI::TownWidget::~TownWidget()
 {
 
 }
+
+QRectF KoushinGUI::TownWidget::boundingRect() const
+{
+  return QRectF(0, 0, 10, 10);
+}
+
+void KoushinGUI::TownWidget::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget)
+{
+  Q_UNUSED(painter)
+  Q_UNUSED(option)
+  Q_UNUSED(widget)
+}
+
 
 #include <kdebug.h>
 void KoushinGUI::TownWidget::drawBuildings(QMap< Koushin::Building*, QPoint > buildingMap)
