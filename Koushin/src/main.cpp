@@ -11,13 +11,10 @@
 #include <KStandardDirs>
 #include <KMainWindow>
 
-// #include "Koushin.h"
-
 #include "actionmanager.h"
 #include "actionparser.h"
 #include "building.h"
 #include "citizen.h"
-#include "citizenaction.h"
 #include "player.h"
 #include "town.h"
 #include <kdebug.h>
