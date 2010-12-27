@@ -33,16 +33,6 @@
 KoushinGUI::TownWidget::TownWidget(QGraphicsItem* parent)
   : QGraphicsItem(parent)
 {
-//   QGraphicsRectItem* rect = new QGraphicsRectItem(0.0, 0.0, 10.0, 10.0, this);
-//   rect->setBrush(Qt::cyan);
-//   for (int i = 1; i < 10; ++i) {
-//     for(int j = 0; j < 10; ++j) {
-//       new Koushin::Field();
-//     }
-//     new QGraphicsLineItem(0.0, i, 10.0, i, this);
-//     new QGraphicsLineItem(i, 0.0, i, 10.0, this);
-//   }
-//  setGeometry(0, 0, 10, 10);
 }
 
 KoushinGUI::TownWidget::~TownWidget()
@@ -74,11 +64,11 @@ void KoushinGUI::TownWidget::drawBuildings(QMap< Koushin::Building*, QPoint > bu
   }
 }
 
-void KoushinGUI::TownWidget::mousePressEvent(QGraphicsSceneMouseEvent* event)
-{
-  QPointF pos = event->pos();
-  emit townClicked(QPoint((int)pos.x(), (int)pos.y()));
-  QGraphicsItem::mousePressEvent(event);
-}
+// void KoushinGUI::TownWidget::mousePressEvent(QGraphicsSceneMouseEvent* event)
+// {
+//   QPointF pos = event->pos();
+//   emit townClicked(QPoint((int)pos.x(), (int)pos.y()));
+//   QGraphicsItem::mousePressEvent(event);
+// }
 
 #include "townwidget.moc"

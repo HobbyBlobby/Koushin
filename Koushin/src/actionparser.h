@@ -29,6 +29,7 @@
 
 #include <KConfigGroup>
 
+class KConfig;
 namespace Koushin {
   class Building;
   class Player;
@@ -177,6 +178,17 @@ namespace Koushin {
        * @return void
        **/
       static void setRoundLimit(Action* action, KConfigGroup config, int currentRound);
+      /**
+       * @brief This function creates a list of open field actions.
+       * The actions are read from the \c fieldtasks group. If the building level is zero, the start number of free fields is used, else the number resulting from <tt>(int)(level*newFieldsPerLevel+startNumber)-stillCreatedActions</tt> is used.
+       * 
+       * This function also sets the right number of the created actions for the building and adds the open field action to the list of the building.
+       *
+       * @param config The whole configuration for the building. The whole configuration is nessecary, because the number of actiones can be found in the \c general group.
+       * 
+       * @return void
+       **/
+      static void createOpenFieldActions(KConfigGroup* config, Koushin::Building* building);
   };
 }
 

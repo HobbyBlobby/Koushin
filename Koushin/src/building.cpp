@@ -21,10 +21,12 @@
 #include "building.h"
 #include <qpainter.h>
 #include <KDebug>
+#include <KConfigGroup>
 
 Koushin::Building::Building(Town* town)
   : m_town(town)
   , m_name("NoName")
+  , m_level(1)
 {
   m_textItem = new QGraphicsTextItem(m_name);
   m_textItem->setScale(1 / m_textItem->boundingRect().width());
@@ -65,3 +67,10 @@ QRectF Koushin::Building::boundingRect() const
 {
   return QRectF(0.0, 0.0, 1.0, 1.0);
 }
+
+void Koushin::Building::addOpenFieldAction(KConfigGroup* config)
+{
+  m_openFieldActions << config;
+  m_createdOpenFieldActions.insert(config->name(), getNumberOfCreatedOpenFieldActions(config->name()) + 1);
+}
+

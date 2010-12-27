@@ -50,4 +50,18 @@ QRectF KoushinGUI::FieldItem::boundingRect() const
   return QRectF(0.0, 0.0, 1.0, 1.0);
 }
 
+#include <KDebug>
+#include <building.h>
+void KoushinGUI::FieldItem::mousePressEvent(QGraphicsSceneMouseEvent* event)
+{
+  if(m_field->getType() == Koushin::plainField) {
+    m_field->getTown()->getTownWidget()->sendSignalTownClicked(QPoint((int)pos().x(), (int)pos().y()));
+  }
+  if(m_field->getType() == Koushin::fieldWithBuilding && m_field->getBuilding()) {
+    foreach(KConfigGroup* group, m_field->getBuilding()->getOpenFieldActions()) {
+      kDebug() << "choose " << group->readEntry("needs", QString("plainField")) << " for action " << group->name();
+    }
+  }
+  QGraphicsItem::mousePressEvent(event);
+}
 

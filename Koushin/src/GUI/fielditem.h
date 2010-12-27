@@ -33,6 +33,8 @@ namespace KoushinGUI {
       FieldItem(Koushin::Field* field);
       virtual void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget = 0);
       virtual QRectF boundingRect() const;
+    protected:
+      void mousePressEvent(QGraphicsSceneMouseEvent* event);
     private:
       ::Koushin::Field* m_field;
   };

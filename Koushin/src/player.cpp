@@ -36,7 +36,6 @@ Koushin::Player::Player(QString name, Koushin::Game* game)
   : m_actionManager(new Koushin::ActionManager(this))
   , m_buildingLot(QPoint(0,0))
   , m_constructionMenu(0)
-//   , m_currentRound(0)
   , m_name(name)
   , m_game(game)
 {
@@ -99,6 +98,9 @@ void Koushin::Player::buildingChosen(QString buildingConfig)
   QList<Action* > actions = ActionParser::createActionsFromConfig(tasksGroup, newBuilding, m_game->getCurrentRound());
   m_actionManager->addAction(actions);
   Koushin::ActionParser::parseGlobals(tasksGroup.group("globals"), m_actionManager);
+  
+  ActionParser::createOpenFieldActions(new KConfigGroup(config, "fieldTasks"), newBuilding);
+  
 
   m_townList.first()->getTownWidget()->drawBuildings(m_townList.first()->getBuildings());
 

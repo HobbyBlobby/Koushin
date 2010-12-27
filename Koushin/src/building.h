@@ -26,6 +26,7 @@
 #include "town.h"
 #include "actionobject.h"
 
+class KConfigGroup;
 namespace Koushin {
   class Building : public QGraphicsItem, public ActionObject {
     public:
@@ -37,14 +38,24 @@ namespace Koushin {
       void setName(QString name) {m_name = name;}
       QString getName() const {return m_name;}
       Town* getTown() {return m_town;}
+      int getLevel() const {return m_level;}
+      int increaseLevel() {return ++m_level;}
+      void setLevel(int newLevel) {m_level = newLevel;}
+      int getNumberOfCreatedOpenFieldActions(QString name) const {return m_createdOpenFieldActions.value(name, 0);}
+      void addOpenFieldAction(KConfigGroup* config);
+      QList<KConfigGroup* > getOpenFieldActions() const {return m_openFieldActions;}
 
       const actionObjectType getActionObjectType() {return actionObjectIsBuiling;};
       static const QMap<QString, ActionProperties> getPossibleActions();
       const QString getLocal(QString name, QString additionalContent = QString());
+      
     private:
       Town* m_town;
       QString m_name;
       QGraphicsTextItem* m_textItem;
+      int m_level;
+      QMap<QString, int > m_createdOpenFieldActions;
+      QList<KConfigGroup* > m_openFieldActions;
   };
 }
 

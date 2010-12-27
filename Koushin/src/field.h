@@ -26,14 +26,13 @@
 #include "town.h"
 #include <qgraphicsitem.h>
 #include "GUI/fielditem.h"
+#include <KConfigGroup>
 
 class QGraphicsRectItem;
 class QGraphicsWidget;
 class QGraphicsItem;
 namespace Koushin {
-
-class Building;
-
+  class Building;
 
   enum FieldType {
     plainField = 0,
@@ -43,7 +42,7 @@ class Building;
     fieldWithBuilding,
     numberOfFieldTypes
   };
-  
+
   class Field : public ActionObject {
     public:
       Field(Town* town, FieldType type = plainField);

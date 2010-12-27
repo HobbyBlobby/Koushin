@@ -42,8 +42,10 @@ namespace KoushinGUI {
       void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget = 0);
       
       void drawBuildings(QMap< ::Koushin::Building*, QPoint> buildingMap = QMap< ::Koushin::Building*, QPoint>());
-    protected:
-      void mousePressEvent(QGraphicsSceneMouseEvent * event);
+      
+      void sendSignalTownClicked(QPoint point) {emit townClicked(point);}
+//     protected:
+//       void mousePressEvent(QGraphicsSceneMouseEvent * event);
     Q_SIGNALS:
       void townClicked(QPoint point);
   };
