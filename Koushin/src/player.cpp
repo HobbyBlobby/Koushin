@@ -22,6 +22,7 @@
 #include <kdebug.h>
 #include "town.h"
 #include "GUI/townwidget.h"
+#include "GUI/buildinginfowidget.h"
 #include "GUI/constructionmenu.h"
 #include <QGraphicsScene>
 #include <KConfigGroup>
@@ -38,6 +39,8 @@ Koushin::Player::Player(QString name, Koushin::Game* game)
   , m_constructionMenu(0)
   , m_name(name)
   , m_game(game)
+  , m_buildingInfo(0)
+  , m_selectedBuilding(0)
 {
 
 }
@@ -119,6 +122,32 @@ void Koushin::Player::endRound()
 //   m_actionManager->executeActions(m_currentRound);
 //   m_resourceInfo->updateInfos(m_townList.first()->getResources().values());
   m_game->endRound();
+}
+
+void Koushin::Player::setBuildingInfoWidget(KoushinGUI::BuildingInfoWidget* widget)
+{
+  m_buildingInfo = widget;
+  connect(m_buildingInfo, SIGNAL(fieldActionSelected(QListWidgetItem*)), this, SLOT(fieldActionSelected(QListWidgetItem*)));
+}
+
+void Koushin::Player::fieldActionSelected(QListWidgetItem* item)
+{
+  if(!m_selectedBuilding) return;
+  KConfigGroup* task;
+  foreach(KConfigGroup* group, m_selectedBuilding->getOpenFieldActions())
+    if(group->name() == item->text()) {
+      task = group;
+      break;
+    }
+  int radius = task->readEntry("fieldRadius", int(1));
+  kDebug() << "Found radius: " << radius;
+  QGraphicsEllipseItem* circle = new QGraphicsEllipseItem(m_selectedBuilding->pos().x()-radius+0.5, m_selectedBuilding->pos().y()-radius+0.5, 2*radius, 2*radius, m_townList.first()->getTownWidget());
+}
+
+void Koushin::Player::setSelectedBuilding(Koushin::Building* building)
+{
+  m_selectedBuilding = building;
+  m_buildingInfo->setBuilding(m_selectedBuilding);
 }
 
 #include "player.moc"

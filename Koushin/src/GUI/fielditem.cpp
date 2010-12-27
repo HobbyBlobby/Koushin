@@ -52,16 +52,20 @@ QRectF KoushinGUI::FieldItem::boundingRect() const
 
 #include <KDebug>
 #include <building.h>
+#include <player.h>
+#include "buildinginfowidget.h"
 void KoushinGUI::FieldItem::mousePressEvent(QGraphicsSceneMouseEvent* event)
 {
+  //deselect building:
+  m_field->getTown()->getOwner()->setSelectedBuilding(0);
+  //chosse, what is selected:
   if(m_field->getType() == Koushin::plainField) {
     m_field->getTown()->getTownWidget()->sendSignalTownClicked(QPoint((int)pos().x(), (int)pos().y()));
   }
   if(m_field->getType() == Koushin::fieldWithBuilding && m_field->getBuilding()) {
-    foreach(KConfigGroup* group, m_field->getBuilding()->getOpenFieldActions()) {
-      kDebug() << "choose " << group->readEntry("needs", QString("plainField")) << " for action " << group->name();
-    }
+      m_field->getTown()->getOwner()->setSelectedBuilding(m_field->getBuilding());
   }
+  m_field->getTown()->getOwner()->getBuidlingInfoWidget()->repaint();
   QGraphicsItem::mousePressEvent(event);
 }
 

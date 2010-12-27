@@ -11,6 +11,7 @@ set(Koushin_SRCS
   player.cpp
   population.cpp
   town.cpp
+  GUI/buildinginfowidget.cpp
   GUI/constructionmenu.cpp
   GUI/fielditem.cpp
   GUI/resourceinfowidget.cpp

@@ -31,6 +31,7 @@
 #include "GUI/resourceinfowidget.h"
 #include <QPushButton>
 #include "game.h"
+#include "GUI/buildinginfowidget.h"
 
 static const char description[] =
     I18N_NOOP("A round based strategy game.");
@@ -82,6 +83,9 @@ int main(int argc, char** argv)
     KoushinGUI::ResourceInfoWidget* infos = new KoushinGUI::ResourceInfoWidget;
     layout->addWidget(infos);
     tester->setResourceInfoWidget(infos);
+    KoushinGUI::BuildingInfoWidget* buildingInfo = new KoushinGUI::BuildingInfoWidget;
+    tester->setBuildingInfoWidget(buildingInfo);
+    layout->addWidget(buildingInfo);
     QPushButton* endRoundButton = new QPushButton("End Round");
     layout->addWidget(endRoundButton);
     tmpView->setWidget(tmpViewWidget);

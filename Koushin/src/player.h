@@ -29,8 +29,10 @@
 #include "actionobject.h"
 #include "GUI/resourceinfowidget.h"
 
+class QListWidgetItem;
 namespace KoushinGUI {
   class ConstructionMenu;
+class BuildingInfoWidget;
 }
 
 namespace Koushin {
@@ -50,6 +52,9 @@ namespace Koushin {
       void setResourceInfoWidget(KoushinGUI::ResourceInfoWidget* widget) {m_resourceInfo = widget;}
       KoushinGUI::ResourceInfoWidget* getResourceInfoWidget() const {return m_resourceInfo;}
       QString getName() const {return m_name;}
+      ::KoushinGUI::BuildingInfoWidget* getBuidlingInfoWidget() const {return m_buildingInfo;}
+      void setBuildingInfoWidget(::KoushinGUI::BuildingInfoWidget* widget);
+      void setSelectedBuilding(Building* building);
       
       const actionObjectType getActionObjectType() {return actionObjectIsPlayer;}
       static const QMap<QString, ActionProperties> getPossibleActions();
@@ -58,6 +63,7 @@ namespace Koushin {
     public Q_SLOTS:
       void townClicked(QPoint point);
       void buildingChosen(QString buildingConfig);
+      void fieldActionSelected(QListWidgetItem* item);
       void endRound();
     private:
       QList<Town* > m_townList;
@@ -66,9 +72,10 @@ namespace Koushin {
       QPoint m_buildingLot;
       KoushinGUI::ConstructionMenu* m_constructionMenu;
       KoushinGUI::ResourceInfoWidget* m_resourceInfo;
-//       int m_currentRound;
+      KoushinGUI::BuildingInfoWidget* m_buildingInfo;
       QString m_name;
       Game* m_game;
+      Building* m_selectedBuilding;
   };
 }
 
