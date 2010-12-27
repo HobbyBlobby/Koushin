@@ -252,10 +252,13 @@ bool Koushin::Action::possibleParametersGiven(Koushin::ActionObject* recipient, 
   QMap<QString, Koushin::ActionProperties> possibleActions;
   if(recipient->getActionObjectType() == Koushin::actionObjectIsBuiling)
     possibleActions = Koushin::Building::getPossibleActions();
+  if(recipient->getActionObjectType() == Koushin::actionObjectIsField)
+    possibleActions = Koushin::Field::getPossibleActions();
   if(recipient->getActionObjectType() == Koushin::actionObjectIsTown)
     possibleActions = Koushin::Town::getPossibleActions();
   if(recipient->getActionObjectType() == Koushin::actionObjectIsPlayer)
     possibleActions = Koushin::Player::getPossibleActions();
+
   
   if(!recipient || !possibleActions.contains(actionName)) {
     kDebug() << "Action is not in list of possible actions: " << actionName;
@@ -266,17 +269,5 @@ bool Koushin::Action::possibleParametersGiven(Koushin::ActionObject* recipient, 
     kDebug() << "Wrong parameter Number: Expected = " << properties.parameterTypes.length() << "; Given = " << parameters.length();
     return false;
   }
-  ///This part is not necessary: in execution the error is caught
-/*  for (int i = 0; i <= properties.parameterTypes.length(); ++i) {
-    if (properties.parameterTypes.value(i) == "int") {
-      try{
-	manager->evalContent(parameters.value(i));
-      }
-      catch (std::exception& e) {
-	kDebug() << "Parameter " << parameters.value(i) << " can not be calculated";
-	return false;
-      }
-    }
-  }*/
   return true;
 }

@@ -58,6 +58,7 @@ Koushin::Town::Town(Player* owner)
       while((type = (Koushin::FieldType)(qrand() % Koushin::numberOfFieldTypes)) == Koushin::fieldWithBuilding) {}
 	field->setType(type);
       m_fields.insert(QPoint(i,j), field);
+      field->setResource(Koushin::ResourceWood, 1000);
     }
   }
 }
@@ -169,4 +170,9 @@ void Koushin::Town::unmarkAllFields()
 {
   foreach(Koushin::Field* field, m_fields.values())
     field->unmarkField();
+}
+
+Koushin::Field* Koushin::Town::getFieldFromBuilding(Koushin::Building* building)
+{
+  return m_fields.value(m_buildings.value(building));
 }

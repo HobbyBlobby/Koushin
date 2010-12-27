@@ -20,17 +20,16 @@
 #include "actionparser.h"
 #include "actionmanager.h"
 #include "building.h"
-// #include "citizenaction.h"
+#include "field.h"
 #include "player.h"
 #include "town.h"
-// #include "playeraction.h"
-// #include "townaction.h"
 
 #include <QRegExp>
 #include <QString>
 
 #include <kdebug.h>
 #include "action.h"
+#include "field.h"
 
 QPair< QString, QStringList > Koushin::ActionParser::separateNameAndParameters(QString string)
 {
@@ -42,19 +41,27 @@ QPair< QString, QStringList > Koushin::ActionParser::separateNameAndParameters(Q
   return QPair<QString, QStringList>(actionName, parameters);
 }
 
-QList< Koushin::Action* > Koushin::ActionParser::createActionsFromConfig(const KConfigGroup& tasksGroup, ActionObject* newOwner, int currentRound)
+QList< Koushin::Action* > Koushin::ActionParser::createActionsFromConfig(const KConfigGroup& tasksGroup, ActionObject* newOwner, int currentRound, bool singleGroup)
 {
   QMap<QString, Koushin::Action* > actions;
   QStringList actionNames = tasksGroup.groupList();
 //Create Actions:
-  foreach(QString actionName, actionNames) {
-    if(actionName == "globals" || actionName == "conditions") continue;
-    KConfigGroup* actionGroup = new KConfigGroup(tasksGroup.group(actionName));
+  if(singleGroup) {
     Koushin::Action* newAction = new Koushin::Action();
     newAction->setOwner(newOwner);
-    newAction->setConfiguration(actionGroup);
-    setRoundLimit(newAction, *actionGroup, currentRound);
-    actions.insert(actionName, newAction);
+    newAction->setConfiguration(new KConfigGroup(tasksGroup));
+    setRoundLimit(newAction, tasksGroup, currentRound);
+    actions.insert(tasksGroup.name(), newAction);
+  } else {
+    foreach(QString actionName, actionNames) {
+      if(actionName == "globals" || actionName == "conditions") continue;
+      KConfigGroup* actionGroup = new KConfigGroup(tasksGroup.group(actionName));
+      Koushin::Action* newAction = new Koushin::Action();
+      newAction->setOwner(newOwner);
+      newAction->setConfiguration(actionGroup);
+      setRoundLimit(newAction, *actionGroup, currentRound);
+      actions.insert(actionName, newAction);
+    }
   }
 //write conditions to action:
   KConfigGroup conditionGroup = tasksGroup.group("conditions");
@@ -169,19 +176,36 @@ QList<Koushin::ActionObject* > Koushin::ActionParser::parseRecipient(const QStri
   }
 //find Buildings:
   QList<Koushin::Building* > buildings;
-  if(!(linePart = configLine.section(QRegExp("building([A-Za-z0-9,=]*)"), 0)).isEmpty()) { //find e.g.: town(all,hasBuilding=lumbermill)
+  if(!(linePart = configLine.section(QRegExp("building([A-Za-z0-9,=]*)"), 0)).isEmpty()) { //find e.g.: building(current)
     buildings = findBuildings(Koushin::ActionParser::separateNameAndParameters(linePart).second, owner, towns);
   } else {
     buildings = findBuildings(QStringList(), owner, towns);
   }
-  if(buildings.isEmpty()) {
-    kDebug() << "No reasonable town found" << linePart;
+  if(buildings.isEmpty() && expectedObject != "field") {
+    kDebug() << "No reasonable building found" << linePart;
     return QList<Koushin::ActionObject* >();
   }
   if(expectedObject == "building") {
     QList<Koushin::ActionObject* > objects;
     foreach(Koushin::Building* building, buildings)
       objects << (Koushin::ActionObject*)building;
+    return objects;
+  }
+//find Fields:
+  QList<Koushin::Field* > fields;
+  if(!(linePart = configLine.section(QRegExp("field([A-Za-z0-9,=]*)"), 0)).isEmpty()) { //find e.g.: field(current)
+    fields = findFields(Koushin::ActionParser::separateNameAndParameters(linePart).second, owner, towns);
+  } else {
+    fields = findFields(QStringList(), owner, towns);
+  }
+  if(fields.isEmpty()) {
+    kDebug() << "No reasonable field found" << linePart;
+    return QList<Koushin::ActionObject* >();
+  }
+  if(expectedObject == "field") {
+    QList<Koushin::ActionObject* > objects;
+    foreach(Koushin::Field* field, fields)
+      objects << (Koushin::ActionObject*)field;
     return objects;
   }
 
@@ -193,14 +217,26 @@ QList< Koushin::Player* > Koushin::ActionParser::findPlayers(QStringList paramet
 {
   QList<Koushin::Player* > players;
   if(parameters.isEmpty()) parameters.insert(0, "current"); //set "current" as default
-  
-  if(parameters.value(0) == "current") {
-    if(owner->getActionObjectType() == Koushin::actionObjectIsBuiling)
-      players << ((Koushin::Building*)owner)->getTown()->getOwner();
-    else if(owner->getActionObjectType() == Koushin::actionObjectIsTown)
-      players << ((Koushin::Town*)owner)->getOwner();
-    else if(owner->getActionObjectType() == Koushin::actionObjectIsPlayer)
-      players << (Koushin::Player*)owner;
+
+  switch(owner->getActionObjectType()) {
+    case Koushin::actionObjectIsBuiling:
+      if(parameters.value(0) == "current")
+	players << ((Koushin::Building*)owner)->getTown()->getOwner();
+      break;
+    case Koushin::actionObjectIsField:
+      if(parameters.value(0) == "current")
+	players << ((Koushin::Field*)owner)->getTown()->getOwner();
+      break;
+    case Koushin::actionObjectIsTown:
+      if(parameters.value(0) == "current")
+	players << ((Koushin::Town*)owner)->getOwner();
+      break;
+    case Koushin::actionObjectIsPlayer:
+      if(parameters.value(0) == "current")
+	players << (Koushin::Player*)owner;
+      break;
+    default:
+      kDebug() << "Unknown action object type";
   }
   ///@todo implement filters for players here
   return players;
@@ -211,13 +247,25 @@ QList<Koushin::Town* > Koushin::ActionParser::findTowns(QStringList parameters, 
   QList<Koushin::Town* > towns;
   if(parameters.isEmpty()) parameters.insert(0, "current");
 //parse parameter 0:  
-  if(parameters.value(0) == "current") {
-    if(owner->getActionObjectType() == Koushin::actionObjectIsBuiling)
-      towns << ((Koushin::Building*)owner)->getTown();
-    else if(owner->getActionObjectType() == Koushin::actionObjectIsTown)
-      towns << (Koushin::Town*)owner;
-    else if(owner->getActionObjectType() == Koushin::actionObjectIsPlayer)
-      kDebug() << "\"current\" does not make sense for a player as owner";
+  switch(owner->getActionObjectType()) {
+    case Koushin::actionObjectIsBuiling:
+      if(parameters.value(0) == "current")
+	towns << ((Koushin::Building*)owner)->getTown();
+      break;
+    case Koushin::actionObjectIsField:
+      if(parameters.value(0) == "current")
+	towns << ((Koushin::Field*)owner)->getTown();
+      break;
+    case Koushin::actionObjectIsTown:
+      if(parameters.value(0) == "current")
+	towns << (Koushin::Town*)owner;
+      break;
+    case Koushin::actionObjectIsPlayer:
+      if(parameters.value(0) == "current")
+	kDebug() << "\"current\" does not make sense for a player as owner";
+      break;
+    default:
+      kDebug() << "Unknown action object type";
   }
 //sort out the towns which are not owned by the players in list:
   foreach(Koushin::Town* town, towns) {
@@ -232,14 +280,30 @@ QList< Koushin::Building* > Koushin::ActionParser::findBuildings(QStringList par
   QList<Koushin::Building* > buildings;
   if(parameters.isEmpty()) parameters.insert(0, "current");
 //parse parameter 0:  
-  if(parameters.value(0) == "current") {
-    if(owner->getActionObjectType() == Koushin::actionObjectIsBuiling)
-      buildings << (Koushin::Building*)owner;
-    else if(owner->getActionObjectType() == Koushin::actionObjectIsTown)
-      kDebug() << "\"current\" does not make sense for a town as owner";
-    else if(owner->getActionObjectType() == Koushin::actionObjectIsPlayer)
-      kDebug() << "\"current\" does not make sense for a player as owner";
+  switch(owner->getActionObjectType()) {
+    case Koushin::actionObjectIsBuiling:
+      if(parameters.value(0) == "current")
+	buildings << (Koushin::Building*)owner;
+      break;
+    case Koushin::actionObjectIsField:
+      if(parameters.value(0) == "current") {
+	Koushin::Field* field = (Koushin::Field*)owner;
+	if (field->getBuilding())
+	  buildings << field->getBuilding();
+      }
+      break;
+    case Koushin::actionObjectIsTown:
+      if(parameters.value(0) == "current")
+	kDebug() << "\"current\" does not make sense for a town as owner";
+      break;
+    case Koushin::actionObjectIsPlayer:
+      if(parameters.value(0) == "current")
+	kDebug() << "\"current\" does not make sense for a player as owner";
+      break;
+    default:
+      kDebug() << "Unknown action object type.";
   }
+    
 //sort out the towns which are not owned by the players in list:
   foreach(Koushin::Building* building, buildings) {
     if(!towns.contains(building->getTown())) buildings.removeAll(building);
@@ -247,6 +311,42 @@ QList< Koushin::Building* > Koushin::ActionParser::findBuildings(QStringList par
   ///@todo implement filters for towns here
   return buildings;
 }
+
+QList<Koushin::Field* > Koushin::ActionParser::findFields(QStringList parameters, Koushin::ActionObject* owner, QList< Koushin::Town* > towns)
+{
+  QList<Koushin::Field* > fields;
+  if(parameters.isEmpty()) parameters.insert(0, "current");
+//parse parameter 0:  
+  switch(owner->getActionObjectType()) {
+    case Koushin::actionObjectIsBuiling:
+      if(parameters.value(0) == "current")
+	fields << ((Koushin::Building*)owner)->getTown()->getFieldFromBuilding((Koushin::Building*)owner);
+      break;
+    case Koushin::actionObjectIsField:
+      if(parameters.value(0) == "current") {
+	  fields << (Koushin::Field*)owner;
+      }
+      break;
+    case Koushin::actionObjectIsTown:
+      if(parameters.value(0) == "current")
+	kDebug() << "\"current\" does not make sense for a town as owner";
+      break;
+    case Koushin::actionObjectIsPlayer:
+      if(parameters.value(0) == "current")
+	kDebug() << "\"current\" does not make sense for a player as owner";
+      break;
+    default:
+      kDebug() << "Unknown action object type.";
+  }
+    
+//sort out the towns which are not owned by the players in list:
+  foreach(Koushin::Field* field, fields) {
+    if(!towns.contains(field->getTown())) fields.removeAll(field);
+  }
+  ///@todo implement filters for towns here
+  return fields;
+}
+
 
 void Koushin::ActionParser::createOpenFieldActions(KConfigGroup* config, Koushin::Building* building)
 {

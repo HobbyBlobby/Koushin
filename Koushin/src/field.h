@@ -48,7 +48,7 @@ namespace Koushin {
       FieldType getType() const {return m_type;}
       void setResource(ResourceType type, int newValue) {m_resources.insert(type, newValue);}
       void addToResource(ResourceType type, int value) {value += getResource(type); m_resources.insert(type, value);}
-      int getResource(ResourceType type) {m_resources.value(type, 0);}
+      int getResource(ResourceType type) {return m_resources.value(type, 0);}
       void addBuilding(Building* building) {m_building = building;}
       Building* getBuilding() const {return m_building;}
       Town* getTown() const {return m_town;}

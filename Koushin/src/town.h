@@ -80,6 +80,7 @@ namespace Koushin {
       QMap<QString, QString> getPossibleBuildings(QMap<QString, QString> allBuildings) const;
       void markFields(QPoint aroundPos, qreal radius, FieldType type);
       void unmarkAllFields();
+      Field* getFieldFromBuilding(Building* building);
       
       static ResourceType getResourceTypeFromQString(QString resourceName);
       

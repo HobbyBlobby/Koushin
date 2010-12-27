@@ -98,11 +98,13 @@ bool Koushin::Field::gatherResource(Koushin::ResourceType type, int value)
   int currentResource = getResource(type);
   Koushin::Resource* resource = m_town->getResources().value(type);
   int spaceInTown = resource->maximumCapacity - resource->amount;
+  kDebug() << "gather Resource. Space in Town: " << spaceInTown << " and remaining Resource: " << currentResource;
   if(currentResource == 0 || spaceInTown == 0) return false;
   value = qMin(value, currentResource);
   value = qMin(value, spaceInTown);
   addToResource(type, -value);
   m_town->changeResource(type, value);
+  kDebug() << "gatherResource: " << value;
   return true;  
 }
 

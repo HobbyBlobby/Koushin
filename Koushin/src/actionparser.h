@@ -32,6 +32,7 @@
 class KConfig;
 namespace Koushin {
   class Building;
+  class Field;
   class Player;
   class ActionObject;
   class ActionManager;
@@ -83,7 +84,7 @@ namespace Koushin {
        * 
        * @return QList<Action* > The list containing all actions from the configuration.
        **/
-      static QList<Action* > createActionsFromConfig(const KConfigGroup& tasksGroup, ActionObject* newOwner, int currentRound);
+      static QList<Action* > createActionsFromConfig(const KConfigGroup& tasksGroup, Koushin::ActionObject* newOwner, int currentRound, bool singleGroup = false);
       /**
        * @brief This function finds the recipients.
        * It is possible to have multiple recipients, e.g. all town containing a port.
@@ -108,10 +109,14 @@ namespace Koushin {
       static bool parseGlobals(const KConfigGroup& parameterList, ActionManager* manager);
       /**
        * @brief This function tries to find the wanted player for the recipient.
-       * \n If the owner is a Building the following parameters are knwon:
+       * \n If the owner is a Building the following parameters are known:
        * - current (standard) -- the player constructed the Building
-       *
-       * @todo reorder the test: first check the owner type, then check the parameter.
+       * If the owner is a Field the following parameters are known:
+       * - current (standard) -- the player owning the town the field belongs to
+       * If the owner is a Town the following parameters are known:
+       * - current (standard) -- the player owning the town
+       * If the owner is a Player the following parameters are known:
+       * - current (standard) -- the player itself
        * 
        * @param parameters The list of the parameters to choose the player.
        * 
@@ -124,9 +129,12 @@ namespace Koushin {
        * @brief This function tries to find the wanted town for the recipient.
        * \n If the owner is a Building the following parameters are knwon:
        * - current (standard) -- the town the Building belongs to
+       * If the owner is a Field the following parameters are known:
+       * - current (standard) -- the town the field belongs to
+       * If the owner is a Town the following parameters are known:
+       * - current (standard) -- the town itslef
+       * If the owner is a Player the following parameters are known:
        *
-       * @todo reorder the test: first check the owner type, then check the parameter.
-       * 
        * @param parameters The list of the parameters to choose the town.
        * 
        * @param owner For some parameters it is nessecary to know the owner (like for "current").
@@ -138,9 +146,11 @@ namespace Koushin {
        * @brief This function tries to find the wanted building for the recipient.
        * \n If the owner is a Building the following parameters are knwon:
        * - current (standard) -- the building itself
+       * If the owner is a Field the following parameters are known:
+       * - current (standard) -- the building on the field (if there is one)
+       * If the owner is a Town the following parameters are known: (none)
+       * If the owner is a Player the following parameters are known: (none)
        *
-       * @todo reorder the test: first check the owner type, then check the parameter.
-       * 
        * @param parameters The list of the parameters to choose the building.
        * 
        * @param owner For some parameters it is nessecary to know the owner (like for "current").
@@ -148,6 +158,21 @@ namespace Koushin {
        * @return QList<:Player* > All buildings fitting in the given parameters.
        **/
       static QList<Building* > findBuildings(QStringList parameters, ActionObject* owner, QList<Town* > towns);
+      /** @brief This function tries to find the wanted fields for the recipient.
+       * \n If the owner is a Building the following parameters are knwon:
+       * - current (standard) -- the field on which the building stands
+       * If the owner is a Field the following parameters are known:
+       * - current (standard) -- the field itself
+       * If the owner is a Town the following parameters are known: (none)
+       * If the owner is a Player the following parameters are known: (none)
+       *
+       * @param parameters The list of the parameters to choose the fields.
+       * 
+       * @param owner For some parameters it is nessecary to know the owner (like for "current").
+       * 
+       * @return QList<:Player* > All fields fitting in the given parameters.
+       **/
+      static QList<Field* > findFields(QStringList parameters, ActionObject* owner, QList<Town* > towns);
       /**
        * @brief This functions separates a function name and his parameter.
        *

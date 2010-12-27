@@ -62,6 +62,11 @@ QRectF KoushinGUI::FieldItem::boundingRect() const
 void KoushinGUI::FieldItem::mousePressEvent(QGraphicsSceneMouseEvent* event)
 {
   //deselect building:
+  if(m_field->isMarked()) {
+    m_field->getTown()->getOwner()->fieldForActionChoosen(m_field);
+    m_field->getTown()->unmarkAllFields();
+    return;
+  }
   m_field->getTown()->getOwner()->setSelectedBuilding(0);
   //chosse, what is selected:
   if(m_field->getType() == Koushin::plainField) {

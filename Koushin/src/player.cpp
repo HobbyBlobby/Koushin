@@ -138,6 +138,7 @@ void Koushin::Player::fieldActionSelected(QListWidgetItem* item)
   foreach(KConfigGroup* group, m_selectedBuilding->getOpenFieldActions())
     if(group->name() == item->text()) {
       task = group;
+      m_openFieldConfig = *task;
       break;
     }
   qreal radius = task->readEntry("fieldRadius", qreal(1));
@@ -152,5 +153,14 @@ void Koushin::Player::setSelectedBuilding(Koushin::Building* building)
   m_selectedBuilding = building;
   m_buildingInfo->setBuilding(m_selectedBuilding);
 }
+
+void Koushin::Player::fieldForActionChoosen(Koushin::Field* field)
+{
+  if(!m_selectedBuilding) return;
+  QList<Action* > actions = ActionParser::createActionsFromConfig(m_openFieldConfig, field, m_game->getCurrentRound(), true);
+  m_actionManager->addAction(actions);
+//   m_selectedBuilding->getOpenFieldActions().removeOne(&m_openFieldConfig); //no effect, because group is copied in between
+}
+
 
 #include "player.moc"

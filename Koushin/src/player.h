@@ -28,6 +28,7 @@
 
 #include "actionobject.h"
 #include "GUI/resourceinfowidget.h"
+#include <KConfigGroup>
 
 class QListWidgetItem;
 namespace KoushinGUI {
@@ -65,6 +66,7 @@ namespace Koushin {
       void buildingChosen(QString buildingConfig);
       void fieldActionSelected(QListWidgetItem* item);
       void endRound();
+      void fieldForActionChoosen(Field* field);
     private:
       QList<Town* > m_townList;
       ActionManager* m_actionManager;
@@ -76,6 +78,7 @@ namespace Koushin {
       QString m_name;
       Game* m_game;
       Building* m_selectedBuilding;
+      KConfigGroup m_openFieldConfig;
   };
 }
 
