@@ -50,53 +50,23 @@ int main(int argc, char** argv)
     game->addPlayer("Felix");
     
     Koushin::Player* tester = game->getPlayers().first();
-//     Koushin::Player* tester = new Koushin::Player;
     Koushin::Town* town = new Koushin::Town(tester);
-//     Koushin::Building* testbldg = new Koushin::Building(town);
-    
-//     kDebug() << "Holz vorher: " << town->getResources().value(Koushin::ResourceWood).amount;
-    
-//     QStringList possibleDirs = KStandardDirs::resourceDirs("data");
-//     QStringList fileStrings;
+
+//later: prefer building downloaded or created by the user (in ~/.kde4/share/apps/Koushin/...) :
     KStandardDirs stdDirs;
     QMap<QString, QString> buildings;
     foreach(QString dirString, stdDirs.resourceDirs("data")) {
       QDir dir(dirString + "koushin/data/buildings/");
       dir.setNameFilters(QStringList() << "*.config");
       foreach(QString entry, dir.entryList()) {
-// 	tester->buildingChosen(dir.path() + "/" + entry);
-// 	fileStrings << dir.path() + "/" + entry;
 	KConfig config(dir.path() + "/" + entry);
 	KConfigGroup general(&config, "general");
 	buildings.insert(general.readEntry("name", QString()), dir.path() + "/" + entry);
-	
-// 	KConfigGroup tasks(&config, "tasks");
-// 	QStringList taskConfigList = tasks.groupList();
-// 	QList<KConfigGroup > taskList;
-// 	for (QStringList::const_iterator it = taskConfigList.begin(); it != taskConfigList.end(); ++it) {
-// 	  taskList << KConfigGroup(&tasks, *it);
-// 	  kDebug() << *it << " aus Config " << dir.path() + "/" + entry;
-// 	  KConfigGroup group(&tasks, *it);
-// 	}
-// 	kDebug() << taskConfigList;
-// 	foreach(KConfigGroup group, taskList) {
-// 	  kDebug() << group.keyList();
-// 	  Koushin::ActionParser parser(testbldg);
-// 	  QString recipient = group.readEntry("recipient", QString());
-// 	  QString actionName = group.readEntry("action", QString());
-// 	  kDebug() << "#######Create Action: " << recipient << " ### und ### " << actionName;
-// 	  Koushin::Action* action = parser.parseConfig(group);
-// 	  if(action) kDebug() << "######Succes";
-// 	  if (action) manager->addAction(action);
-// 	}
       }
     }
     tester->setBuildingList(buildings);
-//     kDebug() << "Building files parsed: " << fileStrings;
-    
-//     manager->executeActions();
-//     kDebug() << "Holz nachher: " << town->getResources().value(Koushin::ResourceWood).amount;
 
+//this will be part of the GameView later:
     QGraphicsScene* scene = new QGraphicsScene;
     QGraphicsView* view = new QGraphicsView;
     view->setScene(scene);
@@ -117,6 +87,7 @@ int main(int argc, char** argv)
     tmpView->setWidget(tmpViewWidget);
     
     QObject::connect(endRoundButton, SIGNAL(clicked(bool)), tester, SLOT(endRound()));
+//end of GameView part.
     
     KMainWindow* window = new KMainWindow;
     window->setCentralWidget(view);
