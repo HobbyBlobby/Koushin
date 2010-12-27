@@ -42,6 +42,11 @@ void KoushinGUI::FieldItem::paint(QPainter* painter, const QStyleOptionGraphicsI
   else if(m_field->getType() == Koushin::plainField)
     painter->setBrush(QBrush(QColor(100, 255, 100)));
 
+  if(m_field->isMarked()) {
+    painter->setPen(QPen(QBrush(Qt::red), 0.1));
+  } else {
+    painter->setPen(QPen());
+  }
   painter->drawRect(0, 0, 1, 1);
 }
 
@@ -66,6 +71,7 @@ void KoushinGUI::FieldItem::mousePressEvent(QGraphicsSceneMouseEvent* event)
       m_field->getTown()->getOwner()->setSelectedBuilding(m_field->getBuilding());
   }
   m_field->getTown()->getOwner()->getBuidlingInfoWidget()->repaint();
+  m_field->getTown()->unmarkAllFields();
   QGraphicsItem::mousePressEvent(event);
 }
 

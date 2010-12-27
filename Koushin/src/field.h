@@ -34,15 +34,6 @@ class QGraphicsItem;
 namespace Koushin {
   class Building;
 
-  enum FieldType {
-    plainField = 0,
-    fieldWithForest,
-    fieldWithRocks,
-    fieldWithWater,
-    fieldWithBuilding,
-    numberOfFieldTypes
-  };
-
   class Field : public ActionObject {
     public:
       Field(Town* town, FieldType type = plainField);
@@ -63,6 +54,10 @@ namespace Koushin {
       Town* getTown() const {return m_town;}
       void setPos(QPoint pos) {m_fieldItem->setPos(pos);}
       
+      void markField() {m_isMarked = true; m_fieldItem->update(m_fieldItem->boundingRect());}
+      void unmarkField() {m_isMarked = false; m_fieldItem->update(m_fieldItem->boundingRect());}
+      bool isMarked() {return m_isMarked;}
+      
       static QString fieldTypeToQString(FieldType type);
       static FieldType QStringToFieldType(QString string);
       
@@ -75,6 +70,7 @@ namespace Koushin {
       QMap<ResourceType, int > m_resources;
       Building* m_building;
       ::KoushinGUI::FieldItem* m_fieldItem;
+      bool m_isMarked;
   };
 }
 

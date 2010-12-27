@@ -32,6 +32,7 @@
 #include "GUI/resourceinfowidget.h"
 #include "action.h"
 #include "game.h"
+#include "field.h"
 
 Koushin::Player::Player(QString name, Koushin::Game* game)
   : m_actionManager(new Koushin::ActionManager(this))
@@ -139,9 +140,11 @@ void Koushin::Player::fieldActionSelected(QListWidgetItem* item)
       task = group;
       break;
     }
-  int radius = task->readEntry("fieldRadius", int(1));
-  kDebug() << "Found radius: " << radius;
-  QGraphicsEllipseItem* circle = new QGraphicsEllipseItem(m_selectedBuilding->pos().x()-radius+0.5, m_selectedBuilding->pos().y()-radius+0.5, 2*radius, 2*radius, m_townList.first()->getTownWidget());
+  qreal radius = task->readEntry("fieldRadius", qreal(1));
+  QString typeLine = task->readEntry("needs", QString());
+  typeLine = ActionParser::separateNameAndParameters(typeLine).second.first();
+  Koushin::FieldType type = Koushin::Field::QStringToFieldType(typeLine);
+  m_townList.first()->markFields(m_selectedBuilding->pos().toPoint(), radius, type);
 }
 
 void Koushin::Player::setSelectedBuilding(Koushin::Building* building)

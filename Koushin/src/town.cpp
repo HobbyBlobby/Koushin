@@ -22,6 +22,8 @@
 #include "player.h"
 
 #include <KDebug>
+#include "building.h"
+#include <math.h>
 #include "field.h"
 
 //define operator "<" for QPoint after lexigographic order for using it as key in QMap:
@@ -31,6 +33,11 @@ bool operator<(const QPoint& lPoint, const QPoint& rPoint) {
   if(lPoint.x() == rPoint.x() && lPoint.y() < rPoint.y())
     return true;
   return false;
+}
+
+qreal distance(QPoint p1, QPoint p2) {
+  QPoint tmpP = p2 - p1;
+  return sqrt(pow(tmpP.x(), 2) + pow(tmpP.y(), 2));
 }
 
 Koushin::Town::Town(Player* owner)
@@ -145,4 +152,21 @@ QMap< QString, QString > Koushin::Town::getPossibleBuildings(QMap< QString, QStr
 {
   //Look for prerequisits, now: no prerequisits are implemented, so all buildings will returned
   return allBuildings;
+}
+
+void Koushin::Town::markFields(QPoint aroundPos, qreal radius, Koushin::FieldType type)
+{
+  foreach(QPoint point, m_fields.keys()) {
+    if(distance(point, aroundPos) <= radius) {
+      Koushin::Field* field = m_fields.value(point);
+      if(field->getType() == type)
+	field->markField();
+    }
+  }
+}
+
+void Koushin::Town::unmarkAllFields()
+{
+  foreach(Koushin::Field* field, m_fields.values())
+    field->unmarkField();
 }

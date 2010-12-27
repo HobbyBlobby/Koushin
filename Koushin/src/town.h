@@ -25,7 +25,6 @@
 #include <QPoint>
 #include "actionobject.h"
 
-
 namespace KoushinGUI {
   class TownWidget;
 }
@@ -40,6 +39,15 @@ namespace Koushin {
     ResourceTypeCount
   };
   
+  enum FieldType {
+    plainField = 0,
+    fieldWithForest,
+    fieldWithRocks,
+    fieldWithWater,
+    fieldWithBuilding,
+    numberOfFieldTypes
+  };
+
   class Resource {
     public:
       Resource(ResourceType type = ResourceUnspezifed)
@@ -70,6 +78,8 @@ namespace Koushin {
       bool addBuilding(Building* building, QPoint pos);
       QMap<Building*, QPoint> getBuildings() const {return m_buildings;}
       QMap<QString, QString> getPossibleBuildings(QMap<QString, QString> allBuildings) const;
+      void markFields(QPoint aroundPos, qreal radius, FieldType type);
+      void unmarkAllFields();
       
       static ResourceType getResourceTypeFromQString(QString resourceName);
       

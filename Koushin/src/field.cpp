@@ -23,12 +23,14 @@
 #include <qgraphicsitem.h>
 #include <QGraphicsRectItem>
 #include <QBrush>
+#include <kdebug.h>
 
 Koushin::Field::Field(Koushin::Town* town, Koushin::FieldType type)
   : m_type(type)
   , m_town(town)
   , m_building(0)
   , m_fieldItem(new KoushinGUI::FieldItem(this))
+  , m_isMarked(false)
 {
 }
 
@@ -49,6 +51,7 @@ QString Koushin::Field::fieldTypeToQString(Koushin::FieldType type)
 
 Koushin::FieldType Koushin::Field::QStringToFieldType(QString string)
 {
+  kDebug() << string;
   if(string == "fieldWithBuilding")
     return Koushin::fieldWithBuilding;
   if(string == "fieldWithForest")
