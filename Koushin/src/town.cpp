@@ -47,6 +47,9 @@ Koushin::Town::Town(Player* owner)
     for(int j = 0; j < 10; ++j) {
       Koushin::Field* field =  new Koushin::Field(this);
       field->setPos(QPoint(i, j));
+      Koushin::FieldType type;
+      while((type = (Koushin::FieldType)(qrand() % Koushin::numberOfFieldTypes)) == Koushin::fieldWithBuilding) {}
+	field->setType(type);
       m_fields.insert(QPoint(i,j), field);
     }
   }
@@ -131,8 +134,10 @@ bool Koushin::Town::addBuilding(Koushin::Building* building, QPoint pos)
   }
   m_buildings.insert(building, pos);
   Koushin::Field* field = m_fields.value(pos, 0);
-  if(field)
+  if(field) {
+    field->setType(Koushin::fieldWithBuilding);
     field->addBuilding(building);
+  }
   return 1;
 }
 

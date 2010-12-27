@@ -25,6 +25,7 @@
 #include <QString>
 #include "town.h"
 #include <qgraphicsitem.h>
+#include "GUI/fielditem.h"
 
 class QGraphicsRectItem;
 class QGraphicsWidget;
@@ -54,13 +55,14 @@ class Building;
       
 //getters and setters:
       void setType(FieldType type) {m_type = type;}
+      FieldType getType() const {return m_type;}
       void setResource(ResourceType type, int newValue) {m_resources.insert(type, newValue);}
       void addToResource(ResourceType type, int value) {value += getResource(type); m_resources.insert(type, value);}
       int getResource(ResourceType type) {m_resources.value(type, 0);}
       void addBuilding(Building* building) {m_building = building;}
       Building* getBuilding() const {return m_building;}
       Town* getTown() const {return m_town;}
-      void setPos(QPoint pos) {m_rect->setPos(pos);}
+      void setPos(QPoint pos) {m_fieldItem->setPos(pos);}
       
       static QString fieldTypeToQString(FieldType type);
       static FieldType QStringToFieldType(QString string);
@@ -73,7 +75,7 @@ class Building;
       Town* m_town;
       QMap<ResourceType, int > m_resources;
       Building* m_building;
-      QGraphicsRectItem* m_rect;
+      ::KoushinGUI::FieldItem* m_fieldItem;
   };
 }
 

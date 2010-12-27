@@ -12,6 +12,7 @@ set(Koushin_SRCS
   population.cpp
   town.cpp
   GUI/constructionmenu.cpp
+  GUI/fielditem.cpp
   GUI/resourceinfowidget.cpp
   GUI/townwidget.cpp
 )

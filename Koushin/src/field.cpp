@@ -28,11 +28,8 @@ Koushin::Field::Field(Koushin::Town* town, Koushin::FieldType type)
   : m_type(type)
   , m_town(town)
   , m_building(0)
-  , m_rect(0)
+  , m_fieldItem(new KoushinGUI::FieldItem(this))
 {
-  m_rect = new QGraphicsRectItem(0.0, 0.0, 1.0, 1.0); // m_town->getTownWidget()
-  m_rect->setParentItem(m_town->getTownWidget());
-  m_rect->setBrush(QBrush(Qt::cyan));
 }
 
 QString Koushin::Field::fieldTypeToQString(Koushin::FieldType type)
