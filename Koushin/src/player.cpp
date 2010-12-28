@@ -14,7 +14,8 @@
 
     You should have received a copy of the GNU Lesser General Public
     License along with this library; if not, write to the Free Software
-    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+    Foundation, Inc., 51 
+    Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
 #include "building.h"
@@ -42,6 +43,7 @@ Koushin::Player::Player(QString name, Koushin::Game* game)
   , m_game(game)
   , m_buildingInfo(0)
   , m_selectedBuilding(0)
+  , m_openFieldConfig(0)
   , m_lastInteraction(Koushin::PlayerInteraction::noInteraction)
 {
 
@@ -99,10 +101,10 @@ void Koushin::Player::buildingChosen(QString buildingConfig)
   KConfig* config = new KConfig(buildingConfig);
   newBuilding->setName(KConfigGroup(config , "general").readEntry("name", QString("NoName")));
 
-  KConfigGroup tasksGroup(config, "tasks");
+  KConfigGroup* tasksGroup = new KConfigGroup(config, "tasks");
   QList<Action* > actions = ActionParser::createActionsFromConfig(tasksGroup, newBuilding, m_game->getCurrentRound());
   m_actionManager->addAction(actions);
-  Koushin::ActionParser::parseGlobals(tasksGroup.group("globals"), m_actionManager);
+  Koushin::ActionParser::parseGlobals(tasksGroup->group("globals"), m_actionManager);
   
   ActionParser::createOpenFieldActions(new KConfigGroup(config, "fieldTasks"), newBuilding);
   
@@ -138,15 +140,13 @@ void Koushin::Player::setBuildingInfoWidget(KoushinGUI::BuildingInfoWidget* widg
 void Koushin::Player::fieldActionSelected(QListWidgetItem* item)
 {
   if(!m_selectedBuilding) return;
-  KConfigGroup* task;
   foreach(KConfigGroup* group, m_selectedBuilding->getOpenFieldActions())
     if(group->name() == item->text()) {
-      task = group;
-      m_openFieldConfig = *task;
+      m_openFieldConfig = group;
       break;
     }
-  qreal radius = task->readEntry("fieldRadius", qreal(1));
-  QString typeLine = task->readEntry("needs", QString());
+  qreal radius = m_openFieldConfig->readEntry("fieldRadius", qreal(1));
+  QString typeLine = m_openFieldConfig->readEntry("needs", QString());
   typeLine = ActionParser::separateNameAndParameters(typeLine).second.first();
   Koushin::FieldType type = Koushin::Field::QStringToFieldType(typeLine);
   m_fieldsForFieldAction = m_townList.first()->getPossibleFields(m_selectedBuilding->pos().toPoint(), radius, type);
@@ -165,7 +165,8 @@ void Koushin::Player::fieldForActionChoosen(Koushin::Field* field)
   QList<Action* > actions = ActionParser::createActionsFromConfig(m_openFieldConfig, field, m_game->getCurrentRound(), true);
   m_actionManager->addAction(actions);
   m_fieldsForFieldAction.clear();
-//   m_selectedBuilding->getOpenFieldActions().removeOne(&m_openFieldConfig); //no effect, because group is copied in between
+  m_selectedBuilding->removeOpenFieldAction(m_openFieldConfig);
+  m_buildingInfo->repaint();
 }
 
 void Koushin::Player::fieldClicked(Koushin::Field* field)
@@ -185,9 +186,10 @@ void Koushin::Player::fieldClicked(Koushin::Field* field)
     case Koushin::PlayerInteraction::buildingClicked:
 	if(m_fieldsForFieldAction.contains(field)) {
 	  fieldForActionChoosen(field);
-	  field->getTown()->unmarkAllFields();
-	  setSelectedBuilding(0);
-	  m_lastInteraction = Koushin::PlayerInteraction::noInteraction;
+	  //continue with selection, so do not unmark fields and let building selected:
+// 	  field->getTown()->unmarkAllFields();
+// 	  setSelectedBuilding(0);
+// 	  m_lastInteraction = Koushin::PlayerInteraction::noInteraction;
 	}
       break;
     default:

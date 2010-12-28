@@ -44,6 +44,7 @@ class Field;
       void setLevel(int newLevel) {m_level = newLevel;}
       int getNumberOfCreatedOpenFieldActions(QString name) const {return m_createdOpenFieldActions.value(name, 0);}
       void addOpenFieldAction(KConfigGroup* config);
+      void removeOpenFieldAction(KConfigGroup* config);
       QList<KConfigGroup* > getOpenFieldActions() const {return m_openFieldActions;}
       void setField(Field* field) {m_field = field;}
       Field* getField() const {return m_field;}

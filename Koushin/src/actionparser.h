@@ -84,7 +84,7 @@ namespace Koushin {
        * 
        * @return QList<Action* > The list containing all actions from the configuration.
        **/
-      static QList<Action* > createActionsFromConfig(const KConfigGroup& tasksGroup, Koushin::ActionObject* newOwner, int currentRound, bool singleGroup = false);
+      static QList<Action* > createActionsFromConfig(KConfigGroup* tasksGroup, Koushin::ActionObject* newOwner, int currentRound, bool singleGroup = false);
       /**
        * @brief This function finds the recipients.
        * It is possible to have multiple recipients, e.g. all town containing a port.
@@ -202,7 +202,7 @@ namespace Koushin {
        * 
        * @return void
        **/
-      static void setRoundLimit(Action* action, KConfigGroup config, int currentRound);
+      static void setRoundLimit(Action* action, KConfigGroup* config, int currentRound);
       /**
        * @brief This function creates a list of open field actions.
        * The actions are read from the \c fieldtasks group. If the building level is zero, the start number of free fields is used, else the number resulting from <tt>(int)(level*newFieldsPerLevel+startNumber)-stillCreatedActions</tt> is used.

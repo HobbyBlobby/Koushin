@@ -41,7 +41,6 @@ void KoushinGUI::BuildingInfoWidget::repaint()
   QStringList itemStrings;
   foreach(KConfigGroup* group, m_building->getOpenFieldActions())
     if(!itemStrings.contains(group->name())) itemStrings << group->name();
-  kDebug() << "Redraw building info widget: " << itemStrings;
   m_list.clear();
   m_list.addItems(itemStrings);
   m_list.show();

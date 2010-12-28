@@ -73,16 +73,17 @@ namespace Koushin {
       static const QMap<QString, ActionProperties> getPossibleActions();
       const QString getLocal(QString name, QString additionalContent = QString());
       
+
     public Q_SLOTS:
-      void townClicked(QPoint point);
-      void buildingChosen(QString buildingConfig);
-      void fieldActionSelected(QListWidgetItem* item);
       void endRound();
       void startRound();
-      void fieldForActionChoosen(Field* field);
-      //new slot system:
       void fieldClicked(Field* field);
+      void buildingChosen(QString buildingConfig);
+      void fieldActionSelected(QListWidgetItem* item);
     private:
+      void townClicked(QPoint point);
+      void fieldForActionChoosen(Field* field);
+
       QList<Town* > m_townList;
       ActionManager* m_actionManager;
       QMap<QString, QString> m_listOfAllBuildings;
@@ -93,7 +94,7 @@ namespace Koushin {
       QString m_name;
       Game* m_game;
       Building* m_selectedBuilding;
-      KConfigGroup m_openFieldConfig;
+      KConfigGroup* m_openFieldConfig;
       PlayerInteraction::Interaction m_lastInteraction;
       QList<Field* > m_fieldsForFieldAction;
   };

@@ -74,7 +74,7 @@ int main(int argc, char** argv)
     scene->addItem(town->getTownWidget());
     town->getTownWidget()->scale(50,50);
     view->resize(scene->sceneRect().size().toSize());
-    QObject::connect(town->getTownWidget(), SIGNAL(townClicked(QPoint)), tester, SLOT(townClicked(QPoint)));
+//     QObject::connect(town->getTownWidget(), SIGNAL(townClicked(QPoint)), tester, SLOT(townClicked(QPoint)));
     
     QDockWidget* tmpView = new QDockWidget;
     QWidget* tmpViewWidget = new QWidget;

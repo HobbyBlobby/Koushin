@@ -41,30 +41,30 @@ QPair< QString, QStringList > Koushin::ActionParser::separateNameAndParameters(Q
   return QPair<QString, QStringList>(actionName, parameters);
 }
 
-QList< Koushin::Action* > Koushin::ActionParser::createActionsFromConfig(const KConfigGroup& tasksGroup, ActionObject* newOwner, int currentRound, bool singleGroup)
+QList< Koushin::Action* > Koushin::ActionParser::createActionsFromConfig(KConfigGroup* tasksGroup, Koushin::ActionObject* newOwner, int currentRound, bool singleGroup)
 {
   QMap<QString, Koushin::Action* > actions;
-  QStringList actionNames = tasksGroup.groupList();
+  QStringList actionNames = tasksGroup->groupList();
 //Create Actions:
   if(singleGroup) {
     Koushin::Action* newAction = new Koushin::Action();
     newAction->setOwner(newOwner);
-    newAction->setConfiguration(new KConfigGroup(tasksGroup));
+    newAction->setConfiguration(tasksGroup);
     setRoundLimit(newAction, tasksGroup, currentRound);
-    actions.insert(tasksGroup.name(), newAction);
+    actions.insert(tasksGroup->name(), newAction);
   } else {
     foreach(QString actionName, actionNames) {
       if(actionName == "globals" || actionName == "conditions") continue;
-      KConfigGroup* actionGroup = new KConfigGroup(tasksGroup.group(actionName));
+      KConfigGroup* actionGroup = new KConfigGroup(tasksGroup->group(actionName));
       Koushin::Action* newAction = new Koushin::Action();
       newAction->setOwner(newOwner);
       newAction->setConfiguration(actionGroup);
-      setRoundLimit(newAction, *actionGroup, currentRound);
+      setRoundLimit(newAction, actionGroup, currentRound);
       actions.insert(actionName, newAction);
     }
   }
 //write conditions to action:
-  KConfigGroup conditionGroup = tasksGroup.group("conditions");
+  KConfigGroup conditionGroup = tasksGroup->group("conditions");
   QStringList conditionsList;
   foreach(QString condition, conditionGroup.keyList())
     conditionsList << conditionGroup.readEntryUntranslated(condition, QString());
@@ -73,12 +73,12 @@ QList< Koushin::Action* > Koushin::ActionParser::createActionsFromConfig(const K
   return actions.values();
 }
 
-void Koushin::ActionParser::setRoundLimit(Koushin::Action* action, KConfigGroup config, int currentRound)
+void Koushin::ActionParser::setRoundLimit(Koushin::Action* action, KConfigGroup* config, int currentRound)
 {
   if(!action) return;
-  int fromRound = config.readEntry("fromRound", int(-1));
-  int toRound = config.readEntry("toRound", int(-1));
-  int intervall = config.readEntry("intervall", int(-1));
+  int fromRound = config->readEntry("fromRound", int(-1));
+  int toRound = config->readEntry("toRound", int(-1));
+  int intervall = config->readEntry("intervall", int(-1));
   if(fromRound + toRound + intervall == -3)
     action->executeInEveryRound(true);
   else {
@@ -355,6 +355,7 @@ void Koushin::ActionParser::createOpenFieldActions(KConfigGroup* config, Koushin
     qreal number = taskGroup->readEntry("numberOfFields", qreal(1));
     number += (qreal)building->getLevel() * taskGroup->readEntry("numberOfFieldsPerLevel", qreal(0));
     number -= building->getNumberOfCreatedOpenFieldActions(name);
+    kDebug() << "Create " << (int)number << " actions of " << taskGroup->name();
     for(int i = 0; i < (int)number; ++i) {
       building->addOpenFieldAction(taskGroup);
     }
