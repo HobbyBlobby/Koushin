@@ -29,17 +29,29 @@
 #include "actionobject.h"
 #include "GUI/resourceinfowidget.h"
 #include <KConfigGroup>
-
 class QListWidgetItem;
+
 namespace KoushinGUI {
   class ConstructionMenu;
-class BuildingInfoWidget;
+  class BuildingInfoWidget;
 }
 
 namespace Koushin {
   class ActionManager;
   class Town;
   class Game;
+  
+  namespace PlayerInteraction {
+    enum Interaction {
+      noInteraction = 0,
+      plainFieldClicked,
+      buildingClicked,
+      freeFieldActionChoosen,
+      roundedEnded,
+      roundedStarted
+    };
+  }
+  
   class Player : public QObject, public ActionObject {
     Q_OBJECT
     public:
@@ -79,6 +91,7 @@ namespace Koushin {
       Game* m_game;
       Building* m_selectedBuilding;
       KConfigGroup m_openFieldConfig;
+      PlayerInteraction::Interaction m_lastInteraction;
   };
 }
 

@@ -42,6 +42,7 @@ Koushin::Player::Player(QString name, Koushin::Game* game)
   , m_game(game)
   , m_buildingInfo(0)
   , m_selectedBuilding(0)
+  , m_lastInteraction(Koushin::PlayerInteraction::noInteraction)
 {
 
 }
