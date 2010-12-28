@@ -185,16 +185,14 @@ void Koushin::Player::fieldClicked(Koushin::Field* field)
       }
       break;
     case Koushin::PlayerInteraction::buildingClicked:
-	if(m_fieldsForFieldAction.contains(field)) {
-	  fieldForActionChoosen(field);
-	  //continue with selection, so do not unmark fields and let building selected:
-// 	  field->getTown()->unmarkAllFields();
-// 	  setSelectedBuilding(0);
-// 	  m_lastInteraction = Koushin::PlayerInteraction::noInteraction;
-	} else {
-	  field->getTown()->unmarkAllFields();
-	  m_lastInteraction = Koushin::PlayerInteraction::noInteraction;
-	}
+      if(m_fieldsForFieldAction.contains(field)) {
+	fieldForActionChoosen(field);
+	field->getTown()->unmarkAllFields();
+	m_buildingInfo->repaint();
+      } else {
+	field->getTown()->unmarkAllFields();
+	m_lastInteraction = Koushin::PlayerInteraction::noInteraction;
+      }
       break;
     default:
       kDebug() << "Do not know what to do.";
