@@ -118,6 +118,10 @@ void Koushin::Player::buildingChosen(QString buildingConfig)
 
 void Koushin::Player::endRound()
 {
+  if(m_selectedBuilding)
+    m_selectedBuilding->unselect();
+  setSelectedBuilding(0);
+  m_fieldsForFieldAction.clear();
   m_game->endRound();
 }
 
