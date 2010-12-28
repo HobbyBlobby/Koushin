@@ -54,7 +54,9 @@ namespace Koushin {
       void setPos(QPoint pos) {m_fieldItem->setPos(pos);}
       ::KoushinGUI::FieldItem* getFieldItem () const {return m_fieldItem;}
       
-      void markField() {m_isMarked = true; m_fieldItem->update(m_fieldItem->boundingRect());}
+      void markField(QColor color = Qt::red) {
+	m_isMarked = true; m_fieldItem->setMarkColor(color); m_fieldItem->update(m_fieldItem->boundingRect());
+      }
       void unmarkField() {m_isMarked = false; m_fieldItem->update(m_fieldItem->boundingRect());}
       bool isMarked() {return m_isMarked;}
       

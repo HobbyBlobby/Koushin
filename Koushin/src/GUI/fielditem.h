@@ -22,6 +22,7 @@
 #define FIELDITEM_H
 
 #include <qgraphicsitem.h>
+#include <QColor>
 
 namespace Koushin {
   class Field;
@@ -33,11 +34,13 @@ namespace KoushinGUI {
       FieldItem(Koushin::Field* field);
       virtual void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget = 0);
       virtual QRectF boundingRect() const;
+      void setMarkColor(QColor color) {m_markColor = color;}
     protected:
       void mousePressEvent(QGraphicsSceneMouseEvent* event);
     private:
       ::Koushin::Field* m_field;
       QGraphicsTextItem* m_textItem;
+      QColor m_markColor;
   };
 }
 

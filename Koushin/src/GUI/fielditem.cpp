@@ -30,8 +30,8 @@
 
 KoushinGUI::FieldItem::FieldItem(Koushin::Field* field)
   : m_field(field)
-  , m_textItem(new QGraphicsTextItem()
-)
+  , m_textItem(new QGraphicsTextItem())
+  , m_markColor(Qt::red)
 {
   setParentItem(field->getTown()->getTownWidget());
 }
@@ -47,13 +47,8 @@ void KoushinGUI::FieldItem::paint(QPainter* painter, const QStyleOptionGraphicsI
   else if(m_field->getType() == Koushin::fieldWithWater)
     painter->setBrush(QBrush(Qt::blue));
   else if(m_field->getType() == Koushin::plainField)
-    painter->setBrush(QBrush(QColor(130, 255, 130)));
+    painter->setBrush(QBrush(QColor(200, 255, 130)));
 
-  if(m_field->isMarked()) {
-    painter->setPen(QPen(QBrush(Qt::red), 0.1));
-  } else {
-    painter->setPen(QPen());
-  }
   painter->drawRect(0, 0, 1, 1);
   
   if(m_field->getType() == Koushin::fieldWithBuilding && m_field->getBuilding()) {
@@ -63,6 +58,13 @@ void KoushinGUI::FieldItem::paint(QPainter* painter, const QStyleOptionGraphicsI
     m_textItem->setScale(1 / m_textItem->boundingRect().width());
     m_textItem->setPos(0, 0.5 - m_textItem->boundingRect().height()/(2*m_textItem->boundingRect().width()));
     m_textItem->setParentItem(this);
+  }
+    
+  if(m_field->isMarked()) {
+    painter->setOpacity(0.5);
+    painter->setBrush(QBrush(m_markColor));
+    painter->setPen(QPen());
+    painter->drawRect(0,0,1,1);
   }
 }
 

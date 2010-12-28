@@ -156,6 +156,7 @@ void Koushin::Player::fieldActionSelected(QListWidgetItem* item)
 void Koushin::Player::setSelectedBuilding(Koushin::Building* building)
 {
   m_selectedBuilding = building;
+  m_selectedBuilding->getField()->markField(Qt::green);
   m_buildingInfo->setBuilding(m_selectedBuilding);
 }
 
@@ -190,6 +191,9 @@ void Koushin::Player::fieldClicked(Koushin::Field* field)
 // 	  field->getTown()->unmarkAllFields();
 // 	  setSelectedBuilding(0);
 // 	  m_lastInteraction = Koushin::PlayerInteraction::noInteraction;
+	} else {
+	  field->getTown()->unmarkAllFields();
+	  m_lastInteraction = Koushin::PlayerInteraction::noInteraction;
 	}
       break;
     default:
