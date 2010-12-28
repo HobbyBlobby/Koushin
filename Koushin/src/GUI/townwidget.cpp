@@ -54,15 +54,15 @@ void KoushinGUI::TownWidget::paint(QPainter* painter, const QStyleOptionGraphics
 
 
 #include <kdebug.h>
-void KoushinGUI::TownWidget::drawBuildings(QMap< Koushin::Building*, QPoint > buildingMap)
-{
-  if(!buildingMap.isEmpty()) {
-    foreach(Koushin::Building* building, buildingMap.keys()) {
-      building->setParentItem(this); 
-      building->setPos(buildingMap.value(building));
-    }
-  }
-}
+// void KoushinGUI::TownWidget::drawBuildings(QMap< Koushin::Building*, QPoint > buildingMap)
+// {
+//   if(!buildingMap.isEmpty()) {
+//     foreach(Koushin::Building* building, buildingMap.keys()) {
+//       building->setParentItem(this); 
+//       building->setPos(buildingMap.value(building));
+//     }
+//   }
+// }
 
 // void KoushinGUI::TownWidget::mousePressEvent(QGraphicsSceneMouseEvent* event)
 // {

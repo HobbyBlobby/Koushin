@@ -22,9 +22,16 @@
 #include "field.h"
 #include "GUI/townwidget.h"
 #include <qpainter.h>
+#include <KDebug>
+#include <building.h>
+#include <player.h>
+#include "buildinginfowidget.h"
+#include <QTextItem>
 
 KoushinGUI::FieldItem::FieldItem(Koushin::Field* field)
   : m_field(field)
+  , m_textItem(new QGraphicsTextItem()
+)
 {
   setParentItem(field->getTown()->getTownWidget());
 }
@@ -40,7 +47,7 @@ void KoushinGUI::FieldItem::paint(QPainter* painter, const QStyleOptionGraphicsI
   else if(m_field->getType() == Koushin::fieldWithWater)
     painter->setBrush(QBrush(Qt::blue));
   else if(m_field->getType() == Koushin::plainField)
-    painter->setBrush(QBrush(QColor(100, 255, 100)));
+    painter->setBrush(QBrush(QColor(130, 255, 130)));
 
   if(m_field->isMarked()) {
     painter->setPen(QPen(QBrush(Qt::red), 0.1));
@@ -48,6 +55,15 @@ void KoushinGUI::FieldItem::paint(QPainter* painter, const QStyleOptionGraphicsI
     painter->setPen(QPen());
   }
   painter->drawRect(0, 0, 1, 1);
+  
+  if(m_field->getType() == Koushin::fieldWithBuilding && m_field->getBuilding()) {
+    painter->setPen(QPen());
+    painter->drawEllipse(0,0,1,1);
+    m_textItem->setPlainText(m_field->getBuilding()->getName());
+    m_textItem->setScale(1 / m_textItem->boundingRect().width());
+    m_textItem->setPos(0, 0.5 - m_textItem->boundingRect().height()/(2*m_textItem->boundingRect().width()));
+    m_textItem->setParentItem(this);
+  }
 }
 
 QRectF KoushinGUI::FieldItem::boundingRect() const
@@ -55,10 +71,6 @@ QRectF KoushinGUI::FieldItem::boundingRect() const
   return QRectF(0.0, 0.0, 1.0, 1.0);
 }
 
-#include <KDebug>
-#include <building.h>
-#include <player.h>
-#include "buildinginfowidget.h"
 void KoushinGUI::FieldItem::mousePressEvent(QGraphicsSceneMouseEvent* event)
 {
   //deselect building:

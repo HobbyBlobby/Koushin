@@ -107,8 +107,8 @@ void Koushin::Player::buildingChosen(QString buildingConfig)
   ActionParser::createOpenFieldActions(new KConfigGroup(config, "fieldTasks"), newBuilding);
   
 
-  m_townList.first()->getTownWidget()->drawBuildings(m_townList.first()->getBuildings());
-
+//   m_townList.first()->getTownWidget()->drawBuildings(m_townList.first()->getBuildings());
+  newBuilding->getField()->getFieldItem()->update(newBuilding->getField()->getFieldItem()->boundingRect());
 //   m_townList.first()->getTownWidget()->scene()->removeWidget(m_constructionMenu);
 //   delete(m_constructionMenu);
   //TODO: find a way to delete the widget

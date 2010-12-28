@@ -33,7 +33,6 @@ class QGraphicsWidget;
 class QGraphicsItem;
 namespace Koushin {
   class Building;
-
   class Field : public ActionObject {
     public:
       Field(Town* town, FieldType type = plainField);
@@ -53,6 +52,7 @@ namespace Koushin {
       Building* getBuilding() const {return m_building;}
       Town* getTown() const {return m_town;}
       void setPos(QPoint pos) {m_fieldItem->setPos(pos);}
+      ::KoushinGUI::FieldItem* getFieldItem () const {return m_fieldItem;}
       
       void markField() {m_isMarked = true; m_fieldItem->update(m_fieldItem->boundingRect());}
       void unmarkField() {m_isMarked = false; m_fieldItem->update(m_fieldItem->boundingRect());}

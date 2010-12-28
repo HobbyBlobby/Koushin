@@ -37,6 +37,7 @@ namespace KoushinGUI {
       void mousePressEvent(QGraphicsSceneMouseEvent* event);
     private:
       ::Koushin::Field* m_field;
+      QGraphicsTextItem* m_textItem;
   };
 }
 

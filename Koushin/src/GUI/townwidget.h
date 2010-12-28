@@ -41,7 +41,7 @@ namespace KoushinGUI {
       QRectF boundingRect() const;
       void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget = 0);
       
-      void drawBuildings(QMap< ::Koushin::Building*, QPoint> buildingMap = QMap< ::Koushin::Building*, QPoint>());
+//       void drawBuildings(QMap< ::Koushin::Building*, QPoint> buildingMap = QMap< ::Koushin::Building*, QPoint>());
       
       void sendSignalTownClicked(QPoint point) {emit townClicked(point);}
 //     protected:

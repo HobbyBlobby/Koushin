@@ -145,6 +145,7 @@ bool Koushin::Town::addBuilding(Koushin::Building* building, QPoint pos)
   if(field) {
     field->setType(Koushin::fieldWithBuilding);
     field->addBuilding(building);
+    building->setField(field);
   }
   return 1;
 }

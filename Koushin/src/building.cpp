@@ -27,11 +27,12 @@ Koushin::Building::Building(Town* town)
   : m_town(town)
   , m_name("NoName")
   , m_level(1)
+  , m_field(0)
 {
-  m_textItem = new QGraphicsTextItem(m_name);
-  m_textItem->setScale(1 / m_textItem->boundingRect().width());
-  m_textItem->setPos(0, 0.5 - m_textItem->boundingRect().height()/(2*m_textItem->boundingRect().width()));
-  m_textItem->setParentItem(this);
+//   m_textItem = new QGraphicsTextItem(m_name);
+//   m_textItem->setScale(1 / m_textItem->boundingRect().width());
+//   m_textItem->setPos(0, 0.5 - m_textItem->boundingRect().height()/(2*m_textItem->boundingRect().width()));
+//   m_textItem->setParentItem(this);
 }
 
 Koushin::Building::~Building()
@@ -53,20 +54,20 @@ const QString Koushin::Building::getLocal(QString name, QString additionalConten
   return m_town->getLocal(name, additionalContent);
 }
 
-void Koushin::Building::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget)
-{
-  Q_UNUSED(option)
-  Q_UNUSED(widget)
-  painter->drawEllipse(QRect(0,0,1,1));
-  m_textItem->setPlainText(m_name);
-  m_textItem->setScale(1 / m_textItem->boundingRect().width());
-  m_textItem->setPos(0, 0.5 - m_textItem->boundingRect().height()/(2*m_textItem->boundingRect().width()));
-}
-
-QRectF Koushin::Building::boundingRect() const
-{
-  return QRectF(0.0, 0.0, 1.0, 1.0);
-}
+// void Koushin::Building::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget)
+// {
+//   Q_UNUSED(option)
+//   Q_UNUSED(widget)
+//   painter->drawEllipse(QRect(0,0,1,1));
+//   m_textItem->setPlainText(m_name);
+//   m_textItem->setScale(1 / m_textItem->boundingRect().width());
+//   m_textItem->setPos(0, 0.5 - m_textItem->boundingRect().height()/(2*m_textItem->boundingRect().width()));
+// }
+// 
+// QRectF Koushin::Building::boundingRect() const
+// {
+//   return QRectF(0.0, 0.0, 1.0, 1.0);
+// }
 
 void Koushin::Building::addOpenFieldAction(KConfigGroup* config)
 {

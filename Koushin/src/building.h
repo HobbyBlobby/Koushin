@@ -21,20 +21,21 @@
 #ifndef BUILDING_H
 #define BUILDING_H
 
-#include <QGraphicsItem>
-
 #include "town.h"
 #include "actionobject.h"
+#include "field.h"
+#include "GUI/fielditem.h"
 
 class KConfigGroup;
 namespace Koushin {
-  class Building : public QGraphicsItem, public ActionObject {
+
+class Field;
+
+  class Building : public ActionObject {
     public:
       Building(Town* town);
       virtual ~Building();
       
-      void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget = 0);
-      QRectF boundingRect() const;
       void setName(QString name) {m_name = name;}
       QString getName() const {return m_name;}
       Town* getTown() {return m_town;}
@@ -44,6 +45,9 @@ namespace Koushin {
       int getNumberOfCreatedOpenFieldActions(QString name) const {return m_createdOpenFieldActions.value(name, 0);}
       void addOpenFieldAction(KConfigGroup* config);
       QList<KConfigGroup* > getOpenFieldActions() const {return m_openFieldActions;}
+      void setField(Field* field) {m_field = field;}
+      Field* getField() const {return m_field;}
+      QPointF pos() const {m_field->getFieldItem()->pos();}
 
       const actionObjectType getActionObjectType() {return actionObjectIsBuiling;};
       static const QMap<QString, ActionProperties> getPossibleActions();
@@ -52,10 +56,11 @@ namespace Koushin {
     private:
       Town* m_town;
       QString m_name;
-      QGraphicsTextItem* m_textItem;
+//       QGraphicsTextItem* m_textItem;
       int m_level;
       QMap<QString, int > m_createdOpenFieldActions;
       QList<KConfigGroup* > m_openFieldActions;
+      Field* m_field;
   };
 }
 
