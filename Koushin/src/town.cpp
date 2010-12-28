@@ -156,16 +156,25 @@ QMap< QString, QString > Koushin::Town::getPossibleBuildings(QMap< QString, QStr
   return allBuildings;
 }
 
-void Koushin::Town::markFields(QPoint aroundPos, qreal radius, Koushin::FieldType type)
+void Koushin::Town::markFields(QList< Koushin::Field* > fields)
 {
+  foreach(Koushin::Field* field, fields)
+    field->markField();
+}
+
+QList< Koushin::Field* > Koushin::Town::getPossibleFields(QPoint aroundPos, qreal radius, Koushin::FieldType type)
+{
+  QList<Koushin::Field* > list;
   foreach(QPoint point, m_fields.keys()) {
     if(distance(point, aroundPos) <= radius) {
       Koushin::Field* field = m_fields.value(point);
       if(field->getType() == type)
-	field->markField();
+	list << field;
     }
   }
+  return list;
 }
+
 
 void Koushin::Town::unmarkAllFields()
 {

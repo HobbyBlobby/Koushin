@@ -78,7 +78,10 @@ namespace Koushin {
       void buildingChosen(QString buildingConfig);
       void fieldActionSelected(QListWidgetItem* item);
       void endRound();
+      void startRound();
       void fieldForActionChoosen(Field* field);
+      //new slot system:
+      void fieldClicked(Field* field);
     private:
       QList<Town* > m_townList;
       ActionManager* m_actionManager;
@@ -92,6 +95,7 @@ namespace Koushin {
       Building* m_selectedBuilding;
       KConfigGroup m_openFieldConfig;
       PlayerInteraction::Interaction m_lastInteraction;
+      QList<Field* > m_fieldsForFieldAction;
   };
 }
 

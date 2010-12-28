@@ -120,11 +120,14 @@ void Koushin::Player::buildingChosen(QString buildingConfig)
 
 void Koushin::Player::endRound()
 {
-//   ++m_currentRound;
-//   m_actionManager->executeActions(m_currentRound);
-//   m_resourceInfo->updateInfos(m_townList.first()->getResources().values());
   m_game->endRound();
 }
+
+void Koushin::Player::startRound()
+{
+  m_lastInteraction = Koushin::PlayerInteraction::roundedStarted;
+}
+
 
 void Koushin::Player::setBuildingInfoWidget(KoushinGUI::BuildingInfoWidget* widget)
 {
@@ -146,7 +149,8 @@ void Koushin::Player::fieldActionSelected(QListWidgetItem* item)
   QString typeLine = task->readEntry("needs", QString());
   typeLine = ActionParser::separateNameAndParameters(typeLine).second.first();
   Koushin::FieldType type = Koushin::Field::QStringToFieldType(typeLine);
-  m_townList.first()->markFields(m_selectedBuilding->pos().toPoint(), radius, type);
+  m_fieldsForFieldAction = m_townList.first()->getPossibleFields(m_selectedBuilding->pos().toPoint(), radius, type);
+  m_townList.first()->markFields(m_fieldsForFieldAction);
 }
 
 void Koushin::Player::setSelectedBuilding(Koushin::Building* building)
@@ -160,7 +164,35 @@ void Koushin::Player::fieldForActionChoosen(Koushin::Field* field)
   if(!m_selectedBuilding) return;
   QList<Action* > actions = ActionParser::createActionsFromConfig(m_openFieldConfig, field, m_game->getCurrentRound(), true);
   m_actionManager->addAction(actions);
+  m_fieldsForFieldAction.clear();
 //   m_selectedBuilding->getOpenFieldActions().removeOne(&m_openFieldConfig); //no effect, because group is copied in between
+}
+
+void Koushin::Player::fieldClicked(Koushin::Field* field)
+{
+  kDebug() << "field clicked: " << field->getFieldItem()->pos();
+  switch (m_lastInteraction) {
+    case Koushin::PlayerInteraction::roundedStarted: case Koushin::PlayerInteraction::noInteraction:
+      if(field->getType() == Koushin::plainField) {
+	townClicked(field->getFieldItem()->pos().toPoint());
+      }
+      if(field->getType() == Koushin::fieldWithBuilding && field->getBuilding()) {
+	setSelectedBuilding(field->getBuilding());
+	m_buildingInfo->repaint();
+	m_lastInteraction = Koushin::PlayerInteraction::buildingClicked;
+      }
+      break;
+    case Koushin::PlayerInteraction::buildingClicked:
+	if(m_fieldsForFieldAction.contains(field)) {
+	  fieldForActionChoosen(field);
+	  field->getTown()->unmarkAllFields();
+	  setSelectedBuilding(0);
+	  m_lastInteraction = Koushin::PlayerInteraction::noInteraction;
+	}
+      break;
+    default:
+      kDebug() << "Do not know what to do.";
+  }
 }
 
 

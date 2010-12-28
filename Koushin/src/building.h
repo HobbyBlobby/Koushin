@@ -47,7 +47,7 @@ class Field;
       QList<KConfigGroup* > getOpenFieldActions() const {return m_openFieldActions;}
       void setField(Field* field) {m_field = field;}
       Field* getField() const {return m_field;}
-      QPointF pos() const {m_field->getFieldItem()->pos();}
+      QPointF pos() const {return m_field->getFieldItem()->pos();}
 
       const actionObjectType getActionObjectType() {return actionObjectIsBuiling;};
       static const QMap<QString, ActionProperties> getPossibleActions();
