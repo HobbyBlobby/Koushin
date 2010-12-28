@@ -49,10 +49,12 @@ void KoushinGUI::FieldItem::paint(QPainter* painter, const QStyleOptionGraphicsI
   else if(m_field->getType() == Koushin::plainField)
     painter->setBrush(QBrush(QColor(200, 255, 130)));
 
+  painter->setOpacity(0.1);
   painter->drawRect(0, 0, 1, 1);
   
   if(m_field->getType() == Koushin::fieldWithBuilding && m_field->getBuilding()) {
     painter->setPen(QPen());
+    painter->setOpacity(1.0);
     painter->drawEllipse(0,0,1,1);
     m_textItem->setPlainText(m_field->getBuilding()->getName());
     m_textItem->setScale(1 / m_textItem->boundingRect().width());
@@ -61,7 +63,7 @@ void KoushinGUI::FieldItem::paint(QPainter* painter, const QStyleOptionGraphicsI
   }
     
   if(m_field->isMarked()) {
-    painter->setOpacity(0.7);
+    painter->setOpacity(0.5);
     painter->setBrush(QBrush(m_markColor));
     painter->setPen(QPen());
     painter->drawRect(0,0,1,1);

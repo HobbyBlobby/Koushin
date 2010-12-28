@@ -50,8 +50,8 @@ Koushin::Town::Town(Player* owner)
     m_resources.insert(type, new Koushin::Resource(type));
   }
   m_owner->addTown(this);
-  for (int i = 0; i < 10; ++i) {
-    for(int j = 0; j < 10; ++j) {
+  for (int i = 0; i < fieldNumber; ++i) {
+    for(int j = 0; j < fieldNumber; ++j) {
       Koushin::Field* field =  new Koushin::Field(this);
       field->setPos(QPoint(i, j));
       Koushin::FieldType type;

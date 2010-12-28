@@ -108,11 +108,7 @@ void Koushin::Player::buildingChosen(QString buildingConfig)
   
   ActionParser::createOpenFieldActions(new KConfigGroup(config, "fieldTasks"), newBuilding);
   
-
-//   m_townList.first()->getTownWidget()->drawBuildings(m_townList.first()->getBuildings());
   newBuilding->getField()->getFieldItem()->update(newBuilding->getField()->getFieldItem()->boundingRect());
-//   m_townList.first()->getTownWidget()->scene()->removeWidget(m_constructionMenu);
-//   delete(m_constructionMenu);
   //TODO: find a way to delete the widget
   if(m_constructionMenu) {
     m_constructionMenu->setVisible(false);
@@ -176,7 +172,6 @@ void Koushin::Player::fieldForActionChoosen(Koushin::Field* field)
 
 void Koushin::Player::fieldClicked(Koushin::Field* field)
 {
-  kDebug() << "field clicked: " << field->getFieldItem()->pos();
   switch (m_lastInteraction) {
     case Koushin::PlayerInteraction::roundedStarted: case Koushin::PlayerInteraction::noInteraction:
       if(field->getType() == Koushin::plainField) {

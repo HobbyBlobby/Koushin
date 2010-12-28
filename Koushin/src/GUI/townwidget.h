@@ -27,6 +27,8 @@
 
 class QGraphicsSceneMouseEvent;
 
+static const int fieldNumber = 15;
+
 namespace Koushin {
   class Building; 
 }

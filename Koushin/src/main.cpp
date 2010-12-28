@@ -38,6 +38,7 @@ static const char description[] =
 
 static const char version[] = "0.1";
 
+
 int main(int argc, char** argv)
 {
     KAboutData about("Koushin", 0, ki18n("Koushin"), version, ki18n(description), KAboutData::License_GPL, ki18n("(C) 2010 Felix Lemke"), KLocalizedString(), 0, "hobbyblobby@arcor.de");

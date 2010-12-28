@@ -29,6 +29,7 @@
 #include "building.h"
 #include "field.h"
 #include <QGraphicsScene>
+#include <KStandardDirs>
 
 KoushinGUI::TownWidget::TownWidget(QGraphicsItem* parent)
   : QGraphicsItem(parent)
@@ -42,14 +43,20 @@ KoushinGUI::TownWidget::~TownWidget()
 
 QRectF KoushinGUI::TownWidget::boundingRect() const
 {
-  return QRectF(0, 0, 10, 10);
+  return QRectF(0, 0, fieldNumber, fieldNumber);
 }
 
+#include <KDebug>
+#include <qpainter.h>
 void KoushinGUI::TownWidget::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget)
 {
-  Q_UNUSED(painter)
   Q_UNUSED(option)
   Q_UNUSED(widget)
+  ///temporary solution for testing the image
+  KStandardDirs dir;
+  QString fileName = dir.findResource("data", "koushin/data/images/landscape.jpg");
+  QPixmap* pixmap = new QPixmap(fileName);
+  painter->drawPixmap(QRect(0, 0, fieldNumber, fieldNumber), *pixmap, QRect(0.0, 0.0, 1024, 1024));
 }
 
 
