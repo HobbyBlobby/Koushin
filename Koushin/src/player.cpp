@@ -150,14 +150,17 @@ void Koushin::Player::fieldActionSelected(QListWidgetItem* item)
   typeLine = ActionParser::separateNameAndParameters(typeLine).second.first();
   Koushin::FieldType type = Koushin::Field::QStringToFieldType(typeLine);
   m_fieldsForFieldAction = m_townList.first()->getPossibleFields(m_selectedBuilding->pos().toPoint(), radius, type);
+  foreach(Koushin::Field* field, m_selectedBuilding->getUsedFields())
+    m_fieldsForFieldAction.removeOne(field);
   m_townList.first()->markFields(m_fieldsForFieldAction);
 }
 
 void Koushin::Player::setSelectedBuilding(Koushin::Building* building)
 {
   m_selectedBuilding = building;
-  m_selectedBuilding->getField()->markField(Qt::green);
-  m_buildingInfo->setBuilding(m_selectedBuilding);
+  if(building) {
+    m_buildingInfo->setBuilding(m_selectedBuilding);
+  }
 }
 
 void Koushin::Player::fieldForActionChoosen(Koushin::Field* field)
@@ -166,6 +169,7 @@ void Koushin::Player::fieldForActionChoosen(Koushin::Field* field)
   QList<Action* > actions = ActionParser::createActionsFromConfig(m_openFieldConfig, field, m_game->getCurrentRound(), true);
   m_actionManager->addAction(actions);
   m_fieldsForFieldAction.clear();
+  m_selectedBuilding->useField(field);
   m_selectedBuilding->removeOpenFieldAction(m_openFieldConfig);
   m_buildingInfo->repaint();
 }
@@ -180,6 +184,7 @@ void Koushin::Player::fieldClicked(Koushin::Field* field)
       }
       if(field->getType() == Koushin::fieldWithBuilding && field->getBuilding()) {
 	setSelectedBuilding(field->getBuilding());
+	field->getBuilding()->select();
 	m_buildingInfo->repaint();
 	m_lastInteraction = Koushin::PlayerInteraction::buildingClicked;
       }
@@ -188,9 +193,12 @@ void Koushin::Player::fieldClicked(Koushin::Field* field)
       if(m_fieldsForFieldAction.contains(field)) {
 	fieldForActionChoosen(field);
 	field->getTown()->unmarkAllFields();
+	m_selectedBuilding->select();
 	m_buildingInfo->repaint();
       } else {
+	setSelectedBuilding(0);
 	field->getTown()->unmarkAllFields();
+	m_buildingInfo->repaint();
 	m_lastInteraction = Koushin::PlayerInteraction::noInteraction;
       }
       break;

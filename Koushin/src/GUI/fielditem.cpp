@@ -61,7 +61,7 @@ void KoushinGUI::FieldItem::paint(QPainter* painter, const QStyleOptionGraphicsI
   }
     
   if(m_field->isMarked()) {
-    painter->setOpacity(0.5);
+    painter->setOpacity(0.7);
     painter->setBrush(QBrush(m_markColor));
     painter->setPen(QPen());
     painter->drawRect(0,0,1,1);

@@ -66,3 +66,17 @@ void Koushin::Building::removeOpenFieldAction(KConfigGroup* config)
   m_openFieldActions.removeOne(config);
 }
 
+void Koushin::Building::select()
+{
+  m_field->markField(Qt::gray);
+  foreach(Koushin::Field* field, m_usedFields)
+    field->markField(Qt::gray);
+}
+
+void Koushin::Building::unselect()
+{
+  m_field->unmarkField();
+  foreach(Koushin::Field* field, m_usedFields)
+    field->unmarkField();
+}
+

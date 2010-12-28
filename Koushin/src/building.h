@@ -49,6 +49,10 @@ class Field;
       void setField(Field* field) {m_field = field;}
       Field* getField() const {return m_field;}
       QPointF pos() const {return m_field->getFieldItem()->pos();}
+      void useField(Field* field) {m_usedFields << field;}
+      QList<Field* > getUsedFields() const {return m_usedFields;}
+      void select();
+      void unselect();
 
       const actionObjectType getActionObjectType() {return actionObjectIsBuiling;};
       static const QMap<QString, ActionProperties> getPossibleActions();
@@ -61,6 +65,7 @@ class Field;
       int m_level;
       QMap<QString, int > m_createdOpenFieldActions;
       QList<KConfigGroup* > m_openFieldActions;
+      QList<Field* > m_usedFields;
       Field* m_field;
   };
 }
