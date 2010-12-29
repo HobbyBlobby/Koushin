@@ -20,13 +20,13 @@ void Koushin_TownEditor::Editor::fieldClicked(Koushin_TownEditor::EditorField* f
   kDebug() << "Field clicked at " << xString << "," << yString;
   if(m_type == "plainField")
     field->setBrush(QBrush(Qt::white));
-  if(m_type == "forestField")
+  if(m_type == "fieldWithForest")
     field->setBrush(QBrush(Qt::green));
-  if(m_type == "rockField")
+  if(m_type == "fieldWithRocks")
     field->setBrush(QBrush(Qt::black));
-  if(m_type == "waterField")
+  if(m_type == "fieldWithWater")
     field->setBrush(QBrush(Qt::blue));
-  if(m_type == "notUsableField")
+  if(m_type == "fieldNotUsable")
     field->setBrush(QBrush(Qt::yellow));
   field->update(field->boundingRect());
   if(m_config) {

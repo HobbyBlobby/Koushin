@@ -83,7 +83,7 @@ int main(int argc, char** argv) {
   
   window->setCentralWidget(view);
 
-  QStringList fieldTypes = QStringList() << "plainField" << "forestField" << "rockField" << "waterField" << "notUsableField";
+  QStringList fieldTypes = QStringList() << "plainField" << "fieldWithForest" << "fieldWithRocks" << "fieldWithWater" << "fieldNotUsable";
   QListWidget* list = new QListWidget;
   list->addItems(fieldTypes);
   editor->m_fieldTypes = fieldTypes;

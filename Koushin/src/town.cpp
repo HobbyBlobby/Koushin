@@ -55,19 +55,21 @@ Koushin::Town::Town(Player* owner, KConfig* config)
   
   if(m_townConfig) {
     m_townWidget->updateTownPixmap(m_townConfig);
-/*  for (int i = 0; i < m_townWidget->boundingRect().width(); ++i) {
-    for(int j = 0; j < m_townWidget->boundingRect().height(); ++j) {
-      Koushin::Field* field =  new Koushin::Field(this);
-      field->setPos(QPoint(i, j));
-      Koushin::FieldType type;
-      while((type = (Koushin::FieldType)(qrand() % Koushin::numberOfFieldTypes)) == Koushin::fieldWithBuilding) {}
-	field->setType(type);
-      m_fields.insert(QPoint(i,j), field);
-      field->setResource(Koushin::ResourceWood, 1000);
+    KConfigGroup fieldGroup = m_townConfig->group("fields");
+    foreach(QString groupName, fieldGroup.groupList()) {
+      KConfigGroup group = fieldGroup.group(groupName);
+      foreach(QString key, group.keyList()) {
+	QPoint point = group.readEntry(key, QPoint(0,0));
+	Koushin::Field* field = new Koushin::Field(this);
+	field->setType(Koushin::Field::QStringToFieldType(groupName));
+	field->setPos(point);
+	m_fields.insert(point, field);
+	if(field->getType() == Koushin::fieldWithForest)
+	  field->setResource(Koushin::ResourceWood, 1000);
+	if(field->getType() == Koushin::fieldWithRocks)
+	  field->setResource(Koushin::ResourceStone, 1000);
+      }
     }
-  }*/
-  KConfigGroup fieldGroup = m_townConfig->group("fields");
-  
   }
 }
 

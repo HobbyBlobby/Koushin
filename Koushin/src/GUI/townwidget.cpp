@@ -57,7 +57,6 @@ void KoushinGUI::TownWidget::paint(QPainter* painter, const QStyleOptionGraphics
   Q_UNUSED(option)
   Q_UNUSED(widget)
   if(m_townPixmap) {
-    kDebug() << "Draw pixmap with " << m_townPixmap->width() << " and " << m_townPixmap->height();
     painter->drawPixmap(m_boundingRect, *m_townPixmap, m_portionRect);
   }
 }

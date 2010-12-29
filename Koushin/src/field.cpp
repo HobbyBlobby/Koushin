@@ -53,7 +53,6 @@ QString Koushin::Field::fieldTypeToQString(Koushin::FieldType type)
 
 Koushin::FieldType Koushin::Field::QStringToFieldType(QString string)
 {
-  kDebug() << string;
   if(string == "fieldWithBuilding")
     return Koushin::fieldWithBuilding;
   if(string == "fieldWithForest")

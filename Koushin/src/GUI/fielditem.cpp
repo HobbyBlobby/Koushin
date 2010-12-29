@@ -38,18 +38,14 @@ KoushinGUI::FieldItem::FieldItem(Koushin::Field* field)
 
 void KoushinGUI::FieldItem::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget)
 {
+  if(m_field->getType() == Koushin::plainField)
+    painter->setPen(QPen());
+  else
+    painter->setPen(QPen(Qt::NoPen));
   if(m_field->getType() == Koushin::fieldWithForest)
     painter->setBrush(QBrush(Qt::green));
-  else if(m_field->getType() == Koushin::fieldWithRocks)
-    painter->setBrush(QBrush(Qt::gray));
-  else if(m_field->getType() == Koushin::fieldWithBuilding)
+  if(m_field->getType() == Koushin::fieldWithBuilding)
     painter->setBrush(QBrush(Qt::white));
-  else if(m_field->getType() == Koushin::fieldWithWater)
-    painter->setBrush(QBrush(Qt::blue));
-  else if(m_field->getType() == Koushin::fieldNotUsable)
-    painter->setBrush(QBrush(Qt::darkGray));
-  else if(m_field->getType() == Koushin::plainField)
-    painter->setBrush(QBrush(QColor(200, 255, 130)));
 
   painter->setOpacity(0.3);
   painter->drawRect(0, 0, 1, 1);
