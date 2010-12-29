@@ -84,8 +84,7 @@ int main(int argc, char** argv)
     QGraphicsView* view = new QGraphicsView;
     view->setScene(scene);
     scene->addItem(town->getTownWidget());
-    town->getTownWidget()->scale(40,40);
-    view->resize(scene->sceneRect().size().toSize());
+    view->fitInView(town->getTownWidget()->boundingRect());
     
     QDockWidget* tmpView = new QDockWidget;
     QWidget* tmpViewWidget = new QWidget;
