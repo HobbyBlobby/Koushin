@@ -46,6 +46,8 @@ QString Koushin::Field::fieldTypeToQString(Koushin::FieldType type)
     return "fieldWithRocks";
   if(type == Koushin::fieldWithWater)
     return "fieldWithWater";
+  if(type == Koushin::fieldNotUsable)
+    return "fieldNotUsable";
   return "";
 }
 
@@ -60,6 +62,8 @@ Koushin::FieldType Koushin::Field::QStringToFieldType(QString string)
     return Koushin::fieldWithRocks;
   if(string == "fieldWithWater")
     return Koushin::fieldWithWater;
+  if(string == "fieldNotUsable")
+    return Koushin::fieldNotUsable;
   return Koushin::plainField;
 }
 

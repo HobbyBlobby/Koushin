@@ -18,6 +18,8 @@ set(Koushin_SRCS
   GUI/townwidget.cpp
 )
 
+add_subdirectory(TownEditor)
+
 set(QT_USE_QTSCRIPTTOOLS TRUE)
 set(CMAKE_CXX_FLAGS "-fexceptions")
 

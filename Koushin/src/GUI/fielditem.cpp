@@ -51,7 +51,7 @@ void KoushinGUI::FieldItem::paint(QPainter* painter, const QStyleOptionGraphicsI
   else if(m_field->getType() == Koushin::plainField)
     painter->setBrush(QBrush(QColor(200, 255, 130)));
 
-  painter->setOpacity(0.1);
+  painter->setOpacity(0.3);
   painter->drawRect(0, 0, 1, 1);
   
   if(m_field->getType() == Koushin::fieldWithBuilding && m_field->getBuilding()) {

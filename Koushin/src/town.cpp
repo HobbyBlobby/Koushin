@@ -25,6 +25,7 @@
 #include "building.h"
 #include <math.h>
 #include "field.h"
+#include <kconfig.h>
 
 //define operator "<" for QPoint after lexigographic order for using it as key in QMap:
 bool operator<(const QPoint& lPoint, const QPoint& rPoint) {
@@ -50,11 +51,11 @@ Koushin::Town::Town(Player* owner, KConfig* config)
     Koushin::ResourceType type = (Koushin::ResourceType)i;
     m_resources.insert(type, new Koushin::Resource(type));
   }
-  
-  if(m_townConfig)
-    m_townWidget->updateTownPixmap(m_townConfig);
   m_owner->addTown(this);
-  for (int i = 0; i < m_townWidget->boundingRect().width(); ++i) {
+  
+  if(m_townConfig) {
+    m_townWidget->updateTownPixmap(m_townConfig);
+/*  for (int i = 0; i < m_townWidget->boundingRect().width(); ++i) {
     for(int j = 0; j < m_townWidget->boundingRect().height(); ++j) {
       Koushin::Field* field =  new Koushin::Field(this);
       field->setPos(QPoint(i, j));
@@ -64,6 +65,9 @@ Koushin::Town::Town(Player* owner, KConfig* config)
       m_fields.insert(QPoint(i,j), field);
       field->setResource(Koushin::ResourceWood, 1000);
     }
+  }*/
+  KConfigGroup fieldGroup = m_townConfig->group("fields");
+  
   }
 }
 
