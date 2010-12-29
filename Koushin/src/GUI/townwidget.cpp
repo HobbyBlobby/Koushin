@@ -33,6 +33,9 @@
 
 KoushinGUI::TownWidget::TownWidget(QGraphicsItem* parent)
   : QGraphicsItem(parent)
+  , m_townPixmap(0)
+  , m_boundingRect(0, 0, fieldNumber, fieldNumber)
+  , m_portionRect(m_boundingRect)
 {
 }
 
@@ -43,39 +46,64 @@ KoushinGUI::TownWidget::~TownWidget()
 
 QRectF KoushinGUI::TownWidget::boundingRect() const
 {
-  return QRectF(0, 0, fieldNumber, fieldNumber);
+  return m_boundingRect;
 }
 
 #include <KDebug>
 #include <qpainter.h>
+#include <kconfig.h>
 void KoushinGUI::TownWidget::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget)
 {
   Q_UNUSED(option)
   Q_UNUSED(widget)
-  ///temporary solution for testing the image
-  KStandardDirs dir;
-  QString fileName = dir.findResource("data", "koushin/data/images/landscape.jpg");
-  QPixmap* pixmap = new QPixmap(fileName);
-  painter->drawPixmap(QRect(0, 0, fieldNumber, fieldNumber), *pixmap, QRect(0.0, 0.0, 1024, 1024));
+  if(m_townPixmap) {
+    kDebug() << "Draw pixmap with " << m_townPixmap->width() << " and " << m_townPixmap->height();
+    painter->drawPixmap(m_boundingRect, *m_townPixmap, m_portionRect);
+  }
 }
 
+void KoushinGUI::TownWidget::updateTownPixmap(KConfig* config)
+{
+  if(m_townPixmap) {
+    delete m_townPixmap;
+    m_boundingRect = QRect(0,0,fieldNumber,fieldNumber);
+    m_townPixmap = 0; //set Pointer to 0 if something happens with creating a new QPixmap
+  }
+//open file:
+  KStandardDirs dir;
+  KConfigGroup imageGroup = config->group("Image");
+//read file:
+  QString imageName = imageGroup.readEntry("image", QString());
+  QString fileName = dir.findResource("data", "koushin/data/towns/" + imageName);
+  if(fileName.isEmpty()) return; //do not create pixmap if file not found
+//read parameters for rendering:
+  int fieldsHorizontal = imageGroup.readEntry("fieldsHorizontal", int(-1));
+  int fieldsVertical = imageGroup.readEntry("fieldsVertical", int(-1));
+  
+  m_townPixmap = new QPixmap(fileName);
+  if(m_townPixmap->height() + m_townPixmap->width() == 0) {//empty image
+    m_townPixmap = 0;
+    return;
+  }
+//use proper standard paremters
+  int fieldSize = 1;
+  if(fieldsHorizontal + fieldsVertical == -2) {
+    fieldsHorizontal = fieldNumber;
+    fieldSize = m_townPixmap->width() / fieldsHorizontal;
+    fieldsVertical = m_townPixmap->height() / fieldSize;
+  } else if(fieldsHorizontal == -1) {
+    fieldSize = m_townPixmap->height() / fieldsVertical;
+    fieldsHorizontal = m_townPixmap->width() / fieldSize;
+  } else if(fieldsVertical == -1) {
+    fieldSize = m_townPixmap->width() / fieldsHorizontal;
+    fieldsVertical = m_townPixmap->height() / fieldSize;
+  } else {
+    fieldSize = qMin(m_townPixmap->width() / fieldsHorizontal, m_townPixmap->height() / fieldsVertical);
+  }
+  
+  m_boundingRect = QRect(0, 0, fieldsHorizontal, fieldsVertical);
+  m_portionRect = QRect(0, 0, fieldSize*fieldsHorizontal, fieldSize*fieldsVertical);
+}
 
-#include <kdebug.h>
-// void KoushinGUI::TownWidget::drawBuildings(QMap< Koushin::Building*, QPoint > buildingMap)
-// {
-//   if(!buildingMap.isEmpty()) {
-//     foreach(Koushin::Building* building, buildingMap.keys()) {
-//       building->setParentItem(this); 
-//       building->setPos(buildingMap.value(building));
-//     }
-//   }
-// }
-
-// void KoushinGUI::TownWidget::mousePressEvent(QGraphicsSceneMouseEvent* event)
-// {
-//   QPointF pos = event->pos();
-//   emit townClicked(QPoint((int)pos.x(), (int)pos.y()));
-//   QGraphicsItem::mousePressEvent(event);
-// }
 
 #include "townwidget.moc"

@@ -25,6 +25,7 @@
 #include <QMap>
 #include <QPoint>
 
+class KConfig;
 class QGraphicsSceneMouseEvent;
 
 static const int fieldNumber = 15;
@@ -43,13 +44,16 @@ namespace KoushinGUI {
       QRectF boundingRect() const;
       void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget = 0);
       
-//       void drawBuildings(QMap< ::Koushin::Building*, QPoint> buildingMap = QMap< ::Koushin::Building*, QPoint>());
-      
       void sendSignalTownClicked(QPoint point) {emit townClicked(point);}
-//     protected:
-//       void mousePressEvent(QGraphicsSceneMouseEvent * event);
+      void updateTownPixmap(KConfig* config);
+
     Q_SIGNALS:
       void townClicked(QPoint point);
+    
+    private:
+      QPixmap* m_townPixmap;
+      QRect m_boundingRect;
+      QRect m_portionRect;
   };
 }
 

@@ -52,10 +52,13 @@ int main(int argc, char** argv)
     game->addPlayer("Felix");
     
     Koushin::Player* tester = game->getPlayers().first();
-    Koushin::Town* town = new Koushin::Town(tester);
-
-//later: prefer building downloaded or created by the user (in ~/.kde4/share/apps/Koushin/...) :
+    
     KStandardDirs stdDirs;
+    QString townConfigFile = stdDirs.findResource("data", "koushin/data/towns/town.config");
+    kDebug() << "Found file " << townConfigFile;
+    Koushin::Town* town = new Koushin::Town(tester, new KConfig(townConfigFile));
+
+///@todo later: prefer building downloaded or created by the user (in ~/.kde4/share/apps/Koushin/...) :
     QMap<QString, QString> buildings;
     foreach(QString dirString, stdDirs.resourceDirs("data")) {
       QDir dir(dirString + "koushin/data/buildings/");
@@ -66,16 +69,15 @@ int main(int argc, char** argv)
 	buildings.insert(general.readEntry("name", QString()), dir.path() + "/" + entry);
       }
     }
-    tester->setBuildingList(buildings);
+    tester->setBuildingList(buildings); ///@todo should be part of the game instead of the player
 
-//this will be part of the GameView later:
+///@todo this will be part of the GameView later:
     QGraphicsScene* scene = new QGraphicsScene;
     QGraphicsView* view = new QGraphicsView;
     view->setScene(scene);
     scene->addItem(town->getTownWidget());
-    town->getTownWidget()->scale(50,50);
+    town->getTownWidget()->scale(40,40);
     view->resize(scene->sceneRect().size().toSize());
-//     QObject::connect(town->getTownWidget(), SIGNAL(townClicked(QPoint)), tester, SLOT(townClicked(QPoint)));
     
     QDockWidget* tmpView = new QDockWidget;
     QWidget* tmpViewWidget = new QWidget;

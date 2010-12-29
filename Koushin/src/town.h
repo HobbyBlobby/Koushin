@@ -25,6 +25,7 @@
 #include <QPoint>
 #include "actionobject.h"
 
+class KConfig;
 namespace KoushinGUI {
   class TownWidget;
 }
@@ -65,7 +66,7 @@ namespace Koushin {
   class Player;
   class Town : public ActionObject {
     public:
-      Town(Player* owner);
+      Town(Player* owner, KConfig* config = 0);
       virtual ~Town();
       Player* getOwner() {return m_owner;}
 
@@ -82,6 +83,8 @@ namespace Koushin {
       void markFields(QList<Field* > fields);
       void unmarkAllFields();
       Field* getFieldFromBuilding(Building* building);
+//       void setTownConfig(KConfig* config) {m_townConfig = config;}
+      KConfig* getTownConfig() const {return m_townConfig;}
       
       static ResourceType getResourceTypeFromQString(QString resourceName);
       
@@ -95,6 +98,7 @@ namespace Koushin {
       QMap<Building*, QPoint> m_buildings;
       QMap<QPoint, Field* > m_fields;
       ::KoushinGUI::TownWidget* m_townWidget;
+      KConfig* m_townConfig;
   };
 }
 

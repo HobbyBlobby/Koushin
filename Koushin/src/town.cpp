@@ -40,18 +40,22 @@ qreal distance(QPoint p1, QPoint p2) {
   return sqrt(pow(tmpP.x(), 2) + pow(tmpP.y(), 2));
 }
 
-Koushin::Town::Town(Player* owner)
+Koushin::Town::Town(Player* owner, KConfig* config)
   : m_owner(owner)
   , m_townWidget(new KoushinGUI::TownWidget)
+  , m_townConfig(config)
 {
   //Create Resources with town
   for (int i = 1; i < (int)Koushin::ResourceTypeCount; ++i) {
     Koushin::ResourceType type = (Koushin::ResourceType)i;
     m_resources.insert(type, new Koushin::Resource(type));
   }
+  
+  if(m_townConfig)
+    m_townWidget->updateTownPixmap(m_townConfig);
   m_owner->addTown(this);
-  for (int i = 0; i < fieldNumber; ++i) {
-    for(int j = 0; j < fieldNumber; ++j) {
+  for (int i = 0; i < m_townWidget->boundingRect().width(); ++i) {
+    for(int j = 0; j < m_townWidget->boundingRect().height(); ++j) {
       Koushin::Field* field =  new Koushin::Field(this);
       field->setPos(QPoint(i, j));
       Koushin::FieldType type;
