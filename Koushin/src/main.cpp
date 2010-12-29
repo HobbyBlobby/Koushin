@@ -34,6 +34,8 @@
 #include "GUI/buildinginfowidget.h"
 
 #include <qglobal.h> //for Q_WS_X11
+#include "GUI/constructionmenu.h"
+#include "GUI/constructionmenu.h"
 
 static const char description[] =
     I18N_NOOP("A round based strategy game.");
@@ -41,6 +43,27 @@ static const char description[] =
 static const char version[] = "0.2";
 //0.1: the start
 //0.2: create buildings, draw graphical map, parse first actions, introduce town editor
+
+namespace KoushinGUI {
+  class AutoresizeView : public QGraphicsView {
+  public:
+    AutoresizeView() : QGraphicsView(), m_centralItem(0), testWidget(0), m_rect(new QGraphicsRectItem()) {}
+    void setCentralItem(QGraphicsItem* item) {m_centralItem = item;}
+    void resizeEvent(QResizeEvent* event) {
+      fitInView(m_centralItem->boundingRect(),Qt::KeepAspectRatio);
+      if(testWidget && scene()) {
+	testWidget->repaint();
+	m_rect->setBrush(QBrush(Qt::red));
+	m_rect->setRect(testWidget->geometry());
+// 	scene()->addItem(m_rect);
+      }
+    }
+    QWidget* testWidget;
+  private:
+    QGraphicsItem* m_centralItem;
+    QGraphicsRectItem* m_rect;
+  };
+}
 
 
 int main(int argc, char** argv)
@@ -81,10 +104,13 @@ int main(int argc, char** argv)
 
 ///@todo this will be part of the GameView later:
     QGraphicsScene* scene = new QGraphicsScene;
-    QGraphicsView* view = new QGraphicsView;
+    KoushinGUI::AutoresizeView* view = new KoushinGUI::AutoresizeView;
     view->setScene(scene);
     scene->addItem(town->getTownWidget());
-    view->fitInView(town->getTownWidget()->boundingRect());
+    view->setCentralItem(town->getTownWidget());
+//     town->getTownWidget()->scale(40,40);
+//     view->resize(scene->sceneRect().size().toSize());
+//     view->fitInView(town->getTownWidget()->boundingRect().toRect(), Qt::KeepAspectRatio);
     
     QDockWidget* tmpView = new QDockWidget;
     QWidget* tmpViewWidget = new QWidget;
@@ -107,7 +133,14 @@ int main(int argc, char** argv)
     window->setCentralWidget(view);
     window->addDockWidget(Qt::RightDockWidgetArea, tmpView);
     scene->addItem(new QGraphicsRectItem(scene->sceneRect()));
+
+    KoushinGUI::ConstructionMenu* menu = new KoushinGUI::ConstructionMenu(buildings, view);
+    menu->close();
+    tester->setConstructonMenu(menu);
+    QObject::connect(menu, SIGNAL(buildingChosen(QString)), tester, SLOT(buildingChosen(QString)));
+    view->testWidget = menu;
     
+    window->setMinimumSize(500,500);
     window->show();
     
     game->startRound();

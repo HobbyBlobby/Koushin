@@ -27,6 +27,7 @@
 #include <player.h>
 #include "buildinginfowidget.h"
 #include <QTextItem>
+#include <QGraphicsSceneMouseEvent>
 
 KoushinGUI::FieldItem::FieldItem(Koushin::Field* field)
   : m_field(field)
@@ -75,7 +76,13 @@ QRectF KoushinGUI::FieldItem::boundingRect() const
 
 void KoushinGUI::FieldItem::mousePressEvent(QGraphicsSceneMouseEvent* event)
 {
-  m_field->getTown()->getOwner()->fieldClicked(m_field);
-  QGraphicsItem::mousePressEvent(event);
+  ///this function uses a very hacky way to get the right field. But the QGraphicsView returns the wrong QGraphicsItem on click when the function fitInView on a small rect is used.
+  int x = (int)mapToScene(event->pos()).x();
+  int y = (int)mapToScene(event->pos()).y();
+
+  m_field->getTown()->getOwner()->fieldClicked(m_field->getTown()->getFieldFromPoint(QPoint(x,y)));
+
+  //easy method not possible, because QGraphicsView return the wrong field item
+//   m_field->getTown()->getOwner()->fieldClicked(m_field);
 }
 

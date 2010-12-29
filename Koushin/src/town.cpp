@@ -196,3 +196,8 @@ Koushin::Field* Koushin::Town::getFieldFromBuilding(Koushin::Building* building)
 {
   return m_fields.value(m_buildings.value(building));
 }
+
+Koushin::Field* Koushin::Town::getFieldFromPoint(QPoint point)
+{
+  return m_fields.value(point);
+}

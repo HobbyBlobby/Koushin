@@ -84,8 +84,9 @@ namespace Koushin {
       void markFields(QList<Field* > fields);
       void unmarkAllFields();
       Field* getFieldFromBuilding(Building* building);
-//       void setTownConfig(KConfig* config) {m_townConfig = config;}
       KConfig* getTownConfig() const {return m_townConfig;}
+//       QMap<QPoint, Field* > getFields() const {return m_fields;} //this function causes error because the operate < is not defined
+      Field* getFieldFromPoint(QPoint point);
       
       static ResourceType getResourceTypeFromQString(QString resourceName);
       

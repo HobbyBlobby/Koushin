@@ -68,6 +68,7 @@ namespace Koushin {
       ::KoushinGUI::BuildingInfoWidget* getBuidlingInfoWidget() const {return m_buildingInfo;}
       void setBuildingInfoWidget(::KoushinGUI::BuildingInfoWidget* widget);
       void setSelectedBuilding(Building* building);
+      void setConstructonMenu(KoushinGUI::ConstructionMenu* menu) {m_constructionMenu = menu;}
       
       const actionObjectType getActionObjectType() {return actionObjectIsPlayer;}
       static const QMap<QString, ActionProperties> getPossibleActions();

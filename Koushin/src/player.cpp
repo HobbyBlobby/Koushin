@@ -80,13 +80,14 @@ const QString Koushin::Player::getLocal(QString name, QString additionalContent)
 
 void Koushin::Player::townClicked(QPoint point) //create member with active town
 {
-  if(!m_townList.isEmpty() && !m_constructionMenu) {
+  if(!m_townList.isEmpty() && m_constructionMenu) {
     m_buildingLot = point;
-    m_constructionMenu = new KoushinGUI::ConstructionMenu(m_townList.first()->getPossibleBuildings(m_listOfAllBuildings));
-    QRect sceneRect = m_townList.first()->getTownWidget()->scene()->sceneRect().toRect();
-    m_constructionMenu->setGeometry(sceneRect.width()/4, 0, sceneRect.width()/2, sceneRect.height()*3/4);
-    m_townList.first()->getTownWidget()->scene()->addWidget(m_constructionMenu);
-    connect(m_constructionMenu, SIGNAL(buildingChosen(QString)), this, SLOT(buildingChosen(QString)));
+//     m_constructionMenu = new KoushinGUI::ConstructionMenu(m_townList.first()->getPossibleBuildings(m_listOfAllBuildings));
+    kDebug() << "Call m_constructionMenu->show()";
+    m_constructionMenu->show();
+//     QRect sceneRect = m_townList.first()->getTownWidget()->boundingRect().toRect();
+//     m_constructionMenu->setGeometry(sceneRect.width()/4, 0, sceneRect.width()/2, sceneRect.height()*3/4);
+//     m_townList.first()->getTownWidget()->scene()->addWidget(m_constructionMenu);
   }
 }
 
@@ -109,10 +110,8 @@ void Koushin::Player::buildingChosen(QString buildingConfig)
   ActionParser::createOpenFieldActions(new KConfigGroup(config, "fieldTasks"), newBuilding);
   
   newBuilding->getField()->getFieldItem()->update(newBuilding->getField()->getFieldItem()->boundingRect());
-  //TODO: find a way to delete the widget
   if(m_constructionMenu) {
-    m_constructionMenu->setVisible(false);
-    m_constructionMenu = 0;
+    m_constructionMenu->close();
   }
 }
 
@@ -142,9 +141,10 @@ void Koushin::Player::fieldActionSelected(QListWidgetItem* item)
   if(!m_selectedBuilding) return;
   m_openFieldConfig = item->text();
 
-  KConfigGroup group = m_selectedBuilding->getConfig()->group("fields").group(m_openFieldConfig);
+  KConfigGroup group = m_selectedBuilding->getConfig()->group("fieldTasks").group(m_openFieldConfig);
   qreal radius = group.readEntry("fieldRadius", qreal(1));
-  QString typeLine = group.readEntry("needs", QString());
+  QString typeLine = group.readEntry("needs", QString()); ///@todo prevent crash when "needs=" is empty
+  kDebug() << "needs: " << typeLine;
   typeLine = ActionParser::separateNameAndParameters(typeLine).second.first();
   Koushin::FieldType type = Koushin::Field::QStringToFieldType(typeLine);
   m_fieldsForFieldAction = m_townList.first()->getPossibleFields(m_selectedBuilding->pos().toPoint(), radius, type);
