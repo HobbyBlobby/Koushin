@@ -46,6 +46,7 @@ namespace Koushin {
     fieldWithRocks,
     fieldWithWater,
     fieldWithBuilding,
+    fieldNotUsable,
     numberOfFieldTypes
   };
 

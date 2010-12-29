@@ -46,6 +46,8 @@ void KoushinGUI::FieldItem::paint(QPainter* painter, const QStyleOptionGraphicsI
     painter->setBrush(QBrush(Qt::white));
   else if(m_field->getType() == Koushin::fieldWithWater)
     painter->setBrush(QBrush(Qt::blue));
+  else if(m_field->getType() == Koushin::fieldNotUsable)
+    painter->setBrush(QBrush(Qt::darkGray));
   else if(m_field->getType() == Koushin::plainField)
     painter->setBrush(QBrush(QColor(200, 255, 130)));
 
