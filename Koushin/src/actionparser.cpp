@@ -41,20 +41,14 @@ QPair< QString, QStringList > Koushin::ActionParser::separateNameAndParameters(Q
   return QPair<QString, QStringList>(actionName, parameters);
 }
 
-QList< Koushin::Action* > Koushin::ActionParser::createActionsFromConfig(KConfigGroup* tasksGroup, Koushin::ActionObject* newOwner, int currentRound, bool singleGroup)
+QList< Koushin::Action* > Koushin::ActionParser::createActionsFromConfig(KConfigGroup* tasksGroup, Koushin::ActionObject* newOwner, int currentRound, QString selectedGroup)
 {
   QMap<QString, Koushin::Action* > actions;
   QStringList actionNames = tasksGroup->groupList();
 //Create Actions:
-  if(singleGroup) {
-    Koushin::Action* newAction = new Koushin::Action();
-    newAction->setOwner(newOwner);
-    newAction->setConfiguration(tasksGroup);
-    setRoundLimit(newAction, tasksGroup, currentRound);
-    actions.insert(tasksGroup->name(), newAction);
-  } else {
-    foreach(QString actionName, actionNames) {
-      if(actionName == "globals" || actionName == "conditions") continue;
+  foreach(QString actionName, actionNames) {
+    if(actionName == "globals" || actionName == "conditions") continue;
+    if(selectedGroup.isEmpty() || selectedGroup == actionName) {
       KConfigGroup* actionGroup = new KConfigGroup(tasksGroup->group(actionName));
       Koushin::Action* newAction = new Koushin::Action();
       newAction->setOwner(newOwner);
@@ -64,6 +58,7 @@ QList< Koushin::Action* > Koushin::ActionParser::createActionsFromConfig(KConfig
     }
   }
 //write conditions to action:
+///no conditions for field tasks are possible, because you can create more then one field action from one config
   KConfigGroup conditionGroup = tasksGroup->group("conditions");
   QStringList conditionsList;
   foreach(QString condition, conditionGroup.keyList())
@@ -357,7 +352,7 @@ void Koushin::ActionParser::createOpenFieldActions(KConfigGroup* config, Koushin
     number -= building->getNumberOfCreatedOpenFieldActions(name);
     kDebug() << "Create " << (int)number << " actions of " << taskGroup->name();
     for(int i = 0; i < (int)number; ++i) {
-      building->addOpenFieldAction(taskGroup);
+      building->addOpenFieldAction(name);
     }
   }
 }

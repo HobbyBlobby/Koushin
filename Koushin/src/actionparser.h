@@ -82,9 +82,11 @@ namespace Koushin {
        * 
        * @param currentRound The round the Action is created.
        * 
+       * @param selectedGroup It is possible to choose only on action that should be created from all found actions. The default is an empty QString, that means all actions will be created.
+       * 
        * @return QList<Action* > The list containing all actions from the configuration.
        **/
-      static QList<Action* > createActionsFromConfig(KConfigGroup* tasksGroup, Koushin::ActionObject* newOwner, int currentRound, bool singleGroup = false);
+      static QList<Action* > createActionsFromConfig(KConfigGroup* tasksGroup, Koushin::ActionObject* newOwner, int currentRound, QString selectedGroup = QString());
       /**
        * @brief This function finds the recipients.
        * It is possible to have multiple recipients, e.g. all town containing a port.

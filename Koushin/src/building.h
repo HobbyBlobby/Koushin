@@ -26,6 +26,7 @@
 #include "field.h"
 #include "GUI/fielditem.h"
 
+class KConfig;
 class KConfigGroup;
 namespace Koushin {
 
@@ -33,7 +34,7 @@ class Field;
 
   class Building : public ActionObject {
     public:
-      Building(Town* town);
+      Building(Town* town, KConfig* config);
       virtual ~Building();
       
       void setName(QString name) {m_name = name;}
@@ -43,14 +44,15 @@ class Field;
       int increaseLevel() {return ++m_level;}
       void setLevel(int newLevel) {m_level = newLevel;}
       int getNumberOfCreatedOpenFieldActions(QString name) const {return m_createdOpenFieldActions.value(name, 0);}
-      void addOpenFieldAction(KConfigGroup* config);
-      void removeOpenFieldAction(KConfigGroup* config);
-      QList<KConfigGroup* > getOpenFieldActions() const {return m_openFieldActions;}
+      void addOpenFieldAction(QString groupName);
+      void removeOpenFieldAction(QString groupName);
+      QStringList getOpenFieldActions() const {return m_openFieldActions;}
       void setField(Field* field) {m_field = field;}
       Field* getField() const {return m_field;}
       QPointF pos() const {return m_field->getFieldItem()->pos();}
       void useField(Field* field) {m_usedFields << field;}
       QList<Field* > getUsedFields() const {return m_usedFields;}
+      KConfig* getConfig() const {return m_config;}
       void select();
       void unselect();
 
@@ -61,12 +63,12 @@ class Field;
     private:
       Town* m_town;
       QString m_name;
-//       QGraphicsTextItem* m_textItem;
       int m_level;
       QMap<QString, int > m_createdOpenFieldActions;
-      QList<KConfigGroup* > m_openFieldActions;
+      QStringList m_openFieldActions;
       QList<Field* > m_usedFields;
       Field* m_field;
+      KConfig* m_config;
   };
 }
 

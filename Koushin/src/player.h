@@ -94,7 +94,7 @@ namespace Koushin {
       QString m_name;
       Game* m_game;
       Building* m_selectedBuilding;
-      KConfigGroup* m_openFieldConfig;
+      QString m_openFieldConfig;
       PlayerInteraction::Interaction m_lastInteraction;
       QList<Field* > m_fieldsForFieldAction;
   };

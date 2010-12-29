@@ -39,8 +39,8 @@ void KoushinGUI::BuildingInfoWidget::repaint()
   }
   m_list.setGeometry(0, 0, width(), height());
   QStringList itemStrings;
-  foreach(KConfigGroup* group, m_building->getOpenFieldActions())
-    if(!itemStrings.contains(group->name())) itemStrings << group->name();
+  foreach(QString groupName, m_building->getOpenFieldActions())
+    if(!itemStrings.contains(groupName)) itemStrings << groupName;
   m_list.clear();
   m_list.addItems(itemStrings);
   m_list.show();

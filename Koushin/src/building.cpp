@@ -22,17 +22,15 @@
 #include <qpainter.h>
 #include <KDebug>
 #include <KConfigGroup>
+#include <kconfig.h>
 
-Koushin::Building::Building(Town* town)
+Koushin::Building::Building(Town* town, KConfig* config)
   : m_town(town)
   , m_name("NoName")
   , m_level(1)
   , m_field(0)
+  , m_config(config)
 {
-//   m_textItem = new QGraphicsTextItem(m_name);
-//   m_textItem->setScale(1 / m_textItem->boundingRect().width());
-//   m_textItem->setPos(0, 0.5 - m_textItem->boundingRect().height()/(2*m_textItem->boundingRect().width()));
-//   m_textItem->setParentItem(this);
 }
 
 Koushin::Building::~Building()
@@ -54,16 +52,16 @@ const QString Koushin::Building::getLocal(QString name, QString additionalConten
   return m_town->getLocal(name, additionalContent);
 }
 
-void Koushin::Building::addOpenFieldAction(KConfigGroup* config)
+void Koushin::Building::addOpenFieldAction(QString groupName)
 {
-  m_openFieldActions << config;
-  m_createdOpenFieldActions.insert(config->name(), getNumberOfCreatedOpenFieldActions(config->name()) + 1);
+  m_openFieldActions << groupName;
+  m_createdOpenFieldActions.insert(groupName, getNumberOfCreatedOpenFieldActions(groupName) + 1);
 }
 
-void Koushin::Building::removeOpenFieldAction(KConfigGroup* config)
+void Koushin::Building::removeOpenFieldAction(QString groupName)
 {
   //remove only one: the same object is inserted more then one times to save memory
-  m_openFieldActions.removeOne(config);
+  m_openFieldActions.removeOne(groupName);
 }
 
 void Koushin::Building::select()
