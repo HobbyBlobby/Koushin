@@ -36,7 +36,9 @@
 static const char description[] =
     I18N_NOOP("A round based strategy game.");
 
-static const char version[] = "0.1";
+static const char version[] = "0.2";
+//0.1: the start
+//0.2: create buildings, draw graphical map, parse first actions
 
 
 int main(int argc, char** argv)
