@@ -33,12 +33,14 @@
 #include "game.h"
 #include "GUI/buildinginfowidget.h"
 
+#include <qglobal.h> //for Q_WS_X11
+
 static const char description[] =
     I18N_NOOP("A round based strategy game.");
 
 static const char version[] = "0.2";
 //0.1: the start
-//0.2: create buildings, draw graphical map, parse first actions
+//0.2: create buildings, draw graphical map, parse first actions, introduce town editor
 
 
 int main(int argc, char** argv)
@@ -46,6 +48,10 @@ int main(int argc, char** argv)
     KAboutData about("Koushin", 0, ki18n("Koushin"), version, ki18n(description), KAboutData::License_GPL, ki18n("(C) 2010 Felix Lemke"), KLocalizedString(), 0, "hobbyblobby@arcor.de");
     about.addAuthor(ki18n("Felix Lemke"), KLocalizedString(), "hobbyblobby@arcor.de");
     KCmdLineArgs::init(argc, argv, &about);
+
+#ifdef Q_WS_X11
+    QApplication::setGraphicsSystem("raster");
+#endif //Q_WS_X11
 
     KApplication app;
     qsrand(std::time(0));
