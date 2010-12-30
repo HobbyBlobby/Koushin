@@ -112,6 +112,8 @@ class Field;
       bool m_executeInEveryRound;
       
     private:
+      QList<QGenericArgument > prepareArguments(QStringList types, QStringList parameter, ActionManager* manager);
+      
       bool executePlayerAction(Player* recipient, const QPair<QString, QStringList>& action);
       bool executeTownAction(Town* recipient, const QPair<QString, QStringList>& action);
       bool executeBuildingAction(Building* recipient, const QPair<QString, QStringList>& action);

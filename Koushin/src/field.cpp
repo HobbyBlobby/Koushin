@@ -119,6 +119,9 @@ const QMap< QString, Koushin::ActionProperties > Koushin::Field::getPossibleActi
 
 bool Koushin::Field::gatherResource(Koushin::ResourceType type, int value)
 {
+  if(!m_town)
+    kDebug() << "no town given";
+  kDebug() << "gather resource: " << value << " of " << ((type == Koushin::ResourceWood) ? "Wood" : "something");
   int currentResource = getResource(type);
   Koushin::Resource* resource = m_town->getResources().value(type);
   int spaceInTown = resource->maximumCapacity - resource->amount;

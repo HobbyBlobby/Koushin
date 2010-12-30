@@ -25,6 +25,7 @@
 #include "player.h"
 #include "building.h"
 #include "field.h"
+#include <QMetaClassInfo>
 
 Koushin::Action::Action()
   : m_config(0)
@@ -201,6 +202,17 @@ bool Koushin::Action::executeBuildingAction(Koushin::Building* recipient, const 
 
 bool Koushin::Action::executeFieldAction(Koushin::Field* recipient, const QPair< QString, QStringList >& action)
 {
+  for(int i = 0; i < recipient->metaObject()->methodCount(); ++i)
+    kDebug() << recipient->metaObject()->method(i).signature();
+  QStringList parameterTypes = recipient->getPossibleActions().value(action.first).parameterTypes;
+  int index = recipient->metaObject()->indexOfMethod(QString(action.first + "(" + parameterTypes.join(",") + ")").toLatin1());
+  kDebug() << "Found action index = " << index << " = " << QString(action.first + "(" + parameterTypes.join(",") + ")").toLatin1();
+  QMetaMethod method = recipient->metaObject()->method(index);
+  QList<QGenericArgument > args = prepareArguments(parameterTypes, action.second, recipient->getTown()->getOwner()->getActionManager());
+  bool rtnValue;
+  method.invoke(recipient, Qt::DirectConnection, Q_RETURN_ARG(bool, rtnValue), args[0], args[1], args[2], args[3], args[4], args[5], args[6], args[7], args[8], args[9]);
+  return rtnValue;
+/*  
   if(action.first == "gatherResource") {
     Koushin::ResourceType type = Koushin::Town::getResourceTypeFromQString(action.second[0]);
     try{
@@ -222,7 +234,36 @@ bool Koushin::Action::executeFieldAction(Koushin::Field* recipient, const QPair<
       kDebug() << "Can not calculate " << action.second[1] << ". Reason: " << e.what();
       return false;
     }
+  }*/
+}
+
+QList< QGenericArgument > Koushin::Action::prepareArguments(QStringList types, QStringList parameter, Koushin::ActionManager* manager)
+{
+  QList<QGenericArgument > args;
+  for(int i = 0; i < 10; ++i) {
+    QString type = types.value(i);
+    if(type.isEmpty())
+      args.insert(i, QGenericArgument());
+    else if (type == "ResourceType")
+      args.insert(i, Q_ARG(Koushin::ResourceType, Koushin::Town::getResourceTypeFromQString(parameter.value(i))));
+    else if (type == "int") {
+      try{
+	int value = manager->evalContent(parameter.value(i));
+	args.insert(i, Q_ARG(int, value));
+      }
+      catch (std::exception & e) {
+	kDebug() << "Can not calculate " << parameter.value(i) << ". Reason: " << e.what();
+	args.insert(i, QGenericArgument());
+      }
+    }
+    else if(type == "QString")
+      args.insert(i, Q_ARG(QString, parameter.value(i)));
+    else {
+      kDebug() << "Unknown parameter type: " << type;
+      args.insert(i, QGenericArgument());
+    }
   }
+  return args;
 }
 
 
