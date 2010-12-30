@@ -74,8 +74,8 @@ namespace Koushin {
 
 // Function to access also with parser      
     public Q_SLOTS:
-      bool increaseResource(ResourceType type, int difference) {changeResource(type, difference);}
-      bool decreaseResource(ResourceType type, int difference) {changeResource(type, -difference);}
+      bool increaseResource(ResourceType type, int difference) {return changeResource(type, difference);}
+      bool decreaseResource(ResourceType type, int difference) {return changeResource(type, -difference);}
       bool setResourceCapacity(ResourceType type, int value);
     public:
 //other functions

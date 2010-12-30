@@ -23,6 +23,8 @@
 #include <KDebug>
 #include <KConfigGroup>
 #include <kconfig.h>
+#include "actionparser.h"
+#include <QMetaClassInfo>
 
 Koushin::Building::Building(Town* town, KConfig* config)
   : m_town(town)
@@ -40,7 +42,15 @@ Koushin::Building::~Building()
 
 const QMap< QString, Koushin::ActionProperties > Koushin::Building::getPossibleActions()
 {
-  return Koushin::ActionObject::getPossibleActions();
+  QMap<QString, Koushin::ActionProperties> actions;
+  for(int i = 0; i < metaObject()->methodCount(); ++i) {
+    QPair<QString, QStringList> function = Koushin::ActionParser::separateNameAndParameters(metaObject()->method(i).signature());
+    Koushin::ActionProperties prop(function.second, QString());
+    actions.insert(function.first, prop);
+  }
+  adjustActionProperties(actions);
+  kDebug() << actions.keys();
+  return actions;
 }
 
 const QString Koushin::Building::getLocal(QString name, QString additionalContent)

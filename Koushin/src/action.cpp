@@ -99,13 +99,6 @@ bool Koushin::Action::execute(bool failIfOneRecipientFailed)
       oneRecipientFailed = true;
       continue;
     }
-//     if(Koushin::ActionObject::getPossibleActions().keys().contains(action.first)) {
-//       if(executeActionObjectAction(recipient, action))
-// 	allRecipientsFailed = false;
-//       else
-// 	oneRecipientFailed = true;
-//       continue;
-//     }
 
     //assaign these values when you use the new QMetaMethod call:
     QStringList parameterTypes;
@@ -144,73 +137,12 @@ bool Koushin::Action::execute(bool failIfOneRecipientFailed)
 	allRecipientsFailed = false;
       else
 	oneRecipientFailed = true;
-    } // if(useMetaMethod)
+    } // if(manager)
   } // loop over recipients
   if(failIfOneRecipientFailed && oneRecipientFailed) return false;
   if(allRecipientsFailed) return false;
   return true;
 }
-
-// bool Koushin::Action::executeTownAction(Koushin::Town* recipient, const QPair< QString, QStringList >& action)
-// {
-//   if(action.first == "increaseResource") {
-//     Koushin::ResourceType type = Koushin::Town::getResourceTypeFromQString(action.second[0]);
-//     try{
-//       int diff = recipient->getOwner()->getActionManager()->evalContent(action.second.value(1, QString("0")));
-//       return recipient->changeResource(type, diff);
-//     }
-//     catch (std::exception & e) {
-//       kDebug() << "Can not calculate " << action.second[1] << ". Reason: " << e.what();
-//       return false;
-//     }
-//   }
-//   else if(action.first == "decreaseResource") {
-//     Koushin::ResourceType type = Koushin::Town::getResourceTypeFromQString(action.second[0]);
-//     try{
-//       int diff = recipient->getOwner()->getActionManager()->evalContent(action.second.value(1, QString("0")));
-//       return recipient->changeResource(type, -diff);
-//     }
-//     catch (std::exception & e) {
-//       kDebug() << "Can not calculate " << action.second[1] << ". Reason: " << e.what();
-//       return false;
-//     }
-//   }
-//   else if(action.first == "setResourceCapacity") {
-//     Koushin::ResourceType type = Koushin::Town::getResourceTypeFromQString(action.second[0]);
-//     try{
-//       int value = recipient->getOwner()->getActionManager()->evalContent(action.second.value(1, QString("0")));
-//       return recipient->setResourceCapacity(type, value);
-//     }
-//     catch (std::exception & e) {
-//       kDebug() << "Can not calculate " << action.second[1] << ". Reason: " << e.what();
-//       return false;
-//     }
-//   } else {
-//     kDebug() << "Unknown action " << action.first;
-//   }
-//   return false; //action not parsed -> return false
-// 
-// }
-
-bool Koushin::Action::executePlayerAction(Koushin::Player* recipient, const QPair< QString, QStringList >& action)
-{
-  if(action.first == "setGlobalTo") {
-    return recipient->getActionManager()->setGlobalParameterContent(action.second[0], action.second[1]);
-  } 
-  else if(action.first == "addToGlobal") {
-    return recipient->getActionManager()->addContentToGlobalParameter(action.second[0], action.second[1]);
-  } 
-  else {
-    kDebug() << "Unknown action " << action.first;
-  }
-  return false;
-}
-
-// bool Koushin::Action::executeBuildingAction(Koushin::Building* recipient, const QPair< QString, QStringList >& action)
-// {
-//   kDebug() << "No building actions specified.";
-//   return false;
-// }
 
 QList< QGenericArgument > Koushin::Action::prepareArguments(QStringList types, QStringList parameter, Koushin::ActionManager* manager)
 {
@@ -246,33 +178,11 @@ QList< QGenericArgument > Koushin::Action::prepareArguments(QStringList types, Q
   return args;
 }
 
-
-// bool Koushin::Action::executeActionObjectAction(Koushin::ActionObject* recipient, const QPair< QString, QStringList >& action)
-// {
-//   if(action.first == "setLocalTo") {
-//     if(action.second[2] == "true")
-//       return recipient->setLocalTo(action.second[0], action.second[1], true);
-//     else
-//       return recipient->setLocalTo(action.second[0], action.second[1], false);
-//   }
-//   else if(action.first == "addToLocal") {
-//     if(action.second[2] == "true")
-//       return recipient->addToLocal(action.second[0], action.second[1], true);
-//     else
-//       return recipient->addToLocal(action.second[0], action.second[1], false);
-//   }
-//   else {
-//     kDebug() << "Unknown action " << action.first;
-//   }
-//   return false;
-// }
-
-
 bool Koushin::Action::possibleParametersGiven(Koushin::ActionObject* recipient, QString actionName, QStringList parameters)
 {
   QMap<QString, Koushin::ActionProperties> possibleActions;
   if(recipient->getActionObjectType() == Koushin::actionObjectIsBuiling)
-    possibleActions = Koushin::Building::getPossibleActions();
+    possibleActions = Koushin::Building().getPossibleActions();
   if(recipient->getActionObjectType() == Koushin::actionObjectIsField)
     possibleActions = Koushin::Field().getPossibleActions();
   if(recipient->getActionObjectType() == Koushin::actionObjectIsTown)

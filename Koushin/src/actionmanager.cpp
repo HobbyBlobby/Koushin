@@ -89,8 +89,10 @@ bool Koushin::ActionManager::executeAction(Koushin::Action* action)
   kDebug() << "Execute action " << action->getActionString() << " with " << action->getParameters();
   if(action->execute()) {
     action->setStatus(Koushin::actionSucceeded);
+    kDebug() << "action " << action->getActionString() << " succeded";
   } else {
     action->setStatus(Koushin::actionFailed);
+    kDebug() << "action " << action->getActionString() << " failed";
   }
   setStatusOfDependensies(action);
   return true;

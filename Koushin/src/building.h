@@ -33,8 +33,9 @@ namespace Koushin {
 class Field;
 
   class Building : public ActionObject {
+    Q_OBJECT
     public:
-      Building(Town* town, KConfig* config);
+      Building(Town* town = 0, KConfig* config = 0);
       virtual ~Building();
       
       void setName(QString name) {m_name = name;}
@@ -57,9 +58,10 @@ class Field;
       void unselect();
 
       const actionObjectType getActionObjectType() {return actionObjectIsBuiling;};
-      static const QMap<QString, ActionProperties> getPossibleActions();
+      const QMap<QString, ActionProperties> getPossibleActions();
       const QString getLocal(QString name, QString additionalContent = QString());
-      
+    public Q_SLOTS:
+    //define here public actions
     private:
       Town* m_town;
       QString m_name;

@@ -102,19 +102,6 @@ const QMap< QString, Koushin::ActionProperties > Koushin::Town::getPossibleActio
   adjustActionProperties(actions);
   kDebug() << actions.keys();
   return actions;
-//   QMap<QString, Koushin::ActionProperties> actions;
-//   actions.insert("increaseResource", Koushin::ActionProperties(
-//     QStringList() << "string" << "int",
-//     "Town: Add the given parameter to the given resource. string=ResourceName, int=difference"));
-//   actions.insert("decreaseResource", Koushin::ActionProperties(
-//     QStringList() << "string" << "int",
-//     "Town: Removes the given parameter from the given resource. string=ResourceName, int=difference"));
-//   actions.insert("setResourceCapacity", Koushin::ActionProperties(
-//     QStringList() << "string" << "int",
-//     "Town: Sets the capacity of a given resource to the given value. string=ResourceName, int=new value"));
-//   foreach(QString name, Koushin::ActionObject::getPossibleActions().keys())
-//     actions.insert(name, Koushin::ActionObject::getPossibleActions().value(name));
-//   return actions;
 }
 
 const QString Koushin::Town::getLocal(QString name, QString additionalContent)
@@ -140,7 +127,7 @@ bool Koushin::Town::changeResource(Koushin::ResourceType type, int difference)
     return false;
   }
   if (res->amount + difference < 0) {
-    kDebug() << "Not enough resources: " << qAbs(difference) << " of " << res->amount - difference;
+    kDebug() << "Not enough resources: " << res->amount << " of " << qAbs(difference);
     return false;
   }
   res->amount += difference;
