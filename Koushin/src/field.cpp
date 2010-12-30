@@ -24,14 +24,20 @@
 #include <QGraphicsRectItem>
 #include <QBrush>
 #include <kdebug.h>
+#include <QMetaClassInfo>
+#include "actionparser.h"
 
 Koushin::Field::Field(Koushin::Town* town, Koushin::FieldType type)
   : m_type(type)
   , m_town(town)
   , m_building(0)
-  , m_fieldItem(new KoushinGUI::FieldItem(this))
   , m_isMarked(false)
 {
+  if(town)
+    m_fieldItem = new KoushinGUI::FieldItem(this);
+  else
+    m_fieldItem = 0;
+
 }
 
 Koushin::Field::Field(const Koushin::Field& oldField)
@@ -95,17 +101,20 @@ const QString Koushin::Field::getLocal(QString name, QString additionalContent)
 const QMap< QString, Koushin::ActionProperties > Koushin::Field::getPossibleActions()
 {
   QMap<QString, Koushin::ActionProperties> actions;
-  actions.insert("gatherResource", Koushin::ActionProperties(
-    QStringList() << "string" << "int",
-    "Reduces the resource of this field and adds the amount to the town. string=ResourceType, int=value"));
-  actions.insert("growResource", Koushin::ActionProperties(
-    QStringList() << "string" << "int",
-    "Increases a resource for a field. string=ResourceType, ind=value"
-  ));
-  foreach(QString name, Koushin::ActionObject::getPossibleActions().keys())
-    actions.insert(name, Koushin::ActionObject::getPossibleActions().value(name));
+  for(int i = 0; i < metaObject()->methodCount(); ++i) {
+    QPair<QString, QStringList> function = Koushin::ActionParser::separateNameAndParameters(metaObject()->method(i).signature());
+    Koushin::ActionProperties prop(function.second, QString());
+    if(function.first == "gatherResource") {
+      prop.activate("Reduces the resource of this field and adds the amount to the town. string=ResourceType, int=value");
+    }
+    else if(function.first == "growResource") {
+      prop.activate("Increases a resource for a field. string=ResourceType, ind=value");
+    }
+    actions.insert(function.first, prop);
+  }
+  adjustActionProperties(actions);
+  kDebug() << actions.keys();
   return actions;
-
 }
 
 bool Koushin::Field::gatherResource(Koushin::ResourceType type, int value)

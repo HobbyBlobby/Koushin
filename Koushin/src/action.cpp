@@ -253,7 +253,7 @@ bool Koushin::Action::possibleParametersGiven(Koushin::ActionObject* recipient, 
   if(recipient->getActionObjectType() == Koushin::actionObjectIsBuiling)
     possibleActions = Koushin::Building::getPossibleActions();
   if(recipient->getActionObjectType() == Koushin::actionObjectIsField)
-    possibleActions = Koushin::Field::getPossibleActions();
+    possibleActions = Koushin::Field().getPossibleActions();
   if(recipient->getActionObjectType() == Koushin::actionObjectIsTown)
     possibleActions = Koushin::Town::getPossibleActions();
   if(recipient->getActionObjectType() == Koushin::actionObjectIsPlayer)

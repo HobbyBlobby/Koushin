@@ -52,7 +52,7 @@ namespace Koushin {
     };
   }
   
-  class Player : public QObject, public ActionObject {
+  class Player : public ActionObject {
     Q_OBJECT
     public:
       Player(QString name, Game* game);

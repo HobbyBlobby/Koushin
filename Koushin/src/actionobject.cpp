@@ -19,6 +19,7 @@
 
 
 #include "actionobject.h"
+#include <QString>
 
 Koushin::ActionObject::ActionObject()
 {
@@ -56,3 +57,14 @@ const QMap< QString, Koushin::ActionProperties > Koushin::ActionObject::getPossi
   return actions;
 }
 
+QMap< QString, Koushin::ActionProperties > Koushin::ActionObject::adjustActionProperties(QMap< QString, Koushin::ActionProperties >& actions)
+{
+  foreach(QString name, Koushin::ActionObject::getPossibleActions().keys()) {
+    Koushin::ActionProperties prop = Koushin::ActionObject::getPossibleActions().value(name);
+    prop.activate(prop.description);
+    actions.insert(name, prop);
+  }
+  foreach(QString name, actions.keys())
+    if(!actions.value(name).activated) actions.remove(name);
+  return actions;
+}

@@ -34,6 +34,7 @@ class QGraphicsItem;
 namespace Koushin {
   class Building;
   class Field : public ActionObject {
+    Q_OBJECT
     public:
       Field(Town* town = 0, FieldType type = plainField);
 //       Field() {Field(0);} //for using the marcro Q_DECLARE_METATYPE
@@ -42,7 +43,7 @@ namespace Koushin {
 //virtual functions from ActionObject:
       virtual const actionObjectType getActionObjectType();
       virtual const QString getLocal(QString name, QString additionalContent = QString());
-      static const QMap<QString, ActionProperties> getPossibleActions();
+      const QMap<QString, ActionProperties> getPossibleActions();
       
 //getters and setters:
       void setType(FieldType type) {m_type = type;}
@@ -68,6 +69,7 @@ namespace Koushin {
       static FieldType QStringToFieldType(QString string);
       
 //actions for parser:
+    public Q_SLOTS:
       bool gatherResource(ResourceType type, int value);
       bool growResource(ResourceType type, int value);
     private:

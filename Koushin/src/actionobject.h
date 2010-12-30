@@ -49,9 +49,15 @@ namespace Koushin {
     public:
       ActionProperties(QStringList parameterTypes = QStringList(), QString description = "")
 	: parameterTypes(parameterTypes)
-	, description(description) {}
+	, description(description)
+	, activated(false) {}
+      void activate(QString desc) {
+	activated = true;
+	description = desc;
+      }
       QStringList parameterTypes;
       QString description;
+      bool activated;
   };
 
   /**
@@ -63,8 +69,8 @@ namespace Koushin {
    * @endcode
    * The the documentations belonging to this functions for details.
    **/
-  class ActionObject
-  {
+  class ActionObject : public QObject {
+    Q_OBJECT
     public:
       ActionObject();
       
@@ -125,6 +131,7 @@ namespace Koushin {
        * @return const QString The content of the local.
        **/
       virtual const QString getLocal(QString name, QString additionalContent = QString()) = 0;
+      QMap< QString, ActionProperties > adjustActionProperties(QMap< QString, Koushin::ActionProperties >& actions);
       
     protected:
       QMap<QString, QString> m_globalAdditions;
