@@ -151,46 +151,46 @@ bool Koushin::Action::execute(bool failIfOneRecipientFailed)
   return true;
 }
 
-bool Koushin::Action::executeTownAction(Koushin::Town* recipient, const QPair< QString, QStringList >& action)
-{
-  if(action.first == "increaseResource") {
-    Koushin::ResourceType type = Koushin::Town::getResourceTypeFromQString(action.second[0]);
-    try{
-      int diff = recipient->getOwner()->getActionManager()->evalContent(action.second.value(1, QString("0")));
-      return recipient->changeResource(type, diff);
-    }
-    catch (std::exception & e) {
-      kDebug() << "Can not calculate " << action.second[1] << ". Reason: " << e.what();
-      return false;
-    }
-  }
-  else if(action.first == "decreaseResource") {
-    Koushin::ResourceType type = Koushin::Town::getResourceTypeFromQString(action.second[0]);
-    try{
-      int diff = recipient->getOwner()->getActionManager()->evalContent(action.second.value(1, QString("0")));
-      return recipient->changeResource(type, -diff);
-    }
-    catch (std::exception & e) {
-      kDebug() << "Can not calculate " << action.second[1] << ". Reason: " << e.what();
-      return false;
-    }
-  }
-  else if(action.first == "setResourceCapacity") {
-    Koushin::ResourceType type = Koushin::Town::getResourceTypeFromQString(action.second[0]);
-    try{
-      int value = recipient->getOwner()->getActionManager()->evalContent(action.second.value(1, QString("0")));
-      return recipient->setResourceCapacity(type, value);
-    }
-    catch (std::exception & e) {
-      kDebug() << "Can not calculate " << action.second[1] << ". Reason: " << e.what();
-      return false;
-    }
-  } else {
-    kDebug() << "Unknown action " << action.first;
-  }
-  return false; //action not parsed -> return false
-
-}
+// bool Koushin::Action::executeTownAction(Koushin::Town* recipient, const QPair< QString, QStringList >& action)
+// {
+//   if(action.first == "increaseResource") {
+//     Koushin::ResourceType type = Koushin::Town::getResourceTypeFromQString(action.second[0]);
+//     try{
+//       int diff = recipient->getOwner()->getActionManager()->evalContent(action.second.value(1, QString("0")));
+//       return recipient->changeResource(type, diff);
+//     }
+//     catch (std::exception & e) {
+//       kDebug() << "Can not calculate " << action.second[1] << ". Reason: " << e.what();
+//       return false;
+//     }
+//   }
+//   else if(action.first == "decreaseResource") {
+//     Koushin::ResourceType type = Koushin::Town::getResourceTypeFromQString(action.second[0]);
+//     try{
+//       int diff = recipient->getOwner()->getActionManager()->evalContent(action.second.value(1, QString("0")));
+//       return recipient->changeResource(type, -diff);
+//     }
+//     catch (std::exception & e) {
+//       kDebug() << "Can not calculate " << action.second[1] << ". Reason: " << e.what();
+//       return false;
+//     }
+//   }
+//   else if(action.first == "setResourceCapacity") {
+//     Koushin::ResourceType type = Koushin::Town::getResourceTypeFromQString(action.second[0]);
+//     try{
+//       int value = recipient->getOwner()->getActionManager()->evalContent(action.second.value(1, QString("0")));
+//       return recipient->setResourceCapacity(type, value);
+//     }
+//     catch (std::exception & e) {
+//       kDebug() << "Can not calculate " << action.second[1] << ". Reason: " << e.what();
+//       return false;
+//     }
+//   } else {
+//     kDebug() << "Unknown action " << action.first;
+//   }
+//   return false; //action not parsed -> return false
+// 
+// }
 
 bool Koushin::Action::executePlayerAction(Koushin::Player* recipient, const QPair< QString, QStringList >& action)
 {
@@ -206,11 +206,11 @@ bool Koushin::Action::executePlayerAction(Koushin::Player* recipient, const QPai
   return false;
 }
 
-bool Koushin::Action::executeBuildingAction(Koushin::Building* recipient, const QPair< QString, QStringList >& action)
-{
-  kDebug() << "No building actions specified.";
-  return false;
-}
+// bool Koushin::Action::executeBuildingAction(Koushin::Building* recipient, const QPair< QString, QStringList >& action)
+// {
+//   kDebug() << "No building actions specified.";
+//   return false;
+// }
 
 QList< QGenericArgument > Koushin::Action::prepareArguments(QStringList types, QStringList parameter, Koushin::ActionManager* manager)
 {
@@ -247,25 +247,25 @@ QList< QGenericArgument > Koushin::Action::prepareArguments(QStringList types, Q
 }
 
 
-bool Koushin::Action::executeActionObjectAction(Koushin::ActionObject* recipient, const QPair< QString, QStringList >& action)
-{
-  if(action.first == "setLocalTo") {
-    if(action.second[2] == "true")
-      return recipient->setLocalTo(action.second[0], action.second[1], true);
-    else
-      return recipient->setLocalTo(action.second[0], action.second[1], false);
-  }
-  else if(action.first == "addToLocal") {
-    if(action.second[2] == "true")
-      return recipient->addToLocal(action.second[0], action.second[1], true);
-    else
-      return recipient->addToLocal(action.second[0], action.second[1], false);
-  }
-  else {
-    kDebug() << "Unknown action " << action.first;
-  }
-  return false;
-}
+// bool Koushin::Action::executeActionObjectAction(Koushin::ActionObject* recipient, const QPair< QString, QStringList >& action)
+// {
+//   if(action.first == "setLocalTo") {
+//     if(action.second[2] == "true")
+//       return recipient->setLocalTo(action.second[0], action.second[1], true);
+//     else
+//       return recipient->setLocalTo(action.second[0], action.second[1], false);
+//   }
+//   else if(action.first == "addToLocal") {
+//     if(action.second[2] == "true")
+//       return recipient->addToLocal(action.second[0], action.second[1], true);
+//     else
+//       return recipient->addToLocal(action.second[0], action.second[1], false);
+//   }
+//   else {
+//     kDebug() << "Unknown action " << action.first;
+//   }
+//   return false;
+// }
 
 
 bool Koushin::Action::possibleParametersGiven(Koushin::ActionObject* recipient, QString actionName, QStringList parameters)
@@ -278,7 +278,7 @@ bool Koushin::Action::possibleParametersGiven(Koushin::ActionObject* recipient, 
   if(recipient->getActionObjectType() == Koushin::actionObjectIsTown)
     possibleActions = Koushin::Town().getPossibleActions();
   if(recipient->getActionObjectType() == Koushin::actionObjectIsPlayer)
-    possibleActions = Koushin::Player::getPossibleActions();
+    possibleActions = Koushin::Player().getPossibleActions();
 
   
   if(!recipient || !possibleActions.contains(actionName)) {

@@ -59,15 +59,30 @@ Koushin::Player::~Player()
 const QMap< QString, Koushin::ActionProperties > Koushin::Player::getPossibleActions()
 {
   QMap<QString, Koushin::ActionProperties> actions;
-  actions.insert("setGlobalTo", Koushin::ActionProperties(
-    QStringList() << "string" << "string",
-    "Player: overwrites a value. string=NameOfGlobal, string=NewValue "));
-  actions.insert("addToGlobal", Koushin::ActionProperties(
-    QStringList() << "string" << "string",
-    "Player: add a string to a global. string=NameOfGlobal, string=AdditionalContent"));
-  foreach(QString name, Koushin::ActionObject::getPossibleActions().keys())
-    actions.insert(name, Koushin::ActionObject::getPossibleActions().value(name));
+  for(int i = 0; i < metaObject()->methodCount(); ++i) {
+    QPair<QString, QStringList> function = Koushin::ActionParser::separateNameAndParameters(metaObject()->method(i).signature());
+    Koushin::ActionProperties prop(function.second, QString());
+    if(function.first == "setGlobalTo") {
+      prop.activate("Player: overwrites a value. string=NameOfGlobal, string=NewValue ");
+    }
+    else if(function.first == "addToGlobal") {
+      prop.activate("Player: add a string to a global. string=NameOfGlobal, string=AdditionalContent");
+    }
+    actions.insert(function.first, prop);
+  }
+  adjustActionProperties(actions);
+  kDebug() << actions.keys();
   return actions;
+}
+
+bool Koushin::Player::addToGlobal(QString name, QString content)
+{
+  return m_actionManager->setGlobalParameterContent(name, content);
+}
+
+bool Koushin::Player::setGlobalTo(QString name, QString content)
+{
+  return m_actionManager->addContentToGlobalParameter(name, content);
 }
 
 const QString Koushin::Player::getLocal(QString name, QString additionalContent)

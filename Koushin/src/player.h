@@ -55,7 +55,7 @@ namespace Koushin {
   class Player : public ActionObject {
     Q_OBJECT
     public:
-      Player(QString name, Game* game);
+      Player(QString name = QString(), Game* game = 0);
       virtual ~Player();
       QList<Town* > getTowns() const {return m_townList;}
       ActionManager* getActionManager() const {return m_actionManager;}
@@ -71,12 +71,16 @@ namespace Koushin {
       void setConstructonMenu(KoushinGUI::ConstructionMenu* menu) {m_constructionMenu = menu;}
       
       const actionObjectType getActionObjectType() {return actionObjectIsPlayer;}
-      static const QMap<QString, ActionProperties> getPossibleActions();
+      const QMap<QString, ActionProperties> getPossibleActions();
       const QString getLocal(QString name, QString additionalContent = QString());
       
       void testPlayer();
 
     public Q_SLOTS:
+      //public actions
+      bool setGlobalTo(QString name, QString content);
+      bool addToGlobal(QString name, QString content);
+      //interactions with game
       void endRound();
       void startRound();
       void fieldClicked(Field* field);
