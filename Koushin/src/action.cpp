@@ -99,47 +99,39 @@ bool Koushin::Action::execute(bool failIfOneRecipientFailed)
       oneRecipientFailed = true;
       continue;
     }
-    if(Koushin::ActionObject::getPossibleActions().keys().contains(action.first)) {
-      if(executeActionObjectAction(recipient, action))
-	allRecipientsFailed = false;
-      else
-	oneRecipientFailed = true;
-      continue;
-    }
+//     if(Koushin::ActionObject::getPossibleActions().keys().contains(action.first)) {
+//       if(executeActionObjectAction(recipient, action))
+// 	allRecipientsFailed = false;
+//       else
+// 	oneRecipientFailed = true;
+//       continue;
+//     }
 
     //assaign these values when you use the new QMetaMethod call:
     QStringList parameterTypes;
-    bool useMetaMethod = false;
     Koushin::ActionManager* manager = 0;
     //asseignment changes with recipients, so use this switch:
     switch(recipient->getActionObjectType()) {
       case Koushin::actionObjectIsBuiling:
-	if(executeBuildingAction((Koushin::Building*)recipient, action))
-	  allRecipientsFailed = false;
-	else
-	  oneRecipientFailed = true;
+	parameterTypes = ((Koushin::Building*)recipient)->getPossibleActions().value(action.first).parameterTypes;
+	manager = ((Koushin::Building*)recipient)->getTown()->getOwner()->getActionManager();
 	break;
       case Koushin::actionObjectIsTown:
-	if(executeTownAction((Koushin::Town*)recipient, action))
-	  allRecipientsFailed = false;
-	else
-	  oneRecipientFailed = true;
+	parameterTypes = ((Koushin::Town*)recipient)->getPossibleActions().value(action.first).parameterTypes;
+	manager = ((Koushin::Town*)recipient)->getOwner()->getActionManager();
 	break;
       case Koushin::actionObjectIsPlayer:
-	if(executePlayerAction((Koushin::Player*)recipient, action))
-	  allRecipientsFailed = false;
-	else
-	  oneRecipientFailed = true;
+	parameterTypes = ((Koushin::Player*)recipient)->getPossibleActions().value(action.first).parameterTypes;
+	manager = ((Koushin::Player*)recipient)->getActionManager();
 	break;
       case Koushin::actionObjectIsField:
-	useMetaMethod = true;
 	parameterTypes = ((Koushin::Field*)recipient)->getPossibleActions().value(action.first).parameterTypes;
 	manager = ((Koushin::Field*)recipient)->getTown()->getOwner()->getActionManager();
 	break;
       default:
 	oneRecipientFailed = true;
     } // switch(recipient->getActionObjectType())
-    if(useMetaMethod) {
+    if(manager) {
       //find right method:
       int index = recipient->metaObject()->indexOfMethod(QString(action.first + "(" + parameterTypes.join(",") + ")").toLatin1());
       QMetaMethod method = recipient->metaObject()->method(index);
@@ -284,7 +276,7 @@ bool Koushin::Action::possibleParametersGiven(Koushin::ActionObject* recipient, 
   if(recipient->getActionObjectType() == Koushin::actionObjectIsField)
     possibleActions = Koushin::Field().getPossibleActions();
   if(recipient->getActionObjectType() == Koushin::actionObjectIsTown)
-    possibleActions = Koushin::Town::getPossibleActions();
+    possibleActions = Koushin::Town().getPossibleActions();
   if(recipient->getActionObjectType() == Koushin::actionObjectIsPlayer)
     possibleActions = Koushin::Player::getPossibleActions();
 

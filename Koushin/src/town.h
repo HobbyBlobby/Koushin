@@ -66,15 +66,20 @@ namespace Koushin {
   class Field;
   class Player;
   class Town : public ActionObject {
+    Q_OBJECT
     public:
-      Town(Player* owner, KConfig* config = 0);
+      Town(Player* owner = 0, KConfig* config = 0);
       virtual ~Town();
       Player* getOwner() {return m_owner;}
 
 // Function to access also with parser      
-      bool changeResource(ResourceType type, int difference);
+    public Q_SLOTS:
+      bool increaseResource(ResourceType type, int difference) {changeResource(type, difference);}
+      bool decreaseResource(ResourceType type, int difference) {changeResource(type, -difference);}
       bool setResourceCapacity(ResourceType type, int value);
+    public:
 //other functions
+      bool changeResource(ResourceType type, int difference);
       QMap<ResourceType, Resource*> getResources() {return m_resources;}
       ::KoushinGUI::TownWidget* getTownWidget() const {return m_townWidget;}
       bool addBuilding(Building* building, QPoint pos);
@@ -91,7 +96,7 @@ namespace Koushin {
       static ResourceType getResourceTypeFromQString(QString resourceName);
       
       const actionObjectType getActionObjectType() {return actionObjectIsTown;};
-      static const QMap<QString, ActionProperties> getPossibleActions();
+      const QMap<QString, ActionProperties> getPossibleActions();
       const QString getLocal(QString name, QString additionalContent = QString());
 
     private:

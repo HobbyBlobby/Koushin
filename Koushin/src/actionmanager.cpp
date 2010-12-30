@@ -183,7 +183,7 @@ QString Koushin::ActionManager::expandParameter(QString line, QString name)
   QString part;
   int replacePart = 1;
   while((part = line.section("#", replacePart, replacePart)) != "") {
-    kDebug() << "Found part = " << part << " in " << line;
+//     kDebug() << "Found part = " << part << " in " << line;
     if (line.contains("#" + name + "#")) {
       kDebug() << "Found recursion." << line << " contains " << name;
       return QString("NO_VALID");
@@ -194,7 +194,7 @@ QString Koushin::ActionManager::expandParameter(QString line, QString name)
       replacePart += 2; //jump to next part => skip unknown Parameter
     }
   }
-  kDebug() << "Line after replacement = " << line;
+//   kDebug() << "Line after replacement = " << line;
   return line;
 }
 

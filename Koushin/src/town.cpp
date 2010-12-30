@@ -26,6 +26,8 @@
 #include <math.h>
 #include "field.h"
 #include <kconfig.h>
+#include "actionparser.h"
+#include <QMetaClassInfo>
 
 //define operator "<" for QPoint after lexigographic order for using it as key in QMap:
 bool operator<(const QPoint& lPoint, const QPoint& rPoint) {
@@ -46,31 +48,33 @@ Koushin::Town::Town(Player* owner, KConfig* config)
   , m_townWidget(new KoushinGUI::TownWidget)
   , m_townConfig(config)
 {
-  //Create Resources with town
-  for (int i = 1; i < (int)Koushin::ResourceTypeCount; ++i) {
-    Koushin::ResourceType type = (Koushin::ResourceType)i;
-    m_resources.insert(type, new Koushin::Resource(type));
-  }
-  m_owner->addTown(this);
-  
-  if(m_townConfig) {
-    m_townWidget->updateTownPixmap(m_townConfig);
-    KConfigGroup fieldGroup = m_townConfig->group("fields");
-    foreach(QString groupName, fieldGroup.groupList()) {
-      KConfigGroup group = fieldGroup.group(groupName);
-      foreach(QString key, group.keyList()) {
-	QPoint point = group.readEntry(key, QPoint(0,0));
-	Koushin::Field* field = new Koushin::Field(this);
-	field->setType(Koushin::Field::QStringToFieldType(groupName));
-	field->setPos(point);
-	m_fields.insert(point, field);
-	if(field->getType() == Koushin::fieldWithForest)
-	  field->setResource(Koushin::ResourceWood, 1000);
-	if(field->getType() == Koushin::fieldWithRocks)
-	  field->setResource(Koushin::ResourceStone, 1000);
-      }
+  if(owner) {
+    //Create Resources with town
+    for (int i = 1; i < (int)Koushin::ResourceTypeCount; ++i) {
+      Koushin::ResourceType type = (Koushin::ResourceType)i;
+      m_resources.insert(type, new Koushin::Resource(type));
     }
-  }
+    m_owner->addTown(this);
+    
+    if(m_townConfig) {
+      m_townWidget->updateTownPixmap(m_townConfig);
+      KConfigGroup fieldGroup = m_townConfig->group("fields");
+      foreach(QString groupName, fieldGroup.groupList()) {
+	KConfigGroup group = fieldGroup.group(groupName);
+	foreach(QString key, group.keyList()) {
+	  QPoint point = group.readEntry(key, QPoint(0,0));
+	  Koushin::Field* field = new Koushin::Field(this);
+	  field->setType(Koushin::Field::QStringToFieldType(groupName));
+	  field->setPos(point);
+	  m_fields.insert(point, field);
+	  if(field->getType() == Koushin::fieldWithForest)
+	    field->setResource(Koushin::ResourceWood, 1000);
+	  if(field->getType() == Koushin::fieldWithRocks)
+	    field->setResource(Koushin::ResourceStone, 1000);
+	}// loop over fields
+      }// loop over field types
+    }// if(m_townConfig)
+  } // if(owner)
 }
 
 Koushin::Town::~Town()
@@ -81,18 +85,36 @@ Koushin::Town::~Town()
 const QMap< QString, Koushin::ActionProperties > Koushin::Town::getPossibleActions()
 {
   QMap<QString, Koushin::ActionProperties> actions;
-  actions.insert("increaseResource", Koushin::ActionProperties(
-    QStringList() << "string" << "int",
-    "Town: Add the given parameter to the given resource. string=ResourceName, int=difference"));
-  actions.insert("decreaseResource", Koushin::ActionProperties(
-    QStringList() << "string" << "int",
-    "Town: Removes the given parameter from the given resource. string=ResourceName, int=difference"));
-  actions.insert("setResourceCapacity", Koushin::ActionProperties(
-    QStringList() << "string" << "int",
-    "Town: Sets the capacity of a given resource to the given value. string=ResourceName, int=new value"));
-  foreach(QString name, Koushin::ActionObject::getPossibleActions().keys())
-    actions.insert(name, Koushin::ActionObject::getPossibleActions().value(name));
+  for(int i = 0; i < metaObject()->methodCount(); ++i) {
+    QPair<QString, QStringList> function = Koushin::ActionParser::separateNameAndParameters(metaObject()->method(i).signature());
+    Koushin::ActionProperties prop(function.second, QString());
+    if(function.first == "increaseResource") {
+      prop.activate("Town: Add the given parameter to the given resource. string=ResourceName, int=difference");
+    }
+    else if(function.first == "decreaseResource") {
+      prop.activate("Town: Removes the given parameter from the given resource. string=ResourceName, int=difference");
+    }
+    else if(function.first == "setResourceCapacity") {
+      prop.activate("Town: Sets the capacity of a given resource to the given value. string=ResourceName, int=new value");
+    }
+    actions.insert(function.first, prop);
+  }
+  adjustActionProperties(actions);
+  kDebug() << actions.keys();
   return actions;
+//   QMap<QString, Koushin::ActionProperties> actions;
+//   actions.insert("increaseResource", Koushin::ActionProperties(
+//     QStringList() << "string" << "int",
+//     "Town: Add the given parameter to the given resource. string=ResourceName, int=difference"));
+//   actions.insert("decreaseResource", Koushin::ActionProperties(
+//     QStringList() << "string" << "int",
+//     "Town: Removes the given parameter from the given resource. string=ResourceName, int=difference"));
+//   actions.insert("setResourceCapacity", Koushin::ActionProperties(
+//     QStringList() << "string" << "int",
+//     "Town: Sets the capacity of a given resource to the given value. string=ResourceName, int=new value"));
+//   foreach(QString name, Koushin::ActionObject::getPossibleActions().keys())
+//     actions.insert(name, Koushin::ActionObject::getPossibleActions().value(name));
+//   return actions;
 }
 
 const QString Koushin::Town::getLocal(QString name, QString additionalContent)
