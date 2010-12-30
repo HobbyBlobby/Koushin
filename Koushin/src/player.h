@@ -74,6 +74,7 @@ namespace Koushin {
       static const QMap<QString, ActionProperties> getPossibleActions();
       const QString getLocal(QString name, QString additionalContent = QString());
       
+      void testPlayer();
 
     public Q_SLOTS:
       void endRound();
@@ -81,6 +82,7 @@ namespace Koushin {
       void fieldClicked(Field* field);
       void buildingChosen(QString buildingConfig);
       void fieldActionSelected(QListWidgetItem* item);
+      void testSlot(Koushin::FieldType ausgabe);
     private:
       void townClicked(QPoint point);
       void fieldForActionChoosen(Field* field);

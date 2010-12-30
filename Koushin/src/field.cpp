@@ -34,6 +34,18 @@ Koushin::Field::Field(Koushin::Town* town, Koushin::FieldType type)
 {
 }
 
+Koushin::Field::Field(const Koushin::Field& oldField)
+  : m_type(oldField.getType())
+  , m_town(oldField.getTown())
+  , m_resources(oldField.getResources())
+  , m_building(oldField.getBuilding())
+  , m_fieldItem(oldField.getFieldItem())
+  , m_isMarked(oldField.isMarked())
+{
+  kDebug() << "Field is copied";
+}
+
+
 QString Koushin::Field::fieldTypeToQString(Koushin::FieldType type)
 {
   if(type == Koushin::plainField)

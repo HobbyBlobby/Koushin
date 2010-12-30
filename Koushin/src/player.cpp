@@ -34,6 +34,7 @@
 #include "action.h"
 #include "game.h"
 #include "field.h"
+#include <QMetaClassInfo>
 
 Koushin::Player::Player(QString name, Koushin::Game* game)
   : m_actionManager(new Koushin::ActionManager(this))
@@ -177,6 +178,7 @@ void Koushin::Player::fieldForActionChoosen(Koushin::Field* field)
 
 void Koushin::Player::fieldClicked(Koushin::Field* field)
 {
+  kDebug() << "field clicked: " << Koushin::Field::fieldTypeToQString(field->getType()) << " = " << (void*)field;
   switch (m_lastInteraction) {
     case Koushin::PlayerInteraction::roundedStarted: case Koushin::PlayerInteraction::noInteraction:
       if(field->getType() == Koushin::plainField) {
@@ -205,6 +207,21 @@ void Koushin::Player::fieldClicked(Koushin::Field* field)
     default:
       kDebug() << "Do not know what to do.";
   }
+}
+
+void Koushin::Player::testPlayer()
+{
+  int index = metaObject()->indexOfSlot("testSlot(Koushin::FieldType)");
+  Koushin::Field* field = m_townList.first()->getFieldFromPoint(QPoint(12,12));
+  Koushin::FieldType type = field->getType();
+  kDebug() << "Field used: " << Koushin::Field::fieldTypeToQString(field->getType());
+  QGenericArgument arg = QGenericArgument("Koushin::FieldType", &type);
+  metaObject()->method(index).invoke(this, Qt::DirectConnection, arg);
+}
+
+void Koushin::Player::testSlot(Koushin::FieldType ausgabe)
+{
+  kDebug() << "Ausgabe: " << Koushin::Field::fieldTypeToQString(ausgabe);
 }
 
 

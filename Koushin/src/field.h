@@ -35,7 +35,9 @@ namespace Koushin {
   class Building;
   class Field : public ActionObject {
     public:
-      Field(Town* town, FieldType type = plainField);
+      Field(Town* town = 0, FieldType type = plainField);
+//       Field() {Field(0);} //for using the marcro Q_DECLARE_METATYPE
+      Field(const Field& oldField);
       
 //virtual functions from ActionObject:
       virtual const actionObjectType getActionObjectType();
@@ -49,16 +51,18 @@ namespace Koushin {
       void addToResource(ResourceType type, int value) {value += getResource(type); m_resources.insert(type, value);}
       int getResource(ResourceType type) {return m_resources.value(type, 0);}
       void addBuilding(Building* building) {m_building = building;}
+      QMap<ResourceType, int > getResources() const {return m_resources;}
       Building* getBuilding() const {return m_building;}
       Town* getTown() const {return m_town;}
       void setPos(QPoint pos) {m_fieldItem->setPos(pos);}
       ::KoushinGUI::FieldItem* getFieldItem () const {return m_fieldItem;}
       
+      
       void markField(QColor color = Qt::red) {
 	m_isMarked = true; m_fieldItem->setMarkColor(color); m_fieldItem->update(m_fieldItem->boundingRect());
       }
       void unmarkField() {m_isMarked = false; m_fieldItem->update(m_fieldItem->boundingRect());}
-      bool isMarked() {return m_isMarked;}
+      bool isMarked() const {return m_isMarked;}
       
       static QString fieldTypeToQString(FieldType type);
       static FieldType QStringToFieldType(QString string);
@@ -75,5 +79,7 @@ namespace Koushin {
       bool m_isMarked;
   };
 }
+// Q_DECLARE_METATYPE(Koushin::Field*)
+
 
 #endif // FIELD_H

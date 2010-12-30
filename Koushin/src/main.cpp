@@ -140,6 +140,8 @@ int main(int argc, char** argv)
     QObject::connect(menu, SIGNAL(buildingChosen(QString)), tester, SLOT(buildingChosen(QString)));
     view->testWidget = menu;
     
+    tester->testPlayer();
+    
     window->setMinimumSize(500,500);
     window->show();
     
