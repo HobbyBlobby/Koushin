@@ -86,7 +86,7 @@ void Koushin::Action::resetAction()
 }
 
 bool Koushin::Action::execute(bool failIfOneRecipientFailed)
-{ //TODO: when a action execution is failed? ->if all recipients failed, or just one? -> make config option
+{
   if(!m_config || !m_owner) return false;
   QString recipientLine = m_config->readEntry("recipient", QString());
   QList<Koushin::ActionObject* > recipients = Koushin::ActionParser::parseRecipient(recipientLine, m_owner);
@@ -106,6 +106,12 @@ bool Koushin::Action::execute(bool failIfOneRecipientFailed)
 	oneRecipientFailed = true;
       continue;
     }
+
+    //assaign these values when you use the new QMetaMethod call:
+    QStringList parameterTypes;
+    bool useMetaMethod = false;
+    Koushin::ActionManager* manager = 0;
+    //asseignment changes with recipients, so use this switch:
     switch(recipient->getActionObjectType()) {
       case Koushin::actionObjectIsBuiling:
 	if(executeBuildingAction((Koushin::Building*)recipient, action))
@@ -126,14 +132,28 @@ bool Koushin::Action::execute(bool failIfOneRecipientFailed)
 	  oneRecipientFailed = true;
 	break;
       case Koushin::actionObjectIsField:
-	if(executeFieldAction((Koushin::Field*)recipient, action))
-	  allRecipientsFailed = false;
-	else
-	  oneRecipientFailed = true;
+	useMetaMethod = true;
+	parameterTypes = ((Koushin::Field*)recipient)->getPossibleActions().value(action.first).parameterTypes;
+	manager = ((Koushin::Field*)recipient)->getTown()->getOwner()->getActionManager();
+	break;
       default:
 	oneRecipientFailed = true;
-    }
-  }
+    } // switch(recipient->getActionObjectType())
+    if(useMetaMethod) {
+      //find right method:
+      int index = recipient->metaObject()->indexOfMethod(QString(action.first + "(" + parameterTypes.join(",") + ")").toLatin1());
+      QMetaMethod method = recipient->metaObject()->method(index);
+      //create QGenericArguments from strings:
+      QList<QGenericArgument > args = prepareArguments(parameterTypes, action.second, manager);
+      //execute the functions:
+      bool rtnValue;
+      method.invoke(recipient, Qt::DirectConnection, Q_RETURN_ARG(bool, rtnValue), args[0], args[1], args[2], args[3], args[4], args[5], args[6], args[7], args[8], args[9]);
+      if(rtnValue)
+	allRecipientsFailed = false;
+      else
+	oneRecipientFailed = true;
+    } // if(useMetaMethod)
+  } // loop over recipients
   if(failIfOneRecipientFailed && oneRecipientFailed) return false;
   if(allRecipientsFailed) return false;
   return true;
@@ -200,43 +220,6 @@ bool Koushin::Action::executeBuildingAction(Koushin::Building* recipient, const 
   return false;
 }
 
-bool Koushin::Action::executeFieldAction(Koushin::Field* recipient, const QPair< QString, QStringList >& action)
-{
-  for(int i = 0; i < recipient->metaObject()->methodCount(); ++i)
-    kDebug() << recipient->metaObject()->method(i).signature();
-  QStringList parameterTypes = recipient->getPossibleActions().value(action.first).parameterTypes;
-  int index = recipient->metaObject()->indexOfMethod(QString(action.first + "(" + parameterTypes.join(",") + ")").toLatin1());
-  kDebug() << "Found action index = " << index << " = " << QString(action.first + "(" + parameterTypes.join(",") + ")").toLatin1();
-  QMetaMethod method = recipient->metaObject()->method(index);
-  QList<QGenericArgument > args = prepareArguments(parameterTypes, action.second, recipient->getTown()->getOwner()->getActionManager());
-  bool rtnValue;
-  method.invoke(recipient, Qt::DirectConnection, Q_RETURN_ARG(bool, rtnValue), args[0], args[1], args[2], args[3], args[4], args[5], args[6], args[7], args[8], args[9]);
-  return rtnValue;
-/*  
-  if(action.first == "gatherResource") {
-    Koushin::ResourceType type = Koushin::Town::getResourceTypeFromQString(action.second[0]);
-    try{
-      int value = recipient->getTown()->getOwner()->getActionManager()->evalContent(action.second.value(1, QString("0")));
-      return recipient->gatherResource(type, value);
-    }
-    catch (std::exception & e) {
-      kDebug() << "Can not calculate " << action.second[1] << ". Reason: " << e.what();
-      return false;
-    }
-  }
-  else if(action.first == "growResource") {
-    Koushin::ResourceType type = Koushin::Town::getResourceTypeFromQString(action.second[0]);
-    try{
-      int value = recipient->getTown()->getOwner()->getActionManager()->evalContent(action.second.value(1, QString("0")));
-      return recipient->growResource(type, value);
-    }
-    catch (std::exception & e) {
-      kDebug() << "Can not calculate " << action.second[1] << ". Reason: " << e.what();
-      return false;
-    }
-  }*/
-}
-
 QList< QGenericArgument > Koushin::Action::prepareArguments(QStringList types, QStringList parameter, Koushin::ActionManager* manager)
 {
   QList<QGenericArgument > args;
@@ -244,11 +227,14 @@ QList< QGenericArgument > Koushin::Action::prepareArguments(QStringList types, Q
     QString type = types.value(i);
     if(type.isEmpty())
       args.insert(i, QGenericArgument());
-    else if (type == "ResourceType")
+    else if (type == "ResourceType") {
+      kDebug() << "Insert ResourceType = " << parameter.value(i);
       args.insert(i, Q_ARG(Koushin::ResourceType, Koushin::Town::getResourceTypeFromQString(parameter.value(i))));
+    }
     else if (type == "int") {
       try{
 	int value = manager->evalContent(parameter.value(i));
+	kDebug() << "Insert int = " << value;
 	args.insert(i, Q_ARG(int, value));
       }
       catch (std::exception & e) {
@@ -256,8 +242,10 @@ QList< QGenericArgument > Koushin::Action::prepareArguments(QStringList types, Q
 	args.insert(i, QGenericArgument());
       }
     }
-    else if(type == "QString")
+    else if(type == "QString") {
+      kDebug() << "Insert QString = " << parameter.value(i);
       args.insert(i, Q_ARG(QString, parameter.value(i)));
+    }
     else {
       kDebug() << "Unknown parameter type: " << type;
       args.insert(i, QGenericArgument());
