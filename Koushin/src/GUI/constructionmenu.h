@@ -40,7 +40,6 @@ namespace KoushinGUI {
       virtual ~ConstructionMenu();
     protected:
       void resizeEvent(QResizeEvent* event);
-      void showEvent(QShowEvent* event);
       
     Q_SIGNALS:
       void buildingChosen(QString buildingConfig);

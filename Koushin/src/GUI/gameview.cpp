@@ -53,8 +53,7 @@ void KoushinGUI::GameView::resizeEvent(QResizeEvent* event)
   m_townView->setGeometry(widgetRect);
   m_townView->fitInView(m_townView->sceneRect(), Qt::KeepAspectRatio);
 //adjust construction menu:
-  m_constructionMenu->setGeometry(0, 0, width()/2, height()/2); //find out, why this do not call resizeEvent()
-//   m_constructionMenu->resizeEvent(new QResizeEvent(QSize(width()/2, height()/2), oldSize));
+  m_constructionMenu->setGeometry(0, 0, 200, height()/2); //find out, why this do not call resizeEvent()
   QWidget::resizeEvent(event);
 }
 
@@ -75,6 +74,8 @@ void KoushinGUI::GameView::changePlayer(Koushin::Player* player)
   m_player = player;
 ///@todo connect with new player
   connect(m_player, SIGNAL(showConstructionMenu(Koushin::Town*, QPoint)), this, SLOT(showConstructionMenu(Koushin::Town*, QPoint)));
+  connect(m_player, SIGNAL(closeConstructionMenu()), this, SLOT(closeConstructionMenu()));
+  connect(m_constructionMenu, SIGNAL(buildingChosen(QString)), m_player, SLOT(buildingChosen(QString)));
 }
 
 #include <KDebug>
@@ -83,11 +84,15 @@ void KoushinGUI::GameView::showConstructionMenu(Koushin::Town* town, QPoint poin
   if(town) { ///@todo later use point to show menu near the cursor
     m_constructionMenu->setPossibleBuildings(town->getBuildingList());
     m_constructionMenu->move(point.x(), point.y());
-    kDebug() << "show constructon menu at " << m_constructionMenu->geometry();
-//     m_townView->close();
     m_constructionMenu->show();
   }
 }
+
+void KoushinGUI::GameView::closeConstructionMenu()
+{
+  m_constructionMenu->close();
+}
+
 
 void KoushinGUI::GameView::showFieldInfo(Koushin::Field* )
 {

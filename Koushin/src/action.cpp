@@ -103,36 +103,55 @@ bool Koushin::Action::execute(bool failIfOneRecipientFailed)
     //assaign these values when you use the new QMetaMethod call:
     QStringList parameterTypes;
     Koushin::ActionManager* manager = 0;
+    QMetaMethod method;
+    int index;
     //asseignment changes with recipients, so use this switch:
     switch(recipient->getActionObjectType()) {
       case Koushin::actionObjectIsBuiling:
 	parameterTypes = ((Koushin::Building*)recipient)->getPossibleActions().value(action.first).parameterTypes;
 	manager = ((Koushin::Building*)recipient)->getTown()->getOwner()->getActionManager();
+	index = recipient->metaObject()->indexOfMethod(QString(action.first + "(" + parameterTypes.join(",") + ")").toLatin1());
+	method = recipient->metaObject()->method(index);
 	break;
       case Koushin::actionObjectIsTown:
 	parameterTypes = ((Koushin::Town*)recipient)->getPossibleActions().value(action.first).parameterTypes;
 	manager = ((Koushin::Town*)recipient)->getOwner()->getActionManager();
+	index = recipient->metaObject()->indexOfMethod(QString(action.first + "(" + parameterTypes.join(",") + ")").toLatin1());
+	method = recipient->metaObject()->method(index);
 	break;
       case Koushin::actionObjectIsPlayer:
 	parameterTypes = ((Koushin::Player*)recipient)->getPossibleActions().value(action.first).parameterTypes;
 	manager = ((Koushin::Player*)recipient)->getActionManager();
+	index = ((Koushin::Player*)recipient)->metaObject()->indexOfMethod(QString(action.first + "(" + parameterTypes.join(",") + ")").toLatin1());
+	method = ((Koushin::Player*)recipient)->metaObject()->method(index);
 	break;
       case Koushin::actionObjectIsField:
 	parameterTypes = ((Koushin::Field*)recipient)->getPossibleActions().value(action.first).parameterTypes;
 	manager = ((Koushin::Field*)recipient)->getTown()->getOwner()->getActionManager();
+	index = recipient->metaObject()->indexOfMethod(QString(action.first + "(" + parameterTypes.join(",") + ")").toLatin1());
+	method = recipient->metaObject()->method(index);
 	break;
       default:
 	oneRecipientFailed = true;
     } // switch(recipient->getActionObjectType())
     if(manager) {
       //find right method:
-      int index = recipient->metaObject()->indexOfMethod(QString(action.first + "(" + parameterTypes.join(",") + ")").toLatin1());
-      QMetaMethod method = recipient->metaObject()->method(index);
+//       int index = recipient->metaObject()->indexOfMethod(QString(action.first + "(" + parameterTypes.join(",") + ")").toLatin1());
+//       method = recipient->metaObject()->method(index);
       //create QGenericArguments from strings:
       QList<QGenericArgument > args = prepareArguments(parameterTypes, action.second, manager);
       //execute the functions:
-      bool rtnValue;
-      method.invoke(recipient, Qt::DirectConnection, Q_RETURN_ARG(bool, rtnValue), args[0], args[1], args[2], args[3], args[4], args[5], args[6], args[7], args[8], args[9]);
+      bool rtnValue = false;
+      switch(recipient->getActionObjectType()) {
+	case Koushin::actionObjectIsBuiling:
+	  method.invoke((Koushin::Building*)recipient, Qt::DirectConnection, Q_RETURN_ARG(bool, rtnValue), args[0], args[1], args[2], args[3], args[4], args[5], args[6], args[7], args[8], args[9]);
+	case Koushin::actionObjectIsField:
+	  method.invoke((Koushin::Field*)recipient, Qt::DirectConnection, Q_RETURN_ARG(bool, rtnValue), args[0], args[1], args[2], args[3], args[4], args[5], args[6], args[7], args[8], args[9]);
+	case Koushin::actionObjectIsTown:
+	  method.invoke((Koushin::Town*)recipient, Qt::DirectConnection, Q_RETURN_ARG(bool, rtnValue), args[0], args[1], args[2], args[3], args[4], args[5], args[6], args[7], args[8], args[9]);
+	case Koushin::actionObjectIsPlayer:
+	  method.invoke((Koushin::Player*)recipient, Qt::DirectConnection, Q_RETURN_ARG(bool, rtnValue), args[0], args[1], args[2], args[3], args[4], args[5], args[6], args[7], args[8], args[9]);
+      }
       if(rtnValue)
 	allRecipientsFailed = false;
       else

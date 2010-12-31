@@ -56,25 +56,12 @@ void KoushinGUI::ConstructionMenu::setPossibleBuildings(QMap< QString, QString >
 void KoushinGUI::ConstructionMenu::resizeEvent(QResizeEvent* event)
 {
   QSize size = event->size();
-  kDebug() << "resize to " << size;
   QSize buttonSize = m_okButton->minimumSizeHint();
   m_okButton->setGeometry((size.width() - buttonSize.width())/2, size.height()*3/4, buttonSize.width(), buttonSize.height());;
   m_list->resize(size.width(), size.height()*3/4);
   m_list->setSelectionMode(QAbstractItemView::SingleSelection);
   QWidget::resizeEvent(event);
 }
-
-void KoushinGUI::ConstructionMenu::showEvent(QShowEvent* event)
-{
-  kDebug() << "show construction menu";
-/*  QGraphicsScene* scene = new QGraphicsScene;
-  QGraphicsView* testView = new QGraphicsView(scene, this);
-  testView->setGeometry(geometry());
-  scene->addRect(geometry());
-  */
-  QWidget::showEvent(event);
-}
-
 
 void KoushinGUI::ConstructionMenu::listitemSelected(QListWidgetItem* item)
 {

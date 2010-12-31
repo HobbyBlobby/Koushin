@@ -143,7 +143,6 @@ int main(int argc, char** argv)
 
     KoushinGUI::ConstructionMenu* menu = new KoushinGUI::ConstructionMenu(buildings);
     menu->close();
-    tester->setConstructonMenu(menu);
     QObject::connect(menu, SIGNAL(buildingChosen(QString)), tester, SLOT(buildingChosen(QString)));
 //     view->testWidget = menu;
     

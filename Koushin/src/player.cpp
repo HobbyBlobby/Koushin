@@ -40,7 +40,6 @@
 Koushin::Player::Player(QString name, Koushin::Game* game)
   : m_actionManager(new Koushin::ActionManager(this))
   , m_buildingLot(QPoint(0,0))
-  , m_constructionMenu(0)
   , m_name(name)
   , m_game(game)
   , m_buildingInfo(0)
@@ -99,14 +98,10 @@ void Koushin::Player::townClicked(QPoint point) //create member with active town
 {
   if(!m_townList.isEmpty()) {
     m_buildingLot = point;
-//     m_constructionMenu = new KoushinGUI::ConstructionMenu(m_townList.first()->getPossibleBuildings(m_listOfAllBuildings));
-    kDebug() << "Call m_constructionMenu->show()";
-//     m_constructionMenu->show();
-    QPoint globalPoint = m_townList.first()->getTownWidget()->scene()->views().first()->mapToGlobal(point);
+    //find better way to map the point
+    QPoint globalPoint = m_townList.first()->getTownWidget()->scene()->views().first()->mapFromScene(point);
+    globalPoint = m_townList.first()->getTownWidget()->scene()->views().first()->parentWidget()->mapToGlobal(globalPoint);
     emit showConstructionMenu(m_townList.first(), globalPoint);
-//     QRect sceneRect = m_townList.first()->getTownWidget()->boundingRect().toRect();
-//     m_constructionMenu->setGeometry(sceneRect.width()/4, 0, sceneRect.width()/2, sceneRect.height()*3/4);
-//     m_townList.first()->getTownWidget()->scene()->addWidget(m_constructionMenu);
   }
 }
 
@@ -129,9 +124,9 @@ void Koushin::Player::buildingChosen(QString buildingConfig)
   ActionParser::createOpenFieldActions(new KConfigGroup(config, "fieldTasks"), newBuilding);
   
   newBuilding->getField()->getFieldItem()->update(newBuilding->getField()->getFieldItem()->boundingRect());
-  if(m_constructionMenu) {
-    m_constructionMenu->close();
-  }
+//   if(m_constructionMenu) {
+  emit closeConstructionMenu();
+//   }
 }
 
 void Koushin::Player::endRound()
