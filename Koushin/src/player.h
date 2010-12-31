@@ -74,8 +74,12 @@ namespace Koushin {
       const QMap<QString, ActionProperties> getPossibleActions();
       const QString getLocal(QString name, QString additionalContent = QString());
       
+      QMap<QString, QString> getBuildingList() const {return m_listOfAllBuildings;}
+      
       void testPlayer();
 
+    Q_SIGNALS:
+      void showConstructionMenu(Koushin::Town*, QPoint);
     public Q_SLOTS:
       //public actions
       bool setGlobalTo(QString name, QString content);

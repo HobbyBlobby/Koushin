@@ -36,6 +36,7 @@
 #include <qglobal.h> //for Q_WS_X11
 #include "GUI/constructionmenu.h"
 #include "GUI/constructionmenu.h"
+#include "GUI/gameview.h"
 
 static const char description[] =
     I18N_NOOP("A round based strategy game.");
@@ -103,11 +104,11 @@ int main(int argc, char** argv)
     tester->setBuildingList(buildings); ///@todo should be part of the game instead of the player
 
 ///@todo this will be part of the GameView later:
-    QGraphicsScene* scene = new QGraphicsScene;
-    KoushinGUI::AutoresizeView* view = new KoushinGUI::AutoresizeView;
-    view->setScene(scene);
-    scene->addItem(town->getTownWidget());
-    view->setCentralItem(town->getTownWidget());
+//     QGraphicsScene* scene = new QGraphicsScene;
+//     KoushinGUI::AutoresizeView* view = new KoushinGUI::AutoresizeView;
+//     view->setScene(scene);
+//     scene->addItem(town->getTownWidget());
+//     view->setCentralItem(town->getTownWidget());
 //     town->getTownWidget()->scale(40,40);
 //     view->resize(scene->sceneRect().size().toSize());
 //     view->fitInView(town->getTownWidget()->boundingRect().toRect(), Qt::KeepAspectRatio);
@@ -130,20 +131,23 @@ int main(int argc, char** argv)
 //end of GameView part.
     
     KMainWindow* window = new KMainWindow;
-    window->setCentralWidget(view);
-    window->addDockWidget(Qt::RightDockWidgetArea, tmpView);
-    scene->addItem(new QGraphicsRectItem(scene->sceneRect()));
+    window->setMinimumSize(500,500);
+    window->show();
 
-    KoushinGUI::ConstructionMenu* menu = new KoushinGUI::ConstructionMenu(buildings, view);
+    KoushinGUI::GameView* gameView = new KoushinGUI::GameView;
+    gameView->showTownView(tester->getTowns().first());
+    gameView->changePlayer(tester);
+    window->setCentralWidget(gameView);
+    window->addDockWidget(Qt::RightDockWidgetArea, tmpView);
+//     scene->addItem(new QGraphicsRectItem(scene->sceneRect()));
+
+    KoushinGUI::ConstructionMenu* menu = new KoushinGUI::ConstructionMenu(buildings);
     menu->close();
     tester->setConstructonMenu(menu);
     QObject::connect(menu, SIGNAL(buildingChosen(QString)), tester, SLOT(buildingChosen(QString)));
-    view->testWidget = menu;
+//     view->testWidget = menu;
     
     tester->testPlayer();
-    
-    window->setMinimumSize(500,500);
-    window->show();
     
     game->startRound();
     return app.exec();

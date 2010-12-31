@@ -210,3 +210,10 @@ Koushin::Field* Koushin::Town::getFieldFromPoint(QPoint point)
 {
   return m_fields.value(point);
 }
+
+QMap< QString, QString > Koushin::Town::getBuildingList()
+{
+  if(m_owner)
+    return m_owner->getBuildingList();
+  return QMap<QString, QString>(); //avoid crash, but this case is actual not possible
+}

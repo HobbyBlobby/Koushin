@@ -35,6 +35,7 @@
 #include "game.h"
 #include "field.h"
 #include <QMetaClassInfo>
+#include <QGraphicsView>
 
 Koushin::Player::Player(QString name, Koushin::Game* game)
   : m_actionManager(new Koushin::ActionManager(this))
@@ -96,11 +97,13 @@ const QString Koushin::Player::getLocal(QString name, QString additionalContent)
 
 void Koushin::Player::townClicked(QPoint point) //create member with active town
 {
-  if(!m_townList.isEmpty() && m_constructionMenu) {
+  if(!m_townList.isEmpty()) {
     m_buildingLot = point;
 //     m_constructionMenu = new KoushinGUI::ConstructionMenu(m_townList.first()->getPossibleBuildings(m_listOfAllBuildings));
     kDebug() << "Call m_constructionMenu->show()";
-    m_constructionMenu->show();
+//     m_constructionMenu->show();
+    QPoint globalPoint = m_townList.first()->getTownWidget()->scene()->views().first()->mapToGlobal(point);
+    emit showConstructionMenu(m_townList.first(), globalPoint);
 //     QRect sceneRect = m_townList.first()->getTownWidget()->boundingRect().toRect();
 //     m_constructionMenu->setGeometry(sceneRect.width()/4, 0, sceneRect.width()/2, sceneRect.height()*3/4);
 //     m_townList.first()->getTownWidget()->scene()->addWidget(m_constructionMenu);

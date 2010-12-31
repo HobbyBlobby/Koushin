@@ -25,6 +25,7 @@
 #include <QString>
 #include <QWidget>
 #include <QList>
+#include <qevent.h>
 
 class QListWidgetItem;
 class QListWidget;
@@ -35,9 +36,11 @@ namespace KoushinGUI {
     Q_OBJECT
     public:
       ConstructionMenu(QMap<QString, QString> possibleBuildings, QWidget* parent = 0);
+      void setPossibleBuildings(QMap<QString, QString> possibleBuildings);
       virtual ~ConstructionMenu();
     protected:
       void resizeEvent(QResizeEvent* event);
+      void showEvent(QShowEvent* event);
       
     Q_SIGNALS:
       void buildingChosen(QString buildingConfig);
@@ -46,7 +49,7 @@ namespace KoushinGUI {
       void okButtonClicked();
     private:
       QListWidget* m_list;
-      QMap<QString, QString> m_buildings;
+      QMap<QString, QString> m_buildings; //this map contains building name and the config file (/absolutePath/fileName.config)
       QPushButton* m_okButton; 
   };
 }

@@ -24,17 +24,16 @@
 #include <QResizeEvent>
 #include <QPushButton>
 #include <KDebug>
+#include <qgraphicsscene.h>
+#include <QGraphicsView>
 
 KoushinGUI::ConstructionMenu::ConstructionMenu(QMap<QString, QString> buildings, QWidget* parent)
   : QWidget(parent)
   , m_list(new QListWidget(this))
-  , m_buildings(buildings)
   , m_okButton(new QPushButton("Construct selected building", this))
 {
   m_okButton->setDisabled(true);
-  foreach(QString name, buildings.keys()) {
-    m_list->addItem(name);
-  }
+  setPossibleBuildings(buildings);
   
   connect(m_list, SIGNAL(itemActivated(QListWidgetItem*)), this, SLOT(listitemSelected(QListWidgetItem*)));
   connect(m_okButton, SIGNAL(clicked(bool)), this, SLOT(okButtonClicked()));
@@ -45,19 +44,37 @@ KoushinGUI::ConstructionMenu::~ConstructionMenu()
 
 }
 
+void KoushinGUI::ConstructionMenu::setPossibleBuildings(QMap< QString, QString > possibleBuildings)
+{
+  m_buildings = possibleBuildings;
+  m_list->clear();
+  foreach(QString name, possibleBuildings.keys()) {
+    m_list->addItem(name);
+  }
+}
+
 void KoushinGUI::ConstructionMenu::resizeEvent(QResizeEvent* event)
 {
-  setBackgroundRole(QPalette::Window);
-  QRect parentRect = parentWidget()->geometry();
-  setGeometry(parentRect.width()/4, 0, parentRect.width()/2, parentRect.height()/2);
-  QSize size = geometry().size();
-  kDebug() << size;
+  QSize size = event->size();
+  kDebug() << "resize to " << size;
   QSize buttonSize = m_okButton->minimumSizeHint();
   m_okButton->setGeometry((size.width() - buttonSize.width())/2, size.height()*3/4, buttonSize.width(), buttonSize.height());;
   m_list->resize(size.width(), size.height()*3/4);
   m_list->setSelectionMode(QAbstractItemView::SingleSelection);
   QWidget::resizeEvent(event);
 }
+
+void KoushinGUI::ConstructionMenu::showEvent(QShowEvent* event)
+{
+  kDebug() << "show construction menu";
+/*  QGraphicsScene* scene = new QGraphicsScene;
+  QGraphicsView* testView = new QGraphicsView(scene, this);
+  testView->setGeometry(geometry());
+  scene->addRect(geometry());
+  */
+  QWidget::showEvent(event);
+}
+
 
 void KoushinGUI::ConstructionMenu::listitemSelected(QListWidgetItem* item)
 {

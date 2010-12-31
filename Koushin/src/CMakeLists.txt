@@ -16,6 +16,7 @@ set(Koushin_SRCS
   GUI/fielditem.cpp
   GUI/resourceinfowidget.cpp
   GUI/townwidget.cpp
+  GUI/gameview.cpp
 )
 
 add_subdirectory(TownEditor)
@@ -23,6 +24,6 @@ add_subdirectory(TownEditor)
 set(QT_USE_QTSCRIPTTOOLS TRUE)
 set(CMAKE_CXX_FLAGS "-fexceptions")
 
-kde4_add_executable(Koushin ${Koushin_SRCS} ${Koushin_GUI})
+kde4_add_executable(Koushin ${Koushin_SRCS})
 target_link_libraries(Koushin ${KDE4_KDEUI_LIBS} ${KDEGAMES_LIBRARY} ${QT_QTSCRIPT_TOOLS_LIBRARY_RELEASE})
 install(TARGETS Koushin ${INSTALL_TARGETS_DEFAULT_ARGS} )
