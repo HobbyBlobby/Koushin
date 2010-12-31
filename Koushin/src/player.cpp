@@ -77,6 +77,11 @@ const QMap< QString, Koushin::ActionProperties > Koushin::Player::getPossibleAct
 
 bool Koushin::Player::addToGlobal(QString name, QString content)
 {
+  if(!m_actionManager) {
+    kDebug() << "no action manager given";
+    return false;
+  }
+  kDebug() << "call addToGlobal";
   return m_actionManager->setGlobalParameterContent(name, content);
 }
 
