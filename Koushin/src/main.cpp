@@ -104,30 +104,14 @@ int main(int argc, char** argv)
     tester->setBuildingList(buildings); ///@todo should be part of the game instead of the player
 
 ///@todo this will be part of the GameView later:
-//     QGraphicsScene* scene = new QGraphicsScene;
-//     KoushinGUI::AutoresizeView* view = new KoushinGUI::AutoresizeView;
-//     view->setScene(scene);
-//     scene->addItem(town->getTownWidget());
-//     view->setCentralItem(town->getTownWidget());
-//     town->getTownWidget()->scale(40,40);
-//     view->resize(scene->sceneRect().size().toSize());
-//     view->fitInView(town->getTownWidget()->boundingRect().toRect(), Qt::KeepAspectRatio);
-    
     QDockWidget* tmpView = new QDockWidget;
     QWidget* tmpViewWidget = new QWidget;
     QVBoxLayout* layout = new QVBoxLayout;
     tmpViewWidget->setLayout(layout);
-    KoushinGUI::ResourceInfoWidget* infos = new KoushinGUI::ResourceInfoWidget;
-    layout->addWidget(infos);
-    tester->setResourceInfoWidget(infos);
     KoushinGUI::BuildingInfoWidget* buildingInfo = new KoushinGUI::BuildingInfoWidget;
     tester->setBuildingInfoWidget(buildingInfo);
     layout->addWidget(buildingInfo);
-    QPushButton* endRoundButton = new QPushButton("End Round");
-    layout->addWidget(endRoundButton);
     tmpView->setWidget(tmpViewWidget);
-    
-    QObject::connect(endRoundButton, SIGNAL(clicked(bool)), tester, SLOT(endRound()));
 //end of GameView part.
     
     KMainWindow* window = new KMainWindow;

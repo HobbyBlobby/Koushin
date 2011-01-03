@@ -145,6 +145,7 @@ void Koushin::Player::endRound()
 
 void Koushin::Player::startRound()
 {
+  emit showResourceInfo(m_townList.first());
   m_lastInteraction = Koushin::PlayerInteraction::roundedStarted;
 }
 

@@ -21,10 +21,11 @@
 #include "resourceinfowidget.h"
 #include <QLabel>
 #include <KDebug>
+#include <QResizeEvent>
 
 KoushinGUI::ResourceInfoWidget::ResourceInfoWidget(QWidget* parent, Qt::WindowFlags f)
   : QWidget(parent, f)
-  , m_label(new QLabel("Resources:\nWood: 0\nStone: 0\nRice: 0", this))
+  , m_label(new QLabel("Resources:\tWood: 0\tStone: 0\tRice: 0", this))
 {
 //   setGeometry(0,0,m_label->minimumSizeHint().width(), m_label->minimumSizeHint().height());
 }
@@ -39,11 +40,11 @@ void KoushinGUI::ResourceInfoWidget::updateInfos(QList< Koushin::Resource* > res
   QString newText("Resources:\n");
   foreach(Koushin::Resource* res, resources) {
     if(res->type == Koushin::ResourceWood)
-      newText += "Wood: " + QString("%1").arg(res->amount) + "\n";
+      newText += "Wood: " + QString("%1").arg(res->amount) + "\t";
     if(res->type == Koushin::ResourceStone)
-      newText += "Stone: " + QString("%1").arg(res->amount) + "\n";
+      newText += "Stone: " + QString("%1").arg(res->amount) + "\t";
     if(res->type == Koushin::ResourceRice)
-      newText += "Rice: " + QString("%1").arg(res->amount) + "\n";
+      newText += "Rice: " + QString("%1").arg(res->amount) + "\t";
   }
   m_label->setText(newText);
 //   m_label->update();
@@ -51,4 +52,8 @@ void KoushinGUI::ResourceInfoWidget::updateInfos(QList< Koushin::Resource* > res
 //   setGeometry(0,0,m_label->sizeHint().width(), m_label->sizeHint().height());
 }
 
+void KoushinGUI::ResourceInfoWidget::resizeEvent(QResizeEvent* event)
+{
+  QWidget::resizeEvent(event);
+}
 

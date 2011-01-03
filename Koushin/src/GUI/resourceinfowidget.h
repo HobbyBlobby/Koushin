@@ -24,6 +24,7 @@
 #include <QtGui/QWidget>
 #include "../town.h"
 
+class QResizeEvent;
 class QLabel;
 namespace KoushinGUI {
   class ResourceInfoWidget : public QWidget {
@@ -31,6 +32,8 @@ namespace KoushinGUI {
       ResourceInfoWidget(QWidget* parent = 0, Qt::WindowFlags f = 0);
       virtual ~ResourceInfoWidget();
       void updateInfos(QList<Koushin::Resource* > resources);
+    protected:
+      void resizeEvent(QResizeEvent* event);
     private:
       QLabel* m_label;
   };

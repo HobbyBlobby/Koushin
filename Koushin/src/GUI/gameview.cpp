@@ -32,13 +32,13 @@ KoushinGUI::GameView::GameView()
   : QWidget() //parent is not planed, because this widget shoul be the central widget showing all other widgets
   , m_resourceInfo(new KoushinGUI::ResourceInfoWidget(this))
   , m_constructionMenu(new KoushinGUI::ConstructionMenu(QMap<QString, QString>(), this))
-  , m_endRoundButton(new QPushButton(this))
+  , m_endRoundButton(new QPushButton("End Round",this))
   , m_fieldInfo(new KoushinGUI::BuildingInfoWidget())
   , m_townView(new QGraphicsView(new QGraphicsScene, this))
   , m_player(0)
   , m_townWidget(0)
 {
-  m_resourceInfo->close();
+//   m_resourceInfo->close();
   m_fieldInfo->setParent(this);
   m_constructionMenu->close();
   m_constructionMenu->setWindowFlags(Qt::Popup);
@@ -49,11 +49,22 @@ KoushinGUI::GameView::GameView()
 void KoushinGUI::GameView::resizeEvent(QResizeEvent* event)
 {
   QRect widgetRect = geometry();
+  QRect resourceInfoRect = QRect(widgetRect.left(), widgetRect.top(), widgetRect.width(), 50);
+  QRect townRect = QRect(widgetRect.left(), resourceInfoRect.bottom(),
+			 widgetRect.width(), widgetRect.height() - resourceInfoRect.height());
+  QSize buttonHint = m_endRoundButton->minimumSizeHint();
+  QRect buttonRect = QRect(resourceInfoRect.right() - buttonHint.width(), (resourceInfoRect.height() - buttonHint.height())/2,
+			   buttonHint.width(), buttonHint.height());
+  //adjust resource info widget:
+  m_resourceInfo->setGeometry(resourceInfoRect);
 //adjust town view:
-  m_townView->setGeometry(widgetRect);
+  m_townView->setGeometry(townRect);
   m_townView->fitInView(m_townView->sceneRect(), Qt::KeepAspectRatio);
 //adjust construction menu:
-  m_constructionMenu->setGeometry(0, 0, 200, height()/2); //find out, why this do not call resizeEvent()
+  m_constructionMenu->setGeometry(0, 0, 200, height()/2);
+//adjust end round button:
+  m_endRoundButton->setGeometry(buttonRect);
+//call original resive event of QWidget:
   QWidget::resizeEvent(event);
 }
 
@@ -74,12 +85,16 @@ void KoushinGUI::GameView::changePlayer(Koushin::Player* player)
   disconnect(m_player, SIGNAL(showConstructionMenu(Koushin::Town*,QPoint)));
   disconnect(m_player, SIGNAL(closeConstructionMenu()));
   disconnect(m_constructionMenu, SIGNAL(buildingChosen(QString)));
+  disconnect(m_player, SIGNAL(showResourceInfo(Koushin::Town*)));
+  disconnect(m_endRoundButton);
 // change player:
   m_player = player;
 ///@todo connect with new player
   connect(m_player, SIGNAL(showConstructionMenu(Koushin::Town*, QPoint)), this, SLOT(showConstructionMenu(Koushin::Town*, QPoint)));
   connect(m_player, SIGNAL(closeConstructionMenu()), this, SLOT(closeConstructionMenu()));
   connect(m_constructionMenu, SIGNAL(buildingChosen(QString)), m_player, SLOT(buildingChosen(QString)));
+  connect(m_player, SIGNAL(showResourceInfo(Koushin::Town*)), this, SLOT(showResourceInfo(Koushin::Town*)));
+  connect(m_endRoundButton, SIGNAL(pressed()), m_player, SLOT(endRound()));
 }
 
 #include <KDebug>
@@ -103,9 +118,10 @@ void KoushinGUI::GameView::showFieldInfo(Koushin::Field* )
 
 }
 
-void KoushinGUI::GameView::showResourceInfo(Koushin::Town* )
+void KoushinGUI::GameView::showResourceInfo(Koushin::Town* town)
 {
-
+  m_resourceInfo->updateInfos(town->getResources().values());
+  m_resourceInfo->show();
 }
 
 #include "gameview.moc"

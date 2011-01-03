@@ -49,7 +49,7 @@ class ResourceInfoWidget;
     public:
       GameView();
     public Q_SLOTS:
-      void showResourceInfo(::Koushin::Town*);
+      void showResourceInfo(Koushin::Town*);
       void showConstructionMenu(Koushin::Town*, QPoint);
       void closeConstructionMenu();
       void showFieldInfo(::Koushin::Field*);

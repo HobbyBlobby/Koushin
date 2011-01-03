@@ -39,7 +39,6 @@ void Koushin::Game::startRound()
     m_currentPlayer = m_players.first();
   ++m_currentRound;
   m_currentPlayer->getActionManager()->executeActions(m_currentRound);
-  m_currentPlayer->getResourceInfoWidget()->updateInfos(m_currentPlayer->getTowns().first()->getResources().values());
   m_currentPlayer->startRound();
 }
 

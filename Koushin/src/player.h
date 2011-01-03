@@ -62,8 +62,6 @@ namespace Koushin {
       void setActionManager(ActionManager* manager) {m_actionManager = manager;}
       void addTown(Town* town) {m_townList << town;}
       void setBuildingList(QMap<QString, QString> buildings) {m_listOfAllBuildings = buildings;}
-      void setResourceInfoWidget(KoushinGUI::ResourceInfoWidget* widget) {m_resourceInfo = widget;}
-      KoushinGUI::ResourceInfoWidget* getResourceInfoWidget() const {return m_resourceInfo;}
       QString getName() const {return m_name;}
       ::KoushinGUI::BuildingInfoWidget* getBuidlingInfoWidget() const {return m_buildingInfo;}
       void setBuildingInfoWidget(::KoushinGUI::BuildingInfoWidget* widget);
@@ -80,6 +78,7 @@ namespace Koushin {
     Q_SIGNALS:
       void showConstructionMenu(Koushin::Town*, QPoint);
       void closeConstructionMenu();
+      void showResourceInfo(Koushin::Town*);
     public Q_SLOTS:
       //public actions
       bool setGlobalTo(QString name, QString content);
@@ -99,7 +98,6 @@ namespace Koushin {
       ActionManager* m_actionManager;
       QMap<QString, QString> m_listOfAllBuildings;
       QPoint m_buildingLot;
-      KoushinGUI::ResourceInfoWidget* m_resourceInfo;
       KoushinGUI::BuildingInfoWidget* m_buildingInfo;
       QString m_name;
       Game* m_game;
