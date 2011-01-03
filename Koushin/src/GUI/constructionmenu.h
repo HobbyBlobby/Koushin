@@ -36,10 +36,12 @@ namespace KoushinGUI {
     Q_OBJECT
     public:
       ConstructionMenu(QMap<QString, QString> possibleBuildings, QWidget* parent = 0);
-      void setPossibleBuildings(QMap<QString, QString> possibleBuildings);
       virtual ~ConstructionMenu();
+      void setPossibleBuildings(QMap<QString, QString> possibleBuildings);
+      void setPaintRange(QRect rect);
     protected:
       void resizeEvent(QResizeEvent* event);
+      void showEvent(QShowEvent* event);
       
     Q_SIGNALS:
       void buildingChosen(QString buildingConfig);
@@ -49,7 +51,8 @@ namespace KoushinGUI {
     private:
       QListWidget* m_list;
       QMap<QString, QString> m_buildings; //this map contains building name and the config file (/absolutePath/fileName.config)
-      QPushButton* m_okButton; 
+      QPushButton* m_okButton;
+      QRect m_paintRange;
   };
 }
 

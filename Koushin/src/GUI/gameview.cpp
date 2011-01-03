@@ -61,7 +61,7 @@ void KoushinGUI::GameView::resizeEvent(QResizeEvent* event)
   m_townView->setGeometry(townRect);
   m_townView->fitInView(m_townView->sceneRect(), Qt::KeepAspectRatio);
 //adjust construction menu:
-  m_constructionMenu->setGeometry(0, 0, 200, height()/2);
+  m_constructionMenu->setPaintRange(QRect(mapToGlobal(townRect.topLeft()), mapToGlobal(townRect.bottomRight())));
 //adjust end round button:
   m_endRoundButton->setGeometry(buttonRect);
 //call original resive event of QWidget:
@@ -125,10 +125,10 @@ void KoushinGUI::GameView::showResourceInfo(Koushin::Town* town)
   m_resourceInfo->show();
 }
 
-QPoint KoushinGUI::GameView::mapFieldToDisplay(QPoint fieldPos)
+QPoint KoushinGUI::GameView::mapFieldToDisplay(QPoint fieldPos) const
 {
   QPoint globalPoint = m_townView->mapFromScene(fieldPos);
-  globalPoint = mapToGlobal(globalPoint);
+  globalPoint = m_townView->mapToGlobal(globalPoint);
   return globalPoint;
 }
 

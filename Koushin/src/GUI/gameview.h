@@ -58,7 +58,7 @@ class ResourceInfoWidget;
     protected:
       virtual void resizeEvent(QResizeEvent* event);
     private:
-      QPoint mapFieldToDisplay(QPoint fieldPos);
+      QPoint mapFieldToDisplay(QPoint fieldPos) const;
       
       ResourceInfoWidget* m_resourceInfo;
       ConstructionMenu* m_constructionMenu;

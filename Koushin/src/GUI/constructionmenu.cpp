@@ -31,6 +31,7 @@ KoushinGUI::ConstructionMenu::ConstructionMenu(QMap<QString, QString> buildings,
   : QWidget(parent)
   , m_list(new QListWidget(this))
   , m_okButton(new QPushButton("Construct selected building", this))
+  , m_paintRange(QRect())
 {
   m_okButton->setDisabled(true);
   setPossibleBuildings(buildings);
@@ -72,6 +73,24 @@ void KoushinGUI::ConstructionMenu::listitemSelected(QListWidgetItem* item)
 void KoushinGUI::ConstructionMenu::okButtonClicked()
 {
   emit buildingChosen(m_buildings.value(m_list->selectedItems().first()->text()));
+}
+
+void KoushinGUI::ConstructionMenu::setPaintRange(QRect rect)
+{
+  m_paintRange = rect;
+}
+
+void KoushinGUI::ConstructionMenu::showEvent(QShowEvent* event)
+{
+  QRect newRect = QRect(pos(), QSize(180,120));
+  if(newRect.right() > m_paintRange.right()) {
+    newRect.moveRight(m_paintRange.right());
+  }
+  if(newRect.bottom() > m_paintRange.bottom()) {
+    newRect.moveBottom(m_paintRange.bottom());
+  }
+  setGeometry(newRect);
+  QWidget::showEvent(event);
 }
 
 
