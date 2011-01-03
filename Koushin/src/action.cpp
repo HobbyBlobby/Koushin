@@ -132,7 +132,8 @@ bool Koushin::Action::execute(bool failIfOneRecipientFailed)
       QList<QGenericArgument > args = prepareArguments(parameterTypes, action.second, manager);
       //execute the functions:
       bool rtnValue = false;
-      method.invoke(recipient, Qt::DirectConnection, Q_RETURN_ARG(bool, rtnValue), args[0], args[1], args[2], args[3], args[4], args[5], args[6], args[7], args[8], args[9]);
+      method.invoke(recipient, Qt::DirectConnection, Q_RETURN_ARG(bool, rtnValue),
+		    args[0], args[1], args[2], args[3], args[4], args[5], args[6], args[7], args[8], args[9]);
       if(rtnValue)
 	allRecipientsFailed = false;
       else
@@ -146,20 +147,22 @@ bool Koushin::Action::execute(bool failIfOneRecipientFailed)
 
 QList< QGenericArgument > Koushin::Action::prepareArguments(QStringList types, QStringList parameter, Koushin::ActionManager* manager)
 {
-  QList<QGenericArgument > args;
+  QList<QGenericArgument> args;
   for(int i = 0; i < 10; ++i) {
     QString type = types.value(i);
     if(type.isEmpty())
       args.insert(i, QGenericArgument());
     else if (type == "ResourceType") {
       kDebug() << "Insert ResourceType = " << parameter.value(i);
-      args.insert(i, Q_ARG(Koushin::ResourceType, Koushin::Town::getResourceTypeFromQString(parameter.value(i))));
+      args.insert(i, Q_ARG(Koushin::ResourceType,
+			   *(new Koushin::ResourceType(Koushin::Town::getResourceTypeFromQString(parameter.value(i))))
+			  ));
     }
     else if (type == "int") {
       try{
 	int value = manager->evalContent(parameter.value(i));
 	kDebug() << "Insert int = " << value;
-	args.insert(i, Q_ARG(int, value));
+	args.insert(i, Q_ARG(int, *(new int(value))));
       }
       catch (std::exception & e) {
 	kDebug() << "Can not calculate " << parameter.value(i) << ". Reason: " << e.what();
