@@ -71,6 +71,10 @@ void KoushinGUI::GameView::changePlayer(Koushin::Player* player)
 {
   if(!player) return; //avoid crash
 ///@todo disconnect events
+  disconnect(m_player, SIGNAL(showConstructionMenu(Koushin::Town*,QPoint)));
+  disconnect(m_player, SIGNAL(closeConstructionMenu()));
+  disconnect(m_constructionMenu, SIGNAL(buildingChosen(QString)));
+// change player:
   m_player = player;
 ///@todo connect with new player
   connect(m_player, SIGNAL(showConstructionMenu(Koushin::Town*, QPoint)), this, SLOT(showConstructionMenu(Koushin::Town*, QPoint)));
