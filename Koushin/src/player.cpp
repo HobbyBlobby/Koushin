@@ -104,9 +104,9 @@ void Koushin::Player::townClicked(QPoint point) //create member with active town
   if(!m_townList.isEmpty()) {
     m_buildingLot = point;
     //find better way to map the point
-    QPoint globalPoint = m_townList.first()->getTownWidget()->scene()->views().first()->mapFromScene(point);
-    globalPoint = m_townList.first()->getTownWidget()->scene()->views().first()->parentWidget()->mapToGlobal(globalPoint);
-    emit showConstructionMenu(m_townList.first(), globalPoint);
+//     QPoint globalPoint = m_townList.first()->getTownWidget()->scene()->views().first()->mapFromScene(point);
+//     globalPoint = m_townList.first()->getTownWidget()->scene()->views().first()->parentWidget()->mapToGlobal(globalPoint);
+    emit showConstructionMenu(m_townList.first(), point);
   }
 }
 
@@ -197,7 +197,6 @@ void Koushin::Player::fieldForActionChoosen(Koushin::Field* field)
 
 void Koushin::Player::fieldClicked(Koushin::Field* field)
 {
-  kDebug() << "field clicked: " << Koushin::Field::fieldTypeToQString(field->getType()) << " = " << (void*)field;
   switch (m_lastInteraction) {
     case Koushin::PlayerInteraction::roundedStarted: case Koushin::PlayerInteraction::noInteraction:
       if(field->getType() == Koushin::plainField) {

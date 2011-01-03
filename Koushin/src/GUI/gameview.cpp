@@ -100,8 +100,9 @@ void KoushinGUI::GameView::changePlayer(Koushin::Player* player)
 #include <KDebug>
 void KoushinGUI::GameView::showConstructionMenu(Koushin::Town* town, QPoint point)
 {
-  if(town) { ///@todo later use point to show menu near the cursor
+  if(town) {
     m_constructionMenu->setPossibleBuildings(town->getBuildingList());
+    point = mapFieldToDisplay(point);
     m_constructionMenu->move(point.x(), point.y());
     m_constructionMenu->show();
   }
@@ -123,5 +124,13 @@ void KoushinGUI::GameView::showResourceInfo(Koushin::Town* town)
   m_resourceInfo->updateInfos(town->getResources().values());
   m_resourceInfo->show();
 }
+
+QPoint KoushinGUI::GameView::mapFieldToDisplay(QPoint fieldPos)
+{
+  QPoint globalPoint = m_townView->mapFromScene(fieldPos);
+  globalPoint = mapToGlobal(globalPoint);
+  return globalPoint;
+}
+
 
 #include "gameview.moc"

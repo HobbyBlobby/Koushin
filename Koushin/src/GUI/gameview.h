@@ -58,6 +58,8 @@ class ResourceInfoWidget;
     protected:
       virtual void resizeEvent(QResizeEvent* event);
     private:
+      QPoint mapFieldToDisplay(QPoint fieldPos);
+      
       ResourceInfoWidget* m_resourceInfo;
       ConstructionMenu* m_constructionMenu;
       QPushButton* m_endRoundButton;
