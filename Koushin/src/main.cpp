@@ -32,6 +32,7 @@
 #include <QPushButton>
 #include "game.h"
 #include "GUI/buildinginfowidget.h"
+#include <QToolBar>
 
 #include <qglobal.h> //for Q_WS_X11
 #include "GUI/constructionmenu.h"
@@ -87,7 +88,6 @@ int main(int argc, char** argv)
     
     KStandardDirs stdDirs;
     QString townConfigFile = stdDirs.findResource("data", "koushin/data/towns/town.config");
-    kDebug() << "Found file " << townConfigFile;
     Koushin::Town* town = new Koushin::Town(tester, new KConfig(townConfigFile));
 
 ///@todo later: prefer building downloaded or created by the user (in ~/.kde4/share/apps/Koushin/...) :
@@ -103,34 +103,17 @@ int main(int argc, char** argv)
     }
     tester->setBuildingList(buildings); ///@todo should be part of the game instead of the player
 
-///@todo this will be part of the GameView later:
-    QDockWidget* tmpView = new QDockWidget;
-    QWidget* tmpViewWidget = new QWidget;
-    QVBoxLayout* layout = new QVBoxLayout;
-    tmpViewWidget->setLayout(layout);
-    KoushinGUI::BuildingInfoWidget* buildingInfo = new KoushinGUI::BuildingInfoWidget;
-    tester->setBuildingInfoWidget(buildingInfo);
-    layout->addWidget(buildingInfo);
-    tmpView->setWidget(tmpViewWidget);
-//end of GameView part.
-    
     KMainWindow* window = new KMainWindow;
-    window->setMinimumSize(500,500);
+    window->setMinimumSize(700,500);
     window->show();
 
     KoushinGUI::GameView* gameView = new KoushinGUI::GameView;
+    window->setCentralWidget(gameView);
+
     gameView->showTownView(tester->getTowns().first());
     gameView->changePlayer(tester);
-    window->setCentralWidget(gameView);
-    window->addDockWidget(Qt::RightDockWidgetArea, tmpView);
-//     scene->addItem(new QGraphicsRectItem(scene->sceneRect()));
-
-    KoushinGUI::ConstructionMenu* menu = new KoushinGUI::ConstructionMenu(buildings);
-    menu->close();
-    QObject::connect(menu, SIGNAL(buildingChosen(QString)), tester, SLOT(buildingChosen(QString)));
-//     view->testWidget = menu;
     
-    tester->testPlayer();
+    window->addToolBar(Qt::BottomToolBarArea, new QToolBar()); //draw toolbar to resize the gameView
     
     game->startRound();
     return app.exec();

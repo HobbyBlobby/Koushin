@@ -42,7 +42,7 @@ Koushin::Player::Player(QString name, Koushin::Game* game)
   , m_buildingLot(QPoint(0,0))
   , m_name(name)
   , m_game(game)
-  , m_buildingInfo(0)
+//   , m_buildingInfo(0)
   , m_selectedBuilding(0)
   , m_openFieldConfig("")
   , m_lastInteraction(Koushin::PlayerInteraction::noInteraction)
@@ -150,11 +150,11 @@ void Koushin::Player::startRound()
 }
 
 
-void Koushin::Player::setBuildingInfoWidget(KoushinGUI::BuildingInfoWidget* widget)
-{
-  m_buildingInfo = widget;
-  connect(m_buildingInfo, SIGNAL(fieldActionSelected(QListWidgetItem*)), this, SLOT(fieldActionSelected(QListWidgetItem*)));
-}
+// void Koushin::Player::setBuildingInfoWidget(KoushinGUI::BuildingInfoWidget* widget)
+// {
+//   m_buildingInfo = widget;
+//   connect(m_buildingInfo, SIGNAL(fieldActionSelected(QListWidgetItem*)), this, SLOT(fieldActionSelected(QListWidgetItem*)));
+// }
 
 void Koushin::Player::fieldActionSelected(QListWidgetItem* item)
 {
@@ -176,9 +176,11 @@ void Koushin::Player::fieldActionSelected(QListWidgetItem* item)
 void Koushin::Player::setSelectedBuilding(Koushin::Building* building)
 {
   m_selectedBuilding = building;
-  if(building) {
-    m_buildingInfo->setBuilding(m_selectedBuilding);
-  }
+  if(building)
+    emit showFieldInfo(building->getField());
+//   if(building) {
+//     m_buildingInfo->setBuilding(m_selectedBuilding);
+//   }
 }
 
 void Koushin::Player::fieldForActionChoosen(Koushin::Field* field)
@@ -192,7 +194,8 @@ void Koushin::Player::fieldForActionChoosen(Koushin::Field* field)
   m_fieldsForFieldAction.clear();
   m_selectedBuilding->useField(field);
   m_selectedBuilding->removeOpenFieldAction(m_openFieldConfig);
-  m_buildingInfo->repaint();
+  emit showFieldInfo(field);
+//   m_buildingInfo->repaint();
 }
 
 void Koushin::Player::fieldClicked(Koushin::Field* field)
@@ -205,7 +208,8 @@ void Koushin::Player::fieldClicked(Koushin::Field* field)
       if(field->getType() == Koushin::fieldWithBuilding && field->getBuilding()) {
 	setSelectedBuilding(field->getBuilding());
 	field->getBuilding()->select();
-	m_buildingInfo->repaint();
+// 	emit showFieldInfo(field);
+// 	m_buildingInfo->repaint();
 	m_lastInteraction = Koushin::PlayerInteraction::buildingClicked;
       }
       break;
@@ -214,11 +218,11 @@ void Koushin::Player::fieldClicked(Koushin::Field* field)
 	fieldForActionChoosen(field);
 	field->getTown()->unmarkAllFields();
 	m_selectedBuilding->select();
-	m_buildingInfo->repaint();
+	emit showFieldInfo(field);
       } else {
 	setSelectedBuilding(0);
 	field->getTown()->unmarkAllFields();
-	m_buildingInfo->repaint();
+// 	m_buildingInfo->repaint();
 	m_lastInteraction = Koushin::PlayerInteraction::noInteraction;
       }
       break;
@@ -226,21 +230,5 @@ void Koushin::Player::fieldClicked(Koushin::Field* field)
       kDebug() << "Do not know what to do.";
   }
 }
-
-void Koushin::Player::testPlayer()
-{
-  int index = metaObject()->indexOfSlot("testSlot(Koushin::FieldType)");
-  Koushin::Field* field = m_townList.first()->getFieldFromPoint(QPoint(12,12));
-  Koushin::FieldType type = field->getType();
-  kDebug() << "Field used: " << Koushin::Field::fieldTypeToQString(field->getType());
-  QGenericArgument arg = QGenericArgument("Koushin::FieldType", &type);
-  metaObject()->method(index).invoke(this, Qt::DirectConnection, arg);
-}
-
-void Koushin::Player::testSlot(Koushin::FieldType ausgabe)
-{
-  kDebug() << "Ausgabe: " << Koushin::Field::fieldTypeToQString(ausgabe);
-}
-
 
 #include "player.moc"

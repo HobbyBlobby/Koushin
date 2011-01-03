@@ -137,6 +137,7 @@ bool Koushin::Town::changeResource(Koushin::ResourceType type, int difference)
 bool Koushin::Town::setResourceCapacity(Koushin::ResourceType type, int value)
 {
   Koushin::Resource* res = m_resources.value(type);
+  kDebug() << (int)type << " = " << value;
   res->maximumCapacity = value;
   return true; //nothing can go wrong, or?
 }

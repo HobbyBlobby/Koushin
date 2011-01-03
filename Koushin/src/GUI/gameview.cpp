@@ -42,22 +42,28 @@ KoushinGUI::GameView::GameView()
   m_fieldInfo->setParent(this);
   m_constructionMenu->close();
   m_constructionMenu->setWindowFlags(Qt::Popup);
-  m_fieldInfo->close();
+//   m_fieldInfo->close();
   m_townView->close();
 }
 
+#include <KDebug>
 void KoushinGUI::GameView::resizeEvent(QResizeEvent* event)
 {
-  QRect widgetRect = geometry();
-  QRect resourceInfoRect = QRect(widgetRect.left(), widgetRect.top(), widgetRect.width(), 50);
+  QRect widgetRect = QRect(QPoint(0,0), event->size());
+  QRect resourceInfoRect = QRect(widgetRect.left(), widgetRect.top(), widgetRect.width() * 2.0/3.0, 50);
+  QRect fieldInfoRect = QRect(resourceInfoRect.right(), widgetRect.top(),
+			      widgetRect.width() - resourceInfoRect.width(), resourceInfoRect.height());
   QRect townRect = QRect(widgetRect.left(), resourceInfoRect.bottom(),
 			 widgetRect.width(), widgetRect.height() - resourceInfoRect.height());
   QSize buttonHint = m_endRoundButton->minimumSizeHint();
   QRect buttonRect = QRect(resourceInfoRect.right() - buttonHint.width(), (resourceInfoRect.height() - buttonHint.height())/2,
 			   buttonHint.width(), buttonHint.height());
-  //adjust resource info widget:
+//adjust resource info widget:
   m_resourceInfo->setGeometry(resourceInfoRect);
+//adjust field info widget:
+  m_fieldInfo->setGeometry(fieldInfoRect);
 //adjust town view:
+  kDebug() << "Resize to " << townRect  << " with " << m_townView->sceneRect();
   m_townView->setGeometry(townRect);
   m_townView->fitInView(m_townView->sceneRect(), Qt::KeepAspectRatio);
 //adjust construction menu:
@@ -68,25 +74,19 @@ void KoushinGUI::GameView::resizeEvent(QResizeEvent* event)
   QWidget::resizeEvent(event);
 }
 
-void KoushinGUI::GameView::showTownView(Koushin::Town* town)
-{
-  if(town) {
-    if(m_townWidget) m_townView->scene()->removeItem(m_townWidget);
-    m_townWidget = town->getTownWidget();
-    m_townView->scene()->addItem(m_townWidget);
-    m_townView->show();
-  }
-}
-
 void KoushinGUI::GameView::changePlayer(Koushin::Player* player)
 {
   if(!player) return; //avoid crash
 ///@todo disconnect events
-  disconnect(m_player, SIGNAL(showConstructionMenu(Koushin::Town*,QPoint)));
-  disconnect(m_player, SIGNAL(closeConstructionMenu()));
-  disconnect(m_constructionMenu, SIGNAL(buildingChosen(QString)));
-  disconnect(m_player, SIGNAL(showResourceInfo(Koushin::Town*)));
-  disconnect(m_endRoundButton);
+  if(m_player) {
+    disconnect(m_player, SIGNAL(showConstructionMenu(Koushin::Town*,QPoint)));
+    disconnect(m_player, SIGNAL(closeConstructionMenu()));
+    disconnect(m_constructionMenu, SIGNAL(buildingChosen(QString)));
+    disconnect(m_player, SIGNAL(showResourceInfo(Koushin::Town*)));
+    disconnect(m_endRoundButton);
+    disconnect(m_player, SIGNAL(showFieldInfo(Koushin::Field*)));
+    disconnect(m_fieldInfo);
+  }
 // change player:
   m_player = player;
 ///@todo connect with new player
@@ -95,9 +95,23 @@ void KoushinGUI::GameView::changePlayer(Koushin::Player* player)
   connect(m_constructionMenu, SIGNAL(buildingChosen(QString)), m_player, SLOT(buildingChosen(QString)));
   connect(m_player, SIGNAL(showResourceInfo(Koushin::Town*)), this, SLOT(showResourceInfo(Koushin::Town*)));
   connect(m_endRoundButton, SIGNAL(pressed()), m_player, SLOT(endRound()));
+  connect(m_player, SIGNAL(showFieldInfo(Koushin::Field*)), this, SLOT(showFieldInfo(Koushin::Field*)));
+  connect(m_fieldInfo, SIGNAL(fieldActionSelected(QListWidgetItem*)), m_player, SLOT(fieldActionSelected(QListWidgetItem*)));
+}
+
+void KoushinGUI::GameView::showTownView(Koushin::Town* town)
+{
+  kDebug() << "Draw town";
+  if(town) {
+    if(m_townWidget) m_townView->scene()->removeItem(m_townWidget);
+    m_townWidget = town->getTownWidget();
+    m_townView->scene()->addItem(m_townWidget);
+    m_townView->show();
+  }
 }
 
 #include <KDebug>
+#include <field.h>
 void KoushinGUI::GameView::showConstructionMenu(Koushin::Town* town, QPoint point)
 {
   if(town) {
@@ -114,9 +128,13 @@ void KoushinGUI::GameView::closeConstructionMenu()
 }
 
 
-void KoushinGUI::GameView::showFieldInfo(Koushin::Field* )
+void KoushinGUI::GameView::showFieldInfo(Koushin::Field* field)
 {
-
+  if(field->getBuilding()) {
+    m_fieldInfo->setBuilding(field->getBuilding());
+    m_fieldInfo->repaint();
+  }
+  m_fieldInfo->show();
 }
 
 void KoushinGUI::GameView::showResourceInfo(Koushin::Town* town)

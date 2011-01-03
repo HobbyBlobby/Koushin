@@ -52,7 +52,7 @@ class ResourceInfoWidget;
       void showResourceInfo(Koushin::Town*);
       void showConstructionMenu(Koushin::Town*, QPoint);
       void closeConstructionMenu();
-      void showFieldInfo(::Koushin::Field*);
+      void showFieldInfo(Koushin::Field* field);
       void showTownView(::Koushin::Town*);
       void changePlayer(::Koushin::Player*); //update the connections to the given player
     protected:

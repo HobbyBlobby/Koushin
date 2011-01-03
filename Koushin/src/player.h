@@ -63,8 +63,8 @@ namespace Koushin {
       void addTown(Town* town) {m_townList << town;}
       void setBuildingList(QMap<QString, QString> buildings) {m_listOfAllBuildings = buildings;}
       QString getName() const {return m_name;}
-      ::KoushinGUI::BuildingInfoWidget* getBuidlingInfoWidget() const {return m_buildingInfo;}
-      void setBuildingInfoWidget(::KoushinGUI::BuildingInfoWidget* widget);
+//       ::KoushinGUI::BuildingInfoWidget* getBuidlingInfoWidget() const {return m_buildingInfo;}
+//       void setBuildingInfoWidget(::KoushinGUI::BuildingInfoWidget* widget);
       void setSelectedBuilding(Building* building);
       
       const actionObjectType getActionObjectType() {return actionObjectIsPlayer;}
@@ -73,12 +73,11 @@ namespace Koushin {
       
       QMap<QString, QString> getBuildingList() const {return m_listOfAllBuildings;}
       
-      void testPlayer();
-
     Q_SIGNALS:
       void showConstructionMenu(Koushin::Town*, QPoint);
       void closeConstructionMenu();
       void showResourceInfo(Koushin::Town*);
+      void showFieldInfo(Koushin::Field*);
     public Q_SLOTS:
       //public actions
       bool setGlobalTo(QString name, QString content);
@@ -89,7 +88,6 @@ namespace Koushin {
       void fieldClicked(Field* field);
       void buildingChosen(QString buildingConfig);
       void fieldActionSelected(QListWidgetItem* item);
-      void testSlot(Koushin::FieldType ausgabe);
     private:
       void townClicked(QPoint point);
       void fieldForActionChoosen(Field* field);
@@ -98,7 +96,7 @@ namespace Koushin {
       ActionManager* m_actionManager;
       QMap<QString, QString> m_listOfAllBuildings;
       QPoint m_buildingLot;
-      KoushinGUI::BuildingInfoWidget* m_buildingInfo;
+//       KoushinGUI::BuildingInfoWidget* m_buildingInfo;
       QString m_name;
       Game* m_game;
       Building* m_selectedBuilding;
