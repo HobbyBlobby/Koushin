@@ -37,6 +37,9 @@ namespace KoushinGUI {
 }
 
 namespace Koushin {
+
+class Game;
+
   class ActionManager;
   class Town;
   class Game;
@@ -63,9 +66,8 @@ namespace Koushin {
       void addTown(Town* town) {m_townList << town;}
       void setBuildingList(QMap<QString, QString> buildings) {m_listOfAllBuildings = buildings;}
       QString getName() const {return m_name;}
-//       ::KoushinGUI::BuildingInfoWidget* getBuidlingInfoWidget() const {return m_buildingInfo;}
-//       void setBuildingInfoWidget(::KoushinGUI::BuildingInfoWidget* widget);
       void setSelectedBuilding(Building* building);
+      Game* getGame() const {return m_game;}
       
       const actionObjectType getActionObjectType() {return actionObjectIsPlayer;}
       const QMap<QString, ActionProperties> getPossibleActions();

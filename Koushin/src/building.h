@@ -56,6 +56,8 @@ class Field;
       KConfig* getConfig() const {return m_config;}
       void select();
       void unselect();
+      void setAge(int time) {m_age = time;}
+      int getAge() const {return m_age;}
 
       const actionObjectType getActionObjectType() {return actionObjectIsBuiling;};
       const QMap<QString, ActionProperties> getPossibleActions();
@@ -71,6 +73,7 @@ class Field;
       QList<Field* > m_usedFields;
       Field* m_field;
       KConfig* m_config;
+      int m_age;
   };
 }
 

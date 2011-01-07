@@ -32,6 +32,7 @@ Koushin::Building::Building(Town* town, KConfig* config)
   , m_level(1)
   , m_field(0)
   , m_config(config)
+  , m_age(0)
 {
 }
 

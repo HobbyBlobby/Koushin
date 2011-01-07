@@ -103,9 +103,6 @@ void Koushin::Player::townClicked(QPoint point) //create member with active town
 {
   if(!m_townList.isEmpty()) {
     m_buildingLot = point;
-    //find better way to map the point
-//     QPoint globalPoint = m_townList.first()->getTownWidget()->scene()->views().first()->mapFromScene(point);
-//     globalPoint = m_townList.first()->getTownWidget()->scene()->views().first()->parentWidget()->mapToGlobal(globalPoint);
     emit showConstructionMenu(m_townList.first(), point);
   }
 }
@@ -119,19 +116,15 @@ void Koushin::Player::buildingChosen(QString buildingConfig)
   KConfig* config = new KConfig(buildingConfig);
   Koushin::Building* newBuilding = new Koushin::Building(m_townList.first(), config);
   m_townList.first()->addBuilding(newBuilding, m_buildingLot);
-  newBuilding->setName(KConfigGroup(config , "general").readEntry("name", QString("NoName")));
+  KConfigGroup settings(config, "general");
+  newBuilding->setName(settings.readEntry("name", QString("NoName")));
+  newBuilding->setAge(-settings.readEntry("constructiontime", int(0)));
+  if(newBuilding->getAge() == 0) m_townList.first()->completeBuildingConstruction(newBuilding);
 
-  KConfigGroup* tasksGroup = new KConfigGroup(config, "tasks");
-  QList<Action* > actions = ActionParser::createActionsFromConfig(tasksGroup, newBuilding, m_game->getCurrentRound());
-  m_actionManager->addAction(actions);
-  Koushin::ActionParser::parseGlobals(tasksGroup->group("globals"), m_actionManager);
-  
   ActionParser::createOpenFieldActions(new KConfigGroup(config, "fieldTasks"), newBuilding);
   
   newBuilding->getField()->getFieldItem()->update(newBuilding->getField()->getFieldItem()->boundingRect());
-//   if(m_constructionMenu) {
   emit closeConstructionMenu();
-//   }
 }
 
 void Koushin::Player::endRound()
@@ -146,15 +139,10 @@ void Koushin::Player::endRound()
 void Koushin::Player::startRound()
 {
   emit showResourceInfo(m_townList.first());
+  foreach(Koushin::Town* town, m_townList)
+    town->growBuildings();
   m_lastInteraction = Koushin::PlayerInteraction::roundedStarted;
 }
-
-
-// void Koushin::Player::setBuildingInfoWidget(KoushinGUI::BuildingInfoWidget* widget)
-// {
-//   m_buildingInfo = widget;
-//   connect(m_buildingInfo, SIGNAL(fieldActionSelected(QListWidgetItem*)), this, SLOT(fieldActionSelected(QListWidgetItem*)));
-// }
 
 void Koushin::Player::fieldActionSelected(QListWidgetItem* item)
 {

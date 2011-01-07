@@ -24,6 +24,8 @@
 #include <KDebug>
 #include "building.h"
 #include <math.h>
+#include "game.h"
+#include "actionmanager.h"
 #include "field.h"
 #include <kconfig.h>
 #include "actionparser.h"
@@ -217,4 +219,22 @@ QMap< QString, QString > Koushin::Town::getBuildingList()
   if(m_owner)
     return m_owner->getBuildingList();
   return QMap<QString, QString>(); //avoid crash, but this case is actual not possible
+}
+
+void Koushin::Town::completeBuildingConstruction(Koushin::Building* building)
+{
+  kDebug() << "Create Action";
+  KConfigGroup* tasksGroup = new KConfigGroup(building->getConfig(), "tasks");
+  QList<Action* > actions = ActionParser::createActionsFromConfig(tasksGroup, building, m_owner->getGame()->getCurrentRound());
+  m_owner->getActionManager()->addAction(actions);
+  Koushin::ActionParser::parseGlobals(tasksGroup->group("globals"), m_owner->getActionManager());
+}
+
+void Koushin::Town::growBuildings()
+{
+  foreach(Koushin::Building* building, m_buildings.keys()) {
+    building->setAge(building->getAge() + 1);
+    if(building->getAge() == 0)
+      completeBuildingConstruction(building);
+  }
 }
