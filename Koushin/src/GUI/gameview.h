@@ -57,6 +57,9 @@ class ResourceInfoWidget;
       void changePlayer(::Koushin::Player*); //update the connections to the given player
     protected:
       virtual void resizeEvent(QResizeEvent* event);
+      void mouseMoveEvent(QMouseEvent* event);
+      void mousePressEvent(QMouseEvent* event);
+      void mouseReleaseEvent(QMouseEvent* event);
     private:
       QPoint mapFieldToDisplay(QPoint fieldPos) const;
       

@@ -44,8 +44,12 @@ namespace KoushinGUI {
       QRectF boundingRect() const;
       void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget = 0);
       
-      void sendSignalTownClicked(QPoint point) {emit townClicked(point);}
+//       void sendSignalTownClicked(QPoint point) {emit townClicked(point);}
       void updateTownPixmap(KConfig* config);
+
+    protected:
+//       void mouseMoveEvent(QGraphicsSceneMouseEvent* event);
+//       void mousePressEvent(QGraphicsSceneMouseEvent* event);
 
     Q_SIGNALS:
       void townClicked(QPoint point);

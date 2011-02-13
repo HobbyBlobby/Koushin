@@ -28,13 +28,23 @@
 #include <QResizeEvent>
 #include "player.h"
 
+#include <KDebug>
+class NonInteractiveView : public QGraphicsView {
+public:
+  NonInteractiveView(QGraphicsScene* scene, QWidget* parent) : QGraphicsView(scene, parent) {}
+protected:
+  void mousePressEvent(QMouseEvent* event) {event->ignore();}
+  void mouseMoveEvent(QMouseEvent* event) {event->ignore();}
+  void mouseReleaseEvent(QMouseEvent* event) {event->ignore();}
+};
+
 KoushinGUI::GameView::GameView()
   : QWidget() //parent is not planed, because this widget shoul be the central widget showing all other widgets
   , m_resourceInfo(new KoushinGUI::ResourceInfoWidget(this))
   , m_constructionMenu(new KoushinGUI::ConstructionMenu(QMap<QString, QString>(), this))
   , m_endRoundButton(new QPushButton("End Round",this))
   , m_fieldInfo(new KoushinGUI::BuildingInfoWidget())
-  , m_townView(new QGraphicsView(new QGraphicsScene, this))
+  , m_townView(new NonInteractiveView(new QGraphicsScene(this), this))
   , m_player(0)
   , m_townWidget(0)
 {
@@ -46,7 +56,6 @@ KoushinGUI::GameView::GameView()
   m_townView->close();
 }
 
-#include <KDebug>
 void KoushinGUI::GameView::resizeEvent(QResizeEvent* event)
 {
   QRect widgetRect = QRect(QPoint(0,0), event->size());
@@ -63,9 +72,11 @@ void KoushinGUI::GameView::resizeEvent(QResizeEvent* event)
 //adjust field info widget:
   m_fieldInfo->setGeometry(fieldInfoRect);
 //adjust town view:
-  kDebug() << "Resize to " << townRect  << " with " << m_townView->sceneRect();
+  int zoom = 150; //per cent
+  QRect zoomRect(0, 0, m_townView->sceneRect().width()*100/zoom, m_townView->sceneRect().height()*100/zoom);
+  kDebug() << "Resize to " << townRect  << " with " << zoomRect;
   m_townView->setGeometry(townRect);
-  m_townView->fitInView(m_townView->sceneRect(), Qt::KeepAspectRatio);
+  m_townView->fitInView(zoomRect, Qt::KeepAspectRatio);
 //adjust construction menu:
   m_constructionMenu->setPaintRange(QRect(mapToGlobal(townRect.topLeft()), mapToGlobal(townRect.bottomRight())));
 //adjust end round button:
@@ -97,6 +108,8 @@ void KoushinGUI::GameView::changePlayer(Koushin::Player* player)
   connect(m_endRoundButton, SIGNAL(pressed()), m_player, SLOT(endRound()));
   connect(m_player, SIGNAL(showFieldInfo(Koushin::Field*)), this, SLOT(showFieldInfo(Koushin::Field*)));
   connect(m_fieldInfo, SIGNAL(fieldActionSelected(QListWidgetItem*)), m_player, SLOT(fieldActionSelected(QListWidgetItem*)));
+  
+  m_player->getTowns().first()->getTownWidget()->setParent(this);
 }
 
 void KoushinGUI::GameView::showTownView(Koushin::Town* town)
@@ -148,6 +161,23 @@ QPoint KoushinGUI::GameView::mapFieldToDisplay(QPoint fieldPos) const
   QPoint globalPoint = m_townView->mapFromScene(fieldPos);
   globalPoint = m_townView->mapToGlobal(globalPoint);
   return globalPoint;
+}
+
+void KoushinGUI::GameView::mouseMoveEvent(QMouseEvent* event)
+{
+  kDebug() << "Move: " << event->pos();
+//   QWidget::mouseMoveEvent(event);
+}
+
+void KoushinGUI::GameView::mousePressEvent(QMouseEvent* event)
+{
+  kDebug() << "Klick: " << event->pos();
+//   QWidget::mousePressEvent(event);
+}
+void KoushinGUI::GameView::mouseReleaseEvent(QMouseEvent* event)
+{
+  kDebug() << "Release: " << event->pos();
+//   QWidget::mousePressEvent(event);
 }
 
 

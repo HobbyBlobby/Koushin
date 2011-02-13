@@ -100,9 +100,19 @@ void KoushinGUI::TownWidget::updateTownPixmap(KConfig* config)
     fieldSize = qMin(m_townPixmap->width() / fieldsHorizontal, m_townPixmap->height() / fieldsVertical);
   }
   
+//   m_boundingRect = QRect(3, 3, 10, 10);
   m_boundingRect = QRect(0, 0, fieldsHorizontal, fieldsVertical);
   m_portionRect = QRect(0, 0, fieldSize*fieldsHorizontal, fieldSize*fieldsVertical);
 }
+
+// void KoushinGUI::TownWidget::mouseMoveEvent(QGraphicsSceneMouseEvent* event)
+// {
+//   kDebug() << "moving";
+// }
+// void KoushinGUI::TownWidget::mousePressEvent(QGraphicsSceneMouseEvent* event)
+// {
+//   kDebug() << "clicking";
+// }
 
 
 #include "townwidget.moc"
