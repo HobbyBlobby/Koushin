@@ -177,7 +177,7 @@ void KoushinGUI::GameView::mouseMoveEvent(QMouseEvent* event)
     m_oldPos.setY(event->posF().y());
 //   if(newFocus.bottom() > m_townView->sceneRect().bottom())
 //     newFocus.moveBottom(m_townView->sceneRect().bottom());
-  kDebug() << "Move: " << m_townView->geometry() << " und " << m_townView->sceneRect() << " = " << shift << " mit " << scale;
+//   kDebug() << "Move: " << m_townView->geometry() << " und " << m_townView->sceneRect() << " = " << shift << " mit " << scale;
   m_townView->fitInView(newFocus, Qt::KeepAspectRatio);
 }
 
@@ -188,10 +188,16 @@ void KoushinGUI::GameView::mousePressEvent(QMouseEvent* event)
 }
 void KoushinGUI::GameView::mouseReleaseEvent(QMouseEvent* event)
 {
-//   kDebug() << "Release: " << event->pos();
   qreal scale = m_townView->geometry().width() / m_townView->sceneRect().width();
-  QPointF shift = QPointF(event->posF() - m_oldPos) / scale;
-  m_focusRect = QRectF(m_focusRect.left()-shift.x(), m_focusRect.top()-shift.y(), m_focusRect.width(), m_focusRect.height());
+  kDebug() << "Release " << m_oldPos << " und " << event->posF();
+  if(m_oldPos == event->posF()) {
+    m_player->fieldClicked(
+      m_player->getTowns().first()->getFieldFromPoint(QPoint(event->pos().x()/scale,event->pos().y()/scale)));
+  } else {
+  //   kDebug() << "Release: " << event->pos();
+    QPointF shift = QPointF(event->posF() - m_oldPos) / scale;
+    m_focusRect = QRectF(m_focusRect.left()-shift.x(), m_focusRect.top()-shift.y(), m_focusRect.width(), m_focusRect.height());
+  }
 }
 
 
