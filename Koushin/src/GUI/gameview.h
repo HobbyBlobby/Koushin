@@ -68,6 +68,8 @@ class ResourceInfoWidget;
       QPushButton* m_endRoundButton;
       BuildingInfoWidget* m_fieldInfo;
       QGraphicsView* m_townView;
+      QRectF m_focusRect;
+      QPointF m_oldPos;
       //old properties: needed for deleting this objects
       ::Koushin::Player* m_player;
       TownWidget* m_townWidget;
