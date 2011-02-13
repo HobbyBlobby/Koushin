@@ -46,27 +46,6 @@ static const char version[] = "0.2";
 //0.1: the start
 //0.2: create buildings, draw graphical map, parse first actions, introduce town editor
 
-namespace KoushinGUI {
-  class AutoresizeView : public QGraphicsView {
-  public:
-    AutoresizeView() : QGraphicsView(), m_centralItem(0), testWidget(0), m_rect(new QGraphicsRectItem()) {}
-    void setCentralItem(QGraphicsItem* item) {m_centralItem = item;}
-    void resizeEvent(QResizeEvent* event) {
-      fitInView(m_centralItem->boundingRect(),Qt::KeepAspectRatio);
-      if(testWidget && scene()) {
-	testWidget->repaint();
-	m_rect->setBrush(QBrush(Qt::red));
-	m_rect->setRect(testWidget->geometry());
-// 	scene()->addItem(m_rect);
-      }
-    }
-    QWidget* testWidget;
-  private:
-    QGraphicsItem* m_centralItem;
-    QGraphicsRectItem* m_rect;
-  };
-}
-
 
 int main(int argc, char** argv)
 {
