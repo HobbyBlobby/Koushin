@@ -39,6 +39,10 @@ protected:
   void wheelEvent(QWheelEvent* event) {event->ignore();}
 };
 
+QPoint toPoint(const QPointF p1) {
+  return QPoint((int)p1.x(), (int)p1.y());
+}
+
 KoushinGUI::GameView::GameView()
   : QWidget() //parent is not planed, because this widget shoul be the central widget showing all other widgets
   , m_resourceInfo(new KoushinGUI::ResourceInfoWidget(this))
@@ -194,7 +198,7 @@ void KoushinGUI::GameView::mouseReleaseEvent(QMouseEvent* event)
 {
   qreal scale = m_townView->geometry().width() / m_focusRect.width();
   if(m_oldPos == event->posF()) {
-    QPoint townPoint = m_townView->mapToScene(QPointF(event->posF() + pos() - m_townView->pos()).toPoint()).toPoint();
+    QPoint townPoint = toPoint(m_townView->mapToScene(event->pos() + pos() - m_townView->pos()));
     m_player->fieldClicked(m_player->getTowns().first()->getFieldFromPoint(townPoint));
   } else {
     m_focusRect = m_townView->mapToScene(m_townView->viewport()->geometry()).boundingRect();
@@ -210,7 +214,7 @@ void KoushinGUI::GameView::wheelEvent(QWheelEvent* event)
     scale = -event->delta()/100.0;
   m_focusRect.setWidth(m_focusRect.width()*scale);
   m_focusRect.setHeight(m_focusRect.height()*scale);
-  QPoint townPoint = m_townView->mapToScene(QPointF(event->pos() + pos() - m_townView->pos()).toPoint()).toPoint();
+  QPoint townPoint = toPoint(m_townView->mapToScene(event->pos() + pos() - m_townView->pos()).toPoint());
   m_focusRect.moveCenter(townPoint);
   m_townView->fitInView(m_focusRect);
   m_focusRect = m_townView->mapToScene(m_townView->viewport()->geometry()).boundingRect();
