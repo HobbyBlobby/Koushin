@@ -55,7 +55,10 @@ void KoushinGUI::FieldItem::paint(QPainter* painter, const QStyleOptionGraphicsI
     painter->setPen(QPen());
     painter->setOpacity(1.0);
     painter->drawEllipse(0,0,1,1);
-    m_textItem->setPlainText(m_field->getBuilding()->getName());
+    if(m_field->getBuilding()->getAge() < 0)
+      m_textItem->setPlainText(QString("%1").arg(-m_field->getBuilding()->getAge()));
+    else
+      m_textItem->setPlainText(m_field->getBuilding()->getName());
     m_textItem->setScale(1 / m_textItem->boundingRect().width());
     m_textItem->setPos(0, 0.5 - m_textItem->boundingRect().height()/(2*m_textItem->boundingRect().width()));
     m_textItem->setParentItem(this);
