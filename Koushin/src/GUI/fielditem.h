@@ -36,7 +36,6 @@ namespace KoushinGUI {
       virtual QRectF boundingRect() const;
       void setMarkColor(QColor color) {m_markColor = color;}
     protected:
-//       void mousePressEvent(QGraphicsSceneMouseEvent* event);
     private:
       ::Koushin::Field* m_field;
       QGraphicsTextItem* m_textItem;
