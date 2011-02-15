@@ -168,23 +168,15 @@ void KoushinGUI::GameView::mouseMoveEvent(QMouseEvent* event)
   qreal scale = m_townView->geometry().width() / m_focusRect.width();
   QPointF shift = QPointF(event->posF() - m_oldPos) / scale;
   QPointF centerPoint = m_focusRect.center() - shift;
-//   QRectF newFocus(m_focusRect.left()-shift.x(), m_focusRect.top()-shift.y(), m_focusRect.width(), m_focusRect.height());
-//   if((newFocus.left() < 0) || (newFocus.right() > m_townView->sceneRect().right()))
-//     m_oldPos.setX(event->posF().x());
-//   if(newFocus.right() > m_townView->sceneRect().right())
-//     newFocus.moveRight(m_townView->sceneRect().right());
-//   if((newFocus.top() < 0) || (newFocus.bottom() > m_townView->sceneRect().bottom()))
-//     m_oldPos.setY(event->posF().y());
-//   if(newFocus.bottom() > m_townView->sceneRect().bottom())
-//     newFocus.moveBottom(m_townView->sceneRect().bottom());
-//   kDebug() << "Move: " << m_townView->geometry() << " und " << m_townView->sceneRect() << " = " << shift << " mit " << scale;
-    m_townView->centerOn(centerPoint);
-    if((centerPoint.x() - m_focusRect.width()/2 < 0) || (centerPoint.x() + m_focusRect.width()/2 > m_focusRect.width())) {
-      m_oldPos.setX(m_oldPos.x() + shift.x());
-    }
-    if((centerPoint.y() - m_focusRect.height()/2 < 0) || (centerPoint.y() + m_focusRect.height()/2 > m_focusRect.height())) {
-      m_oldPos.setY(m_oldPos.y() + shift.y());
-    }
+  m_townView->centerOn(centerPoint);
+  if((centerPoint.x() - m_focusRect.width()/2 < 0) ||
+    (centerPoint.x() + m_focusRect.width()/2 > m_townView->sceneRect().width())) {
+    m_oldPos.setX(m_oldPos.x() + shift.x());
+  }
+  if((centerPoint.y() - m_focusRect.height()/2 < 0) ||
+    (centerPoint.y() + m_focusRect.height()/2 > m_townView->sceneRect().height())) {
+    m_oldPos.setY(m_oldPos.y() + shift.y());
+  }
 }
 
 void KoushinGUI::GameView::mousePressEvent(QMouseEvent* event)
