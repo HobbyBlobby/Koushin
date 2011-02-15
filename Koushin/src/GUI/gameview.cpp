@@ -36,6 +36,7 @@ protected:
   void mousePressEvent(QMouseEvent* event) {event->ignore();}
   void mouseMoveEvent(QMouseEvent* event) {event->ignore();}
   void mouseReleaseEvent(QMouseEvent* event) {event->ignore();}
+  void wheelEvent(QWheelEvent* event) {event->ignore();}
 };
 
 KoushinGUI::GameView::GameView()
@@ -55,6 +56,9 @@ KoushinGUI::GameView::GameView()
   m_constructionMenu->setWindowFlags(Qt::Popup);
 //   m_fieldInfo->close();
   m_townView->close();
+  m_townView->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+  m_townView->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+  
 }
 
 void KoushinGUI::GameView::resizeEvent(QResizeEvent* event)
@@ -77,6 +81,7 @@ void KoushinGUI::GameView::resizeEvent(QResizeEvent* event)
 //   QRect zoomRect(0, 0, m_townView->sceneRect().width()*100/zoom, m_townView->sceneRect().height()*100/zoom);
   m_townView->setGeometry(townRect);
   m_townView->fitInView(m_focusRect, Qt::KeepAspectRatio);
+  m_focusRect = m_townView->mapToScene(m_townView->viewport()->geometry()).boundingRect();
 //adjust construction menu:
   m_constructionMenu->setPaintRange(QRect(mapToGlobal(townRect.topLeft()), mapToGlobal(townRect.bottomRight())));
 //adjust end round button:
@@ -194,6 +199,22 @@ void KoushinGUI::GameView::mouseReleaseEvent(QMouseEvent* event)
   } else {
     m_focusRect = m_townView->mapToScene(m_townView->viewport()->geometry()).boundingRect();
   }
+}
+
+void KoushinGUI::GameView::wheelEvent(QWheelEvent* event)
+{
+  qreal scale = 1.0;
+  if(event->delta() > 0)
+    scale = 2.0 - event->delta()/100.0;
+  else
+    scale = -event->delta()/100.0;
+  m_focusRect.setWidth(m_focusRect.width()*scale);
+  m_focusRect.setHeight(m_focusRect.height()*scale);
+  QPoint townPoint = m_townView->mapToScene(QPointF(event->pos() + pos() - m_townView->pos()).toPoint()).toPoint();
+  m_focusRect.moveCenter(townPoint);
+  m_townView->fitInView(m_focusRect);
+  m_focusRect = m_townView->mapToScene(m_townView->viewport()->geometry()).boundingRect();
+  QWidget::wheelEvent(event);
 }
 
 

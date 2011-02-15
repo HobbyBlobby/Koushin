@@ -60,6 +60,7 @@ class ResourceInfoWidget;
       void mouseMoveEvent(QMouseEvent* event);
       void mousePressEvent(QMouseEvent* event);
       void mouseReleaseEvent(QMouseEvent* event);
+      void wheelEvent(QWheelEvent* event);
     private:
       QPoint mapFieldToDisplay(QPoint fieldPos) const;
       
