@@ -42,7 +42,6 @@ Koushin::Player::Player(QString name, Koushin::Game* game)
   , m_buildingLot(QPoint(0,0))
   , m_name(name)
   , m_game(game)
-//   , m_buildingInfo(0)
   , m_selectedBuilding(0)
   , m_openFieldConfig("")
   , m_lastInteraction(Koushin::PlayerInteraction::noInteraction)
@@ -81,13 +80,13 @@ bool Koushin::Player::addToGlobal(QString name, QString content)
     kDebug() << "no action manager given";
     return false;
   }
-  kDebug() << "call addToGlobal";
-  return m_actionManager->setGlobalParameterContent(name, content);
+  kDebug() << "call addToGlobal" << name << " = " << content;
+  return m_actionManager->addContentToGlobalParameter(name, content);
 }
 
 bool Koushin::Player::setGlobalTo(QString name, QString content)
 {
-  return m_actionManager->addContentToGlobalParameter(name, content);
+  return m_actionManager->setGlobalParameterContent(name, content);
 }
 
 const QString Koushin::Player::getLocal(QString name, QString additionalContent)

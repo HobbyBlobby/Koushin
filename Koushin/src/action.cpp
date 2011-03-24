@@ -151,7 +151,8 @@ bool Koushin::Action::execute(bool failIfOneRecipientFailed)
 	}
 	else if(type == "QString") {
 	  kDebug() << "Insert QString = " << action.second.value(i);
-	  args.insert(i, Q_ARG(QString, action.second.value(i)));
+	  args.insert(i, Q_ARG(QString, *(new QString(action.second.value(i)))));
+	  kDebug() << args.at(i).data();
 	}
 	else {
 	  kDebug() << "Unknown parameter type: " << type;
@@ -173,7 +174,7 @@ bool Koushin::Action::execute(bool failIfOneRecipientFailed)
   return true;
 }
 
-QList< QGenericArgument > Koushin::Action::prepareArguments(QStringList types, QStringList parameter, Koushin::ActionManager* manager)
+/*QList< QGenericArgument > Koushin::Action::prepareArguments(QStringList types, QStringList parameter, Koushin::ActionManager* manager)
 {
   QList<QGenericArgument> args;
   for(int i = 0; i < 10; ++i) {
@@ -208,7 +209,7 @@ QList< QGenericArgument > Koushin::Action::prepareArguments(QStringList types, Q
   }
   return args;
 }
-
+*/
 bool Koushin::Action::possibleParametersGiven(Koushin::ActionObject* recipient, QString actionName, QStringList parameters)
 {
   QMap<QString, Koushin::ActionProperties> possibleActions;
