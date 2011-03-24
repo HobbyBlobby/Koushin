@@ -129,7 +129,35 @@ bool Koushin::Action::execute(bool failIfOneRecipientFailed)
       int index = recipient->metaObject()->indexOfMethod(QString(action.first + "(" + parameterTypes.join(",") + ")").toLatin1());
       QMetaMethod method = recipient->metaObject()->method(index);
       //create QGenericArguments from strings:
-      QList<QGenericArgument > args = prepareArguments(parameterTypes, action.second, manager);
+      QList<QGenericArgument> args;
+      for(int i = 0; i < 10; ++i) {
+	QString type = parameterTypes.value(i);
+	if(type.isEmpty())
+	  args.insert(i, QGenericArgument());
+	else if (type == "ResourceType") {
+	  kDebug() << "Insert ResourceType = " << action.second.value(i);
+	  args.insert(i, Q_ARG(Koushin::ResourceType, Koushin::Town::getResourceTypeFromQString(action.second.value(i))));
+	}
+	else if (type == "int") {
+	  try{
+	    int value = manager->evalContent(action.second.value(i));
+	    kDebug() << "Insert int = " << value;
+	    args.insert(i, Q_ARG(int, value));
+	  }
+	  catch (std::exception & e) {
+	    kDebug() << "Can not calculate " << action.second.value(i) << ". Reason: " << e.what();
+	    args.insert(i, QGenericArgument());
+	  }
+	}
+	else if(type == "QString") {
+	  kDebug() << "Insert QString = " << action.second.value(i);
+	  args.insert(i, Q_ARG(QString, action.second.value(i)));
+	}
+	else {
+	  kDebug() << "Unknown parameter type: " << type;
+	  args.insert(i, QGenericArgument());
+	}
+      }
       //execute the functions:
       bool rtnValue = false;
       method.invoke(recipient, Qt::DirectConnection, Q_RETURN_ARG(bool, rtnValue),
