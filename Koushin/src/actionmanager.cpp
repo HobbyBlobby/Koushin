@@ -40,21 +40,22 @@ Koushin::ActionManager::~ActionManager()
 
 void Koushin::ActionManager::executeActions(int currentRound)
 {
-  m_actions.clear();
-  foreach(Koushin::ActionObject* object, m_actionObjects)
-    addAction(object->getAllActions());
-  kDebug() << "Number of Objects: " << m_actionObjects.size() << ". Number of Actions: " << m_actions.size();
-//reset all action before executing
-  foreach(Action* action, m_actions.values()) { 
-    action->resetAction();
+  QMap<int, Koushin::Action* > actions;
+  foreach(Koushin::ActionObject* object, m_actionObjects) {
+    foreach(Koushin::Action* action, object->getAllActions()) {
+      action->resetAction();
+      actions.insert(action->getPriority(), action);
+    }
   }
+  kDebug() << "Number of Objects: " << m_actionObjects.size() << ". Number of Actions: " << actions.size();
+  
 //get all priorities and sort them descending
-  QList<int > priorityList = m_actions.uniqueKeys();
+  QList<int > priorityList = actions.uniqueKeys();
   qSort(priorityList.begin(), priorityList.end(), qGreater<int>()); //execute first actions with height priority
 //execute actions beginning with highest priority
   QList<Koushin::Action* > actionsToExecute;
   for (QList<int >::const_iterator it = priorityList.begin(); it != priorityList.end(); ++it) {
-    actionsToExecute << m_actions.values(*it); //apend actions to ToDo-List
+    actionsToExecute << actions.values(*it); //apend actions to ToDo-List
     kDebug() << "Execute jobs with priority = " << *it;
     foreach(Koushin::Action* action, actionsToExecute) {
       if(!action->shouldExecuteInEveryRound() && !action->getExecutionRounds().contains(currentRound)) {
@@ -102,18 +103,6 @@ bool Koushin::ActionManager::executeAction(Koushin::Action* action)
   return true;
 }
 
-
-void Koushin::ActionManager::addAction(Koushin::Action* action)
-{
-  m_actions.insert(action->getPriority(), action); //insert is like insertMulti for normal QMaps
-}
-
-void Koushin::ActionManager::addAction(QList< Koushin::Action* > actions)
-{
-  foreach(Koushin::Action* action, actions)
-    addAction(action);
-}
-
 bool Koushin::ActionManager::addActionObject(Koushin::ActionObject* object)
 {
   if(m_actionObjects.contains(object)) return false;
@@ -125,18 +114,7 @@ bool Koushin::ActionManager::removeActionObject(Koushin::ActionObject* object)
 {
   if(!m_actionObjects.contains(object)) return false;
   m_actionObjects.removeAll(object);
-//   removeActions(object);
   return true;
-}
-
-
-void Koushin::ActionManager::removeActions(Koushin::ActionObject* object)
-{
-  foreach(Koushin::Action* action, m_actions.values()) {
-    if(action->getOwner() == object) {
-      m_actions.remove(m_actions.key(action), action);
-    }
-  }
 }
 
 void Koushin::ActionManager::setStatusOfDependensies(Koushin::Action* action)

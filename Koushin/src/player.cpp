@@ -182,8 +182,8 @@ void Koushin::Player::fieldForActionChosen(Koushin::Field* field)
   if(!m_selectedBuilding) return;
   KConfigGroup* fieldsGroup = new KConfigGroup(m_selectedBuilding->getConfig()->group("fieldTasks"));
 //create actions
-  QList<Action* > actions = ActionParser::createActionsFromConfig(fieldsGroup, field, m_game->getCurrentRound(), m_openFieldConfig);
-//   m_actionManager->addAction(actions);
+  QList<Action* > actions = Koushin::ActionParser::createActionsFromConfig(fieldsGroup, field, m_game->getCurrentRound(), m_openFieldConfig);
+  kDebug() << "##### load actions: " << actions.size();
   foreach(Koushin::Action* action, actions)
     m_selectedBuilding->insertAction(action);
   m_actionManager->addActionObject(m_selectedBuilding);

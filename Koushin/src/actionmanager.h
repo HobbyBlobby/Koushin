@@ -49,11 +49,7 @@ class ActionObject;
       void resetGlobalParameters();
     private:
       QString expandParameter( QString line, QString name);
-      void addAction(Action* action);
-      void addAction(QList<Action* > actions);
-      void removeActions(Koushin::ActionObject* object);
-      
-      QMultiMap<int, Action* > m_actions;
+
       QList<ActionObject* > m_actionObjects;
       Player* m_owner;
       QMap<QString, QString> m_globalParameters; //map with name and content

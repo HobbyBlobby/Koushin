@@ -21,6 +21,7 @@
 #include "actionobject.h"
 #include <QString>
 #include <KDebug>
+#include "action.h"
 
 Koushin::ActionObject::ActionObject()
 {
@@ -79,7 +80,7 @@ bool Koushin::ActionObject::insertAction(Koushin::Action* action)
 {
   if(m_actions.contains(action)) return false;
   m_actions << action;
-  kDebug() << "Insert Action";
+  kDebug() << "############### Insert Action" << action->getActionString();
   return true;
 }
 
