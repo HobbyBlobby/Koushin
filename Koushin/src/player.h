@@ -90,6 +90,7 @@ class Game;
       void fieldClicked(Field* field);
       void buildingChosen(QString buildingConfig);
       void fieldActionSelected(QListWidgetItem* item);
+      void levelupBuilding();
     private:
       void townClicked(QPoint point);
       void fieldForActionChosen(Field* field);

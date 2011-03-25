@@ -22,28 +22,37 @@
 #include <building.h>
 #include <KConfigGroup>
 #include <KDebug>
+#include <QPushButton>
 
 KoushinGUI::BuildingInfoWidget::BuildingInfoWidget()
   : m_building(0)
   , m_list(new QListWidget(this))
+  , m_nextLevelButton(new QPushButton("Level up", this))
 {
   m_list.setSelectionMode(QAbstractItemView::SingleSelection);
   connect(&m_list, SIGNAL(itemActivated(QListWidgetItem*)), this, SIGNAL(fieldActionSelected(QListWidgetItem*)));
+  m_nextLevelButton->hide();
 }
 
 void KoushinGUI::BuildingInfoWidget::repaint()
 {
+  QSize buttonSize = m_nextLevelButton->minimumSizeHint(); 
+  m_list.setGeometry(0, 0, width(), height() - buttonSize.height());
+  m_nextLevelButton->setGeometry(0, height() - buttonSize.height(), buttonSize.width(), buttonSize.height());
+  kDebug() << "Repaint of building info";
+
   if(!m_building || m_building->getAge() < 0) {
     m_list.clear();
+    m_nextLevelButton->hide();
     return;
   }
-  m_list.setGeometry(0, 0, width(), height());
   QStringList itemStrings;
   foreach(QString groupName, m_building->getOpenFieldActions())
     if(!itemStrings.contains(groupName)) itemStrings << groupName;
   m_list.clear();
   m_list.addItems(itemStrings);
   m_list.show();
+  m_nextLevelButton->show();
 }
 
 #include "buildinginfowidget.moc"

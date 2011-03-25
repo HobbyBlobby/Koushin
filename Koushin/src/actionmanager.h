@@ -25,6 +25,8 @@
 #include <QString>
 
 namespace Koushin {
+
+class ActionObject;
   class Action;
   class Player;
   class ActionManager {
@@ -36,6 +38,7 @@ namespace Koushin {
       void addAction(QList<Action* > actions);
       void executeActions(int currentRound);
       bool executeAction(Action* action);
+      void removeActions(Koushin::ActionObject* object);
       void setStatusOfDependensies(Action* failedAction);
       Player* getOwner() {return m_owner;}
       bool addGlobalParameter(QString name, QString content);

@@ -138,6 +138,7 @@ void Koushin::Player::endRound()
 void Koushin::Player::startRound()
 {
   emit showResourceInfo(m_townList.first());
+  emit showFieldInfo(0);
   foreach(Koushin::Town* town, m_townList)
     town->growBuildings();
   m_lastInteraction = Koushin::PlayerInteraction::roundedStarted;
@@ -172,9 +173,6 @@ void Koushin::Player::setSelectedBuilding(Koushin::Building* building)
   m_selectedBuilding = building;
   if(building)
     emit showFieldInfo(building->getField());
-//   if(building) {
-//     m_buildingInfo->setBuilding(m_selectedBuilding);
-//   }
 }
 
 void Koushin::Player::fieldForActionChosen(Koushin::Field* field)
@@ -189,7 +187,6 @@ void Koushin::Player::fieldForActionChosen(Koushin::Field* field)
   m_selectedBuilding->useField(field);
   m_selectedBuilding->removeOpenFieldAction(m_openFieldConfig);
   emit showFieldInfo(field);
-//   m_buildingInfo->repaint();
 }
 
 void Koushin::Player::fieldClicked(Koushin::Field* field)
@@ -202,8 +199,6 @@ void Koushin::Player::fieldClicked(Koushin::Field* field)
       if(field->getType() == Koushin::fieldWithBuilding && field->getBuilding()) {
 	setSelectedBuilding(field->getBuilding());
 	field->getBuilding()->select();
-// 	emit showFieldInfo(field);
-// 	m_buildingInfo->repaint();
 	m_lastInteraction = Koushin::PlayerInteraction::buildingClicked;
       }
       break;
@@ -217,7 +212,6 @@ void Koushin::Player::fieldClicked(Koushin::Field* field)
 	setSelectedBuilding(0);
 	field->getTown()->unmarkAllFields();
 	emit showFieldInfo(field);
-// 	m_buildingInfo->repaint();
 	m_lastInteraction = Koushin::PlayerInteraction::noInteraction;
       }
       break;
@@ -225,5 +219,16 @@ void Koushin::Player::fieldClicked(Koushin::Field* field)
       kDebug() << "Do not know what to do.";
   }
 }
+
+void Koushin::Player::levelupBuilding()
+{
+  if(m_selectedBuilding) {
+    kDebug() << m_selectedBuilding->getName();
+    m_actionManager->removeActions((Koushin::ActionObject*)m_selectedBuilding);
+    foreach(Koushin::Field* field, m_selectedBuilding->getUsedFields())
+      m_actionManager->removeActions(field);
+  }
+}
+
 
 #include "player.moc"

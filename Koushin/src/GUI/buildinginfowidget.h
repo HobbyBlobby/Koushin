@@ -24,6 +24,7 @@
 #include <QWidget>
 #include <QListWidget>
 
+class QPushButton;
 namespace Koushin {
 class Building;
 }
@@ -36,6 +37,7 @@ namespace KoushinGUI {
       
       void setBuilding(::Koushin::Building* building) {m_building = building;}
       ::Koushin::Building* getBuilding() const {return m_building;}
+      QPushButton* getNextLevelButton() const {return m_nextLevelButton;}
     public Q_SLOTS:
       void repaint();
     Q_SIGNALS:
@@ -44,6 +46,7 @@ namespace KoushinGUI {
     private:
       ::Koushin::Building* m_building;
       QListWidget m_list;
+      QPushButton* m_nextLevelButton;
   };
 }
 

@@ -110,6 +110,15 @@ void Koushin::ActionManager::addAction(QList< Koushin::Action* > actions)
     addAction(action);
 }
 
+void Koushin::ActionManager::removeActions(Koushin::ActionObject* object)
+{
+  foreach(Koushin::Action* action, m_actions.values()) {
+    if(action->getOwner() == object) {
+      m_actions.remove(m_actions.key(action), action);
+    }
+  }
+}
+
 void Koushin::ActionManager::setStatusOfDependensies(Koushin::Action* action)
 {
   foreach(Koushin::Action* dependency, action->getDependencies().keys()) {

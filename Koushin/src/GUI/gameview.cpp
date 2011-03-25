@@ -118,6 +118,7 @@ void KoushinGUI::GameView::changePlayer(Koushin::Player* player)
   connect(m_endRoundButton, SIGNAL(pressed()), m_player, SLOT(endRound()));
   connect(m_player, SIGNAL(showFieldInfo(Koushin::Field*)), this, SLOT(showFieldInfo(Koushin::Field*)));
   connect(m_fieldInfo, SIGNAL(fieldActionSelected(QListWidgetItem*)), m_player, SLOT(fieldActionSelected(QListWidgetItem*)));
+  connect(m_fieldInfo->getNextLevelButton(), SIGNAL(clicked()), m_player, SLOT(levelupBuilding()));
   
   m_player->getTowns().first()->getTownWidget()->setParent(this);
 }
@@ -153,7 +154,10 @@ void KoushinGUI::GameView::closeConstructionMenu()
 
 void KoushinGUI::GameView::showFieldInfo(Koushin::Field* field)
 {
-  m_fieldInfo->setBuilding(field->getBuilding());
+  if(field)
+    m_fieldInfo->setBuilding(field->getBuilding());
+  else
+    m_fieldInfo->setBuilding(0);
   m_fieldInfo->repaint();
   m_fieldInfo->show();
 }
