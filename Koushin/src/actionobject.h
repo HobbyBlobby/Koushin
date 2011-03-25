@@ -29,6 +29,8 @@
  * This class can not used direct.
  **/
 namespace Koushin {
+
+  class Action;
   /**
    * @brief This enum provides the information about the type of the derived class.
    * Often the base class ActionObject is stored or returned. Before a cast to the derived class test the type. Each derived class should have his onw entry in this enum, so do not forget to add it here.
@@ -87,6 +89,10 @@ namespace Koushin {
        **/
       static const QMap<QString, ActionProperties> getPossibleActions();
       
+      QList<Action* > getAllActions();
+      bool insertAction(Action* action);
+      bool deleteAction(Action* action);
+      
       /**
        * @brief This function replaces a local with a new value.
        * Each derived class can have his own local parameter (here locals). Every local can either be added the the global or can replace the global.
@@ -136,6 +142,7 @@ namespace Koushin {
     protected:
       QMap<QString, QString> m_globalAdditions;
       QMap<QString, QString> m_globalReplacements;
+      QList<Action* > m_actions;
   };
 }
 #endif // ACTIONOBJECT_H

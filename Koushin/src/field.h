@@ -32,6 +32,8 @@ class QGraphicsRectItem;
 class QGraphicsWidget;
 class QGraphicsItem;
 namespace Koushin {
+
+class Action;
   class Building;
   class Field : public ActionObject {
     Q_OBJECT
@@ -58,7 +60,6 @@ namespace Koushin {
       void setPos(QPoint pos) {m_fieldItem->setPos(pos);}
       ::KoushinGUI::FieldItem* getFieldItem () const {return m_fieldItem;}
       
-      
       void markField(QColor color = Qt::red) {
 	m_isMarked = true; m_fieldItem->setMarkColor(color); m_fieldItem->update(m_fieldItem->boundingRect());
       }
@@ -79,6 +80,7 @@ namespace Koushin {
       Building* m_building;
       ::KoushinGUI::FieldItem* m_fieldItem;
       bool m_isMarked;
+      
   };
 }
 // Q_DECLARE_METATYPE(Koushin::Field*)

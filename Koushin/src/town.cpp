@@ -234,7 +234,9 @@ void Koushin::Town::completeBuildingConstruction(Koushin::Building* building)
   kDebug() << "Create Action";
   KConfigGroup* tasksGroup = new KConfigGroup(building->getConfig(), "tasks");
   QList<Action* > actions = ActionParser::createActionsFromConfig(tasksGroup, building, m_owner->getGame()->getCurrentRound());
-  m_owner->getActionManager()->addAction(actions);
+  foreach(Koushin::Action* action, actions)
+    building->insertAction(action);
+  m_owner->getActionManager()->addActionObject(building);
   Koushin::ActionParser::parseGlobals(tasksGroup->group("globals"), m_owner->getActionManager());
 }
 

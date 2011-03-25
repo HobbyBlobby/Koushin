@@ -30,6 +30,8 @@ class KConfig;
 class KConfigGroup;
 namespace Koushin {
 
+class Action;
+
 class Field;
 
   class Building : public ActionObject {
@@ -58,7 +60,7 @@ class Field;
       void unselect();
       void setAge(int time) {m_age = time;}
       int getAge() const {return m_age;}
-
+      
       const actionObjectType getActionObjectType() {return actionObjectIsBuilding;};
       const QMap<QString, ActionProperties> getPossibleActions();
       const QString getLocal(QString name, QString additionalContent = QString());

@@ -132,6 +132,8 @@ void Koushin::Player::endRound()
     m_selectedBuilding->unselect();
   setSelectedBuilding(0);
   m_fieldsForFieldAction.clear();
+  
+  m_actionManager->resetGlobalParameters();
   m_game->endRound();
 }
 
@@ -181,7 +183,10 @@ void Koushin::Player::fieldForActionChosen(Koushin::Field* field)
   KConfigGroup* fieldsGroup = new KConfigGroup(m_selectedBuilding->getConfig()->group("fieldTasks"));
 //create actions
   QList<Action* > actions = ActionParser::createActionsFromConfig(fieldsGroup, field, m_game->getCurrentRound(), m_openFieldConfig);
-  m_actionManager->addAction(actions);
+//   m_actionManager->addAction(actions);
+  foreach(Koushin::Action* action, actions)
+    m_selectedBuilding->insertAction(action);
+  m_actionManager->addActionObject(m_selectedBuilding);
 
   m_fieldsForFieldAction.clear();
   m_selectedBuilding->useField(field);
@@ -224,9 +229,10 @@ void Koushin::Player::levelupBuilding()
 {
   if(m_selectedBuilding) {
     kDebug() << m_selectedBuilding->getName();
-    m_actionManager->removeActions((Koushin::ActionObject*)m_selectedBuilding);
-    foreach(Koushin::Field* field, m_selectedBuilding->getUsedFields())
-      m_actionManager->removeActions(field);
+    m_actionManager->removeActionObject(m_selectedBuilding);
+//     m_actionManager->removeActions((Koushin::ActionObject*)m_selectedBuilding);
+//     foreach(Koushin::Field* field, m_selectedBuilding->getUsedFields())
+//       m_actionManager->removeActions(field);
   }
 }
 

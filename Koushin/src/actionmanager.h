@@ -34,11 +34,10 @@ class ActionObject;
       ActionManager(Player* owner);
       virtual ~ActionManager();
       
-      void addAction(Action* action);
-      void addAction(QList<Action* > actions);
+      bool addActionObject(ActionObject* object);
+      bool removeActionObject(ActionObject* object);
       void executeActions(int currentRound);
       bool executeAction(Action* action);
-      void removeActions(Koushin::ActionObject* object);
       void setStatusOfDependensies(Action* failedAction);
       Player* getOwner() {return m_owner;}
       bool addGlobalParameter(QString name, QString content);
@@ -47,10 +46,15 @@ class ActionObject;
       bool addContentToGlobalParameter(QString name, QString content);
       int evalParameter(QString parameter);
       int evalContent(QString content, QString parameter = "NOT_IN_LIST");
+      void resetGlobalParameters();
     private:
       QString expandParameter( QString line, QString name);
+      void addAction(Action* action);
+      void addAction(QList<Action* > actions);
+      void removeActions(Koushin::ActionObject* object);
       
       QMultiMap<int, Action* > m_actions;
+      QList<ActionObject* > m_actionObjects;
       Player* m_owner;
       QMap<QString, QString> m_globalParameters; //map with name and content
   };

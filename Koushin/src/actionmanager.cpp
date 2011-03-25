@@ -23,9 +23,9 @@
 #include "player.h"
 #include <kdebug.h>
 
-#include <cstring>
 #include <stdexcept>
 #include <QScriptEngine>
+#include "building.h"
 
 Koushin::ActionManager::ActionManager(Player* owner)
   : m_owner(owner)
@@ -40,6 +40,10 @@ Koushin::ActionManager::~ActionManager()
 
 void Koushin::ActionManager::executeActions(int currentRound)
 {
+  m_actions.clear();
+  foreach(Koushin::ActionObject* object, m_actionObjects)
+    addAction(object->getAllActions());
+  kDebug() << "Number of Objects: " << m_actionObjects.size() << ". Number of Actions: " << m_actions.size();
 //reset all action before executing
   foreach(Action* action, m_actions.values()) { 
     action->resetAction();
@@ -110,6 +114,22 @@ void Koushin::ActionManager::addAction(QList< Koushin::Action* > actions)
     addAction(action);
 }
 
+bool Koushin::ActionManager::addActionObject(Koushin::ActionObject* object)
+{
+  if(m_actionObjects.contains(object)) return false;
+  m_actionObjects << object;
+  return true;
+}
+
+bool Koushin::ActionManager::removeActionObject(Koushin::ActionObject* object)
+{
+  if(!m_actionObjects.contains(object)) return false;
+  m_actionObjects.removeAll(object);
+//   removeActions(object);
+  return true;
+}
+
+
 void Koushin::ActionManager::removeActions(Koushin::ActionObject* object)
 {
   foreach(Koushin::Action* action, m_actions.values()) {
@@ -148,7 +168,7 @@ void Koushin::ActionManager::setStatusOfDependensies(Koushin::Action* action)
 bool Koushin::ActionManager::addGlobalParameter(QString name, QString content)
 {
   if(m_globalParameters.keys().contains(name)) {
-    kDebug() << "Parameter allready in use. I do not overwright it. Use instead addToGlobal or setGlobalTo or addToGlobal. " << name;
+    kDebug() << "Parameter allready in use. I do not overwright it. Use instead setGlobalTo or addToGlobal. " << name;
     return false;
   }
   if(name.contains(QRegExp("![A-Za-z0-9]*"))) {
@@ -194,7 +214,6 @@ QString Koushin::ActionManager::expandParameter(QString line, QString name)
   QString part;
   int replacePart = 1;
   while((part = line.section("#", replacePart, replacePart)) != "") {
-//     kDebug() << "Found part = " << part << " in " << line;
     if (line.contains("#" + name + "#")) {
       kDebug() << "Found recursion." << line << " contains " << name;
       return QString("NO_VALID");
@@ -205,7 +224,6 @@ QString Koushin::ActionManager::expandParameter(QString line, QString name)
       replacePart += 2; //jump to next part => skip unknown Parameter
     }
   }
-//   kDebug() << "Line after replacement = " << line;
   return line;
 }
 
@@ -228,4 +246,13 @@ bool Koushin::ActionManager::setGlobalParameterContent ( QString name, QString c
   }
   m_globalParameters.insert(name, content); //overwrites content, because it is not a QMultiMap
   return true;
+}
+
+void Koushin::ActionManager::resetGlobalParameters()
+{
+  m_globalParameters.clear();
+  foreach(Koushin::ActionObject* object, m_actionObjects) {
+    if(object->getActionObjectType() == Koushin::actionObjectIsBuilding)
+      Koushin::ActionParser::parseGlobals(((Koushin::Building*)object)->getConfig()->group("tasks").group("globals"), this);
+  }
 }

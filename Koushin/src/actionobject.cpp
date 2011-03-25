@@ -20,6 +20,7 @@
 
 #include "actionobject.h"
 #include <QString>
+#include <KDebug>
 
 Koushin::ActionObject::ActionObject()
 {
@@ -67,4 +68,25 @@ QMap< QString, Koushin::ActionProperties > Koushin::ActionObject::adjustActionPr
   foreach(QString name, actions.keys())
     if(!actions.value(name).activated) actions.remove(name);
   return actions;
+}
+
+QList<Koushin::Action* > Koushin::ActionObject::getAllActions()
+{
+  return m_actions;
+}
+
+bool Koushin::ActionObject::insertAction(Koushin::Action* action)
+{
+  if(m_actions.contains(action)) return false;
+  m_actions << action;
+  kDebug() << "Insert Action";
+  return true;
+}
+
+
+bool Koushin::ActionObject::deleteAction(Koushin::Action* action)
+{
+  if(!m_actions.contains(action)) return false;
+  m_actions.removeAll(action);
+  return true;
 }

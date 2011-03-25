@@ -88,4 +88,3 @@ void Koushin::Building::unselect()
   foreach(Koushin::Field* field, m_usedFields)
     field->unmarkField();
 }
-
