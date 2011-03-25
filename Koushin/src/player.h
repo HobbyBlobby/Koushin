@@ -92,7 +92,7 @@ class Game;
       void fieldActionSelected(QListWidgetItem* item);
     private:
       void townClicked(QPoint point);
-      void fieldForActionChoosen(Field* field);
+      void fieldForActionChosen(Field* field);
 
       QList<Town* > m_townList;
       ActionManager* m_actionManager;

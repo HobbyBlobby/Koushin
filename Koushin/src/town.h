@@ -85,7 +85,7 @@ namespace Koushin {
       bool addBuilding(Building* building, QPoint pos);
       QMap<Building*, QPoint> getBuildings() const {return m_buildings;}
       QMap<QString, QString> getPossibleBuildings(QMap<QString, QString> allBuildings) const;
-      QList<Field* > getPossibleFields(QPoint aroundPos, qreal radius, FieldType type);
+      QList<Field* > getPossibleFields(QPoint aroundPos, qreal radius, QList<FieldType> types, const QStringList& buildingNames = QStringList());
       void markFields(QList<Field* > fields);
       void unmarkAllFields();
       Field* getFieldFromBuilding(Building* building);

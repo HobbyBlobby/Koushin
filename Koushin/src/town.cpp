@@ -184,14 +184,22 @@ void Koushin::Town::markFields(QList< Koushin::Field* > fields)
     field->markField();
 }
 
-QList< Koushin::Field* > Koushin::Town::getPossibleFields(QPoint aroundPos, qreal radius, Koushin::FieldType type)
+bool isQStringListEmpty(const QStringList& list) {
+  foreach(QString entry, list)
+    if(!entry.isEmpty()) return false;
+  return true;
+}
+
+QList< Koushin::Field* > Koushin::Town::getPossibleFields(QPoint aroundPos, qreal radius, QList<Koushin::FieldType> types, const QStringList& buildingNames)
 {
   QList<Koushin::Field* > list;
   foreach(QPoint point, m_fields.keys()) {
     if(distance(point, aroundPos) <= radius) {
       Koushin::Field* field = m_fields.value(point);
-      if(field->getType() == type)
-	list << field;
+      if(types.indexOf(field->getType()) != -1) {
+	if(field->getType() != Koushin::fieldWithBuilding || (isQStringListEmpty(buildingNames) || (field->getBuilding() && buildingNames.indexOf(field->getBuilding()->getName()) != -1)))
+	  list << field;
+      }
     }
   }
   return list;

@@ -59,7 +59,7 @@ class Field;
       void setAge(int time) {m_age = time;}
       int getAge() const {return m_age;}
 
-      const actionObjectType getActionObjectType() {return actionObjectIsBuiling;};
+      const actionObjectType getActionObjectType() {return actionObjectIsBuilding;};
       const QMap<QString, ActionProperties> getPossibleActions();
       const QString getLocal(QString name, QString additionalContent = QString());
     public Q_SLOTS:

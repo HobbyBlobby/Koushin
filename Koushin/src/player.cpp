@@ -149,12 +149,19 @@ void Koushin::Player::fieldActionSelected(QListWidgetItem* item)
   m_openFieldConfig = item->text();
 
   KConfigGroup group = m_selectedBuilding->getConfig()->group("fieldTasks").group(m_openFieldConfig);
-  qreal radius = group.readEntry("fieldRadius", qreal(1));
+  qreal radius = group.readEntry("fieldRadius", qreal(100));
   QString typeLine = group.readEntry("needs", QString()); ///@todo prevent crash when "needs=" is empty
   kDebug() << "needs: " << typeLine;
-  typeLine = ActionParser::separateNameAndParameters(typeLine).second.first();
-  Koushin::FieldType type = Koushin::Field::QStringToFieldType(typeLine);
-  m_fieldsForFieldAction = m_townList.first()->getPossibleFields(m_selectedBuilding->pos().toPoint(), radius, type);
+  QPair<QString, QStringList> typeDescription = ActionParser::separateNameAndParameters(typeLine);
+  if(typeDescription.first == "building")
+    m_fieldsForFieldAction = m_townList.first()->getPossibleFields(m_selectedBuilding->pos().toPoint(), radius, QList<Koushin::FieldType>() << Koushin::fieldWithBuilding, typeDescription.second);
+  else if (typeDescription.first == "field") {
+    QList<Koushin::FieldType > types;
+    foreach(QString type, typeDescription.second)
+      types << Koushin::Field::QStringToFieldType(type);
+    m_fieldsForFieldAction = m_townList.first()->getPossibleFields(m_selectedBuilding->pos().toPoint(), radius, types);
+  }
+  
   foreach(Koushin::Field* field, m_selectedBuilding->getUsedFields())
     m_fieldsForFieldAction.removeOne(field);
   m_townList.first()->markFields(m_fieldsForFieldAction);
@@ -170,7 +177,7 @@ void Koushin::Player::setSelectedBuilding(Koushin::Building* building)
 //   }
 }
 
-void Koushin::Player::fieldForActionChoosen(Koushin::Field* field)
+void Koushin::Player::fieldForActionChosen(Koushin::Field* field)
 {
   if(!m_selectedBuilding) return;
   KConfigGroup* fieldsGroup = new KConfigGroup(m_selectedBuilding->getConfig()->group("fieldTasks"));
@@ -202,7 +209,7 @@ void Koushin::Player::fieldClicked(Koushin::Field* field)
       break;
     case Koushin::PlayerInteraction::buildingClicked:
       if(m_fieldsForFieldAction.contains(field)) {
-	fieldForActionChoosen(field);
+	fieldForActionChosen(field);
 	field->getTown()->unmarkAllFields();
 	m_selectedBuilding->select();
 	emit showFieldInfo(field);

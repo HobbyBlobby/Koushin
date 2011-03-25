@@ -31,11 +31,11 @@
 namespace Koushin {
   /**
    * @brief This enum provides the information about the type of the derived class.
-   * Often the base class ActionObject is stored or returned. Before a cast to the direved class test the type. Each derived class should have his onw entry in this enum, so do not forget to add it here.
+   * Often the base class ActionObject is stored or returned. Before a cast to the derived class test the type. Each derived class should have his onw entry in this enum, so do not forget to add it here.
    **/
   enum actionObjectType{
     actionObjectNotSpecified = 0,
-    actionObjectIsBuiling,
+    actionObjectIsBuilding,
     actionObjectIsTown,
     actionObjectIsPlayer,
     actionObjectIsField,

@@ -214,7 +214,7 @@ QList< Koushin::Player* > Koushin::ActionParser::findPlayers(QStringList paramet
   if(parameters.isEmpty()) parameters.insert(0, "current"); //set "current" as default
 
   switch(owner->getActionObjectType()) {
-    case Koushin::actionObjectIsBuiling:
+    case Koushin::actionObjectIsBuilding:
       if(parameters.value(0) == "current")
 	players << ((Koushin::Building*)owner)->getTown()->getOwner();
       break;
@@ -243,7 +243,7 @@ QList<Koushin::Town* > Koushin::ActionParser::findTowns(QStringList parameters, 
   if(parameters.isEmpty()) parameters.insert(0, "current");
 //parse parameter 0:  
   switch(owner->getActionObjectType()) {
-    case Koushin::actionObjectIsBuiling:
+    case Koushin::actionObjectIsBuilding:
       if(parameters.value(0) == "current")
 	towns << ((Koushin::Building*)owner)->getTown();
       break;
@@ -276,7 +276,7 @@ QList< Koushin::Building* > Koushin::ActionParser::findBuildings(QStringList par
   if(parameters.isEmpty()) parameters.insert(0, "current");
 //parse parameter 0:  
   switch(owner->getActionObjectType()) {
-    case Koushin::actionObjectIsBuiling:
+    case Koushin::actionObjectIsBuilding:
       if(parameters.value(0) == "current")
 	buildings << (Koushin::Building*)owner;
       break;
@@ -313,7 +313,7 @@ QList<Koushin::Field* > Koushin::ActionParser::findFields(QStringList parameters
   if(parameters.isEmpty()) parameters.insert(0, "current");
 //parse parameter 0:  
   switch(owner->getActionObjectType()) {
-    case Koushin::actionObjectIsBuiling:
+    case Koushin::actionObjectIsBuilding:
       if(parameters.value(0) == "current")
 	fields << ((Koushin::Building*)owner)->getTown()->getFieldFromBuilding((Koushin::Building*)owner);
       break;

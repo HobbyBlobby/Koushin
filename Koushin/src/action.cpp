@@ -105,7 +105,7 @@ bool Koushin::Action::execute(bool failIfOneRecipientFailed)
     Koushin::ActionManager* manager = 0;
     //asseignment changes with recipients, so use this switch:
     switch(recipient->getActionObjectType()) {
-      case Koushin::actionObjectIsBuiling:
+      case Koushin::actionObjectIsBuilding:
 	parameterTypes = ((Koushin::Building*)recipient)->getPossibleActions().value(action.first).parameterTypes;
 	manager = ((Koushin::Building*)recipient)->getTown()->getOwner()->getActionManager();
 	break;
@@ -174,46 +174,10 @@ bool Koushin::Action::execute(bool failIfOneRecipientFailed)
   return true;
 }
 
-/*QList< QGenericArgument > Koushin::Action::prepareArguments(QStringList types, QStringList parameter, Koushin::ActionManager* manager)
-{
-  QList<QGenericArgument> args;
-  for(int i = 0; i < 10; ++i) {
-    QString type = types.value(i);
-    if(type.isEmpty())
-      args.insert(i, QGenericArgument());
-    else if (type == "ResourceType") {
-      kDebug() << "Insert ResourceType = " << parameter.value(i);
-      args.insert(i, Q_ARG(Koushin::ResourceType,
-			   *(new Koushin::ResourceType(Koushin::Town::getResourceTypeFromQString(parameter.value(i))))
-			  ));
-    }
-    else if (type == "int") {
-      try{
-	int value = manager->evalContent(parameter.value(i));
-	kDebug() << "Insert int = " << value;
-	args.insert(i, Q_ARG(int, *(new int(value))));
-      }
-      catch (std::exception & e) {
-	kDebug() << "Can not calculate " << parameter.value(i) << ". Reason: " << e.what();
-	args.insert(i, QGenericArgument());
-      }
-    }
-    else if(type == "QString") {
-      kDebug() << "Insert QString = " << parameter.value(i);
-      args.insert(i, Q_ARG(QString, *(new QString(parameter.value(i))))); ///@todo find out why the game crashs, when I do not use this "new" method
-    }
-    else {
-      kDebug() << "Unknown parameter type: " << type;
-      args.insert(i, QGenericArgument());
-    }
-  }
-  return args;
-}
-*/
 bool Koushin::Action::possibleParametersGiven(Koushin::ActionObject* recipient, QString actionName, QStringList parameters)
 {
   QMap<QString, Koushin::ActionProperties> possibleActions;
-  if(recipient->getActionObjectType() == Koushin::actionObjectIsBuiling)
+  if(recipient->getActionObjectType() == Koushin::actionObjectIsBuilding)
     possibleActions = Koushin::Building().getPossibleActions();
   if(recipient->getActionObjectType() == Koushin::actionObjectIsField)
     possibleActions = Koushin::Field().getPossibleActions();
