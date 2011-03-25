@@ -197,7 +197,7 @@ QList< Koushin::Field* > Koushin::Town::getPossibleFields(QPoint aroundPos, qrea
     if(distance(point, aroundPos) <= radius) {
       Koushin::Field* field = m_fields.value(point);
       if(types.indexOf(field->getType()) != -1) {
-	if(field->getType() != Koushin::fieldWithBuilding || (isQStringListEmpty(buildingNames) || (field->getBuilding() && buildingNames.indexOf(field->getBuilding()->getName()) != -1)))
+	if(field->getType() != Koushin::fieldWithBuilding || (isQStringListEmpty(buildingNames) || (field->getBuilding() && buildingNames.indexOf(field->getBuilding()->getName()) != -1 && field->getBuilding()->getAge() >= 0)))
 	  list << field;
       }
     }

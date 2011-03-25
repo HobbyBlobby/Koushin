@@ -152,10 +152,11 @@ void KoushinGUI::GameView::closeConstructionMenu()
 
 void KoushinGUI::GameView::showFieldInfo(Koushin::Field* field)
 {
-  if(field->getBuilding()) {
+  if(field && field->getBuilding())
     m_fieldInfo->setBuilding(field->getBuilding());
-    m_fieldInfo->repaint();
-  }
+  else
+    m_fieldInfo->setBuilding(0);
+  m_fieldInfo->repaint();
   m_fieldInfo->show();
 }
 
@@ -194,6 +195,7 @@ void KoushinGUI::GameView::mousePressEvent(QMouseEvent* event)
   //adjust focus rect, because with Qt::KeepAspectRation the rect is different from wanted rect
   m_focusRect = m_townView->mapToScene(m_townView->viewport()->geometry()).boundingRect();
 }
+
 void KoushinGUI::GameView::mouseReleaseEvent(QMouseEvent* event)
 {
   qreal scale = m_townView->geometry().width() / m_focusRect.width();

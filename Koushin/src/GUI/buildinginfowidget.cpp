@@ -33,7 +33,7 @@ KoushinGUI::BuildingInfoWidget::BuildingInfoWidget()
 
 void KoushinGUI::BuildingInfoWidget::repaint()
 {
-  if(!m_building) {
+  if(!m_building || m_building->getAge() < 0) {
     m_list.clear();
     return;
   }
