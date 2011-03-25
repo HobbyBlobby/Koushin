@@ -53,6 +53,7 @@ KoushinGUI::GameView::GameView()
   , m_player(0)
   , m_townWidget(0)
   , m_focusRect(3, 3, 6, 6)
+  , m_townClicked(false)
 {
 //   m_resourceInfo->close();
   m_fieldInfo->setParent(this);
@@ -152,10 +153,7 @@ void KoushinGUI::GameView::closeConstructionMenu()
 
 void KoushinGUI::GameView::showFieldInfo(Koushin::Field* field)
 {
-  if(field && field->getBuilding())
-    m_fieldInfo->setBuilding(field->getBuilding());
-  else
-    m_fieldInfo->setBuilding(0);
+  m_fieldInfo->setBuilding(field->getBuilding());
   m_fieldInfo->repaint();
   m_fieldInfo->show();
 }
@@ -193,17 +191,22 @@ void KoushinGUI::GameView::mousePressEvent(QMouseEvent* event)
 {
   m_oldPos = event->posF();
   //adjust focus rect, because with Qt::KeepAspectRation the rect is different from wanted rect
+//   if(items(m_oldPos).contains(m_townView->scene()));
+  m_townClicked = false;
+  if(m_townView->geometry().contains(m_oldPos.x(), m_oldPos.y())) m_townClicked = true;
   m_focusRect = m_townView->mapToScene(m_townView->viewport()->geometry()).boundingRect();
 }
 
 void KoushinGUI::GameView::mouseReleaseEvent(QMouseEvent* event)
 {
-  qreal scale = m_townView->geometry().width() / m_focusRect.width();
-  if(m_oldPos == event->posF()) {
-    QPoint townPoint = toPoint(m_townView->mapToScene(event->pos() + pos() - m_townView->pos()));
-    m_player->fieldClicked(m_player->getTowns().first()->getFieldFromPoint(townPoint));
-  } else {
-    m_focusRect = m_townView->mapToScene(m_townView->viewport()->geometry()).boundingRect();
+  if(m_townClicked) {
+    qreal scale = m_townView->geometry().width() / m_focusRect.width();
+    if(m_oldPos == event->posF()) {
+      QPoint townPoint = toPoint(m_townView->mapToScene(event->pos() + pos() - m_townView->pos()));
+      m_player->fieldClicked(m_player->getTowns().first()->getFieldFromPoint(townPoint));
+    } else {
+      m_focusRect = m_townView->mapToScene(m_townView->viewport()->geometry()).boundingRect();
+    }
   }
 }
 

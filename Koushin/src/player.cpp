@@ -216,7 +216,7 @@ void Koushin::Player::fieldClicked(Koushin::Field* field)
       } else {
 	setSelectedBuilding(0);
 	field->getTown()->unmarkAllFields();
-	emit showFieldInfo(0);
+	emit showFieldInfo(field);
 // 	m_buildingInfo->repaint();
 	m_lastInteraction = Koushin::PlayerInteraction::noInteraction;
       }

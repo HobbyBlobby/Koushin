@@ -71,6 +71,7 @@ class ResourceInfoWidget;
       QGraphicsView* m_townView;
       QRectF m_focusRect;
       QPointF m_oldPos;
+      bool m_townClicked;
       //old properties: needed for deleting this objects
       ::Koushin::Player* m_player;
       TownWidget* m_townWidget;
